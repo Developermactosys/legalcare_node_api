@@ -1,0 +1,83 @@
+// API for chat Approval 
+const db = require("../../../config/db.config");
+
+const User = db.User;
+const chat_request = db.chat_request;
+const walletSystem = db.walletSystem;
+const crypto = require('crypto')
+const axios = require('axios')
+const { Op } = require('sequelize')
+
+exports.approveRequest = async (req, res) => {
+    try {
+        const { id, receiver_id, sender_id } = req.body;
+        const serverKey = process.env.SERVER_KEY_HERE; 
+        const fcmUrl = process.env.FCMURL;
+  
+        // Update chat_request status and notify_user
+        await chat_request.update({
+            status: "Approve",
+            approve_time: new Date(),
+            notify_user: 1
+        }, {
+            where: {
+                id,
+                status: "Pending"
+            }
+        });
+  
+        const user = await User.findByPk(receiver_id);
+        const astro = await User.findByPk(sender_id);
+  
+        if (!user || !astro) {
+            return res.status(404).json({ success: false, message: "User or Astrologer not found" });
+        }
+  
+        const wallet = await walletSystem.findOne({ where: { user_id: receiver_id } });
+        if (!wallet) {
+            return res.status(404).json({ success: false, message: "Wallet not found" });
+        }
+        
+        const max_time = Math.floor(wallet.wallet_amount / astro.per_minute);
+        await User.update({ wait_time: max_time }, { where: { id: sender_id } });
+  
+        if (user.login_from === 'web') {
+            return res.json({ success: 1, failure: 0 });
+        } else {
+            const headers = {
+                "Authorization": `key=${serverKey}`,
+                "Content-Type": "application/json"
+            };
+  
+            const notificationPayload = {
+                notification: {
+                    title: `Your request has been accepted from ${astro.name}`,
+                    body: `Your request has been accepted from ${astro.name}`,
+                    priority: "high",
+                    image: process.env.image
+                },
+                data: {
+                  id: "",
+                  user_name: astro.name,
+                  user_image: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
+                  type: "customer",
+                  notification_type: "approved",
+                  time: Date.now(),
+                  title: `Chat request approved by ${astro.name}`,
+                  icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
+                  image: process.env.image,
+                  sound: "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
+              },
+              to: user.device_id,
+          };
+  
+          const response = await axios.post(fcmUrl, notificationPayload, { headers });
+          return res.json({ success: true, message: "Request approved and notification sent", data: response.data });
+      }
+    } catch (error) {
+        console.error(error);
+        return res.status(500).json({ success: false, message: "Internal Server Error" });
+    }
+  };
+  
+  
