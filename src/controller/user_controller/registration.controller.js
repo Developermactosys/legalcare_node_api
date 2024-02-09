@@ -50,6 +50,7 @@ const registration = async (req, res) => {
       const filePath = req.file
       ? `/src/uploads/${req.file.filename}`
       : "/src/uploads/default.png";
+      
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
