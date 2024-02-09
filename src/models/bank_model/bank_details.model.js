@@ -11,9 +11,9 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
         },
         pan_card_no: {
-<<<<<<< HEAD
+
             type: DataTypes.INTEGER,
-=======
+
             type: DataTypes.STRING
         },
         aadhar_no: {
@@ -39,7 +39,6 @@ module.exports = (sequelize, DataTypes) => {
         },
         passbook_img: {
             type:DataTypes.STRING
->>>>>>> d71fd1ba129facc3dfbfe5747b2d479c5db7aacb
         },
         deleted_At: {
             type: DataTypes.DATE,
