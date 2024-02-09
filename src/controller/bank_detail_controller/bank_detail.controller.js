@@ -1,6 +1,6 @@
 // controllers/bankController.js
 const db = require("../../../config/db.config");
-const BankDetails = db.bankDetails;
+const BankDetails = db.bank_details;
 
 async function saveBankDetails(req, res) {
     try {
