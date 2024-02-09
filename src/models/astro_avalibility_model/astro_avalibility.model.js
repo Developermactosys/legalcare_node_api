@@ -5,12 +5,20 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
-            allowNull: false
+            allowNull : false
+          },
+        astro_id: {
+            type: DataTypes.INTEGER,
         },
-        astro_id: DataTypes.INTEGER,
-        days: DataTypes.STRING,
-        start_time: DataTypes.STRING,
-        end_time: DataTypes.STRING,
+        days: {
+            type: DataTypes.STRING,
+        },
+        start_time: {
+            type: DataTypes.STRING,
+        },
+        end_time: {
+            type: DataTypes.STRING,
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,

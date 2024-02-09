@@ -7,6 +7,9 @@ const {getChatStatus } = require("../../controller/chat_controller/get_chat_stat
 const { sendUserChatRequest} = require("../../controller/chat_controller/send_user_chat_request.controller")
 const { rejectUserChatRequest} = require("../../controller/chat_controller/reject_user_chat_request.controller")
 
+const { getChatList_by_user_id } = require("../../controller/chat_controller/chat_list.controller")
+
+router.post('/get_chat_list_by_user_id',uploads.none(), getChatList_by_user_id);
 
 router.post('/send_user_chat_request/:request_id',uploads.none(), sendUserChatRequest);// Done 
 router.post('/reject_user_chat_request',uploads.none(), rejectUserChatRequest);// Done

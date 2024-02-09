@@ -45,8 +45,12 @@ const registration = async (req, res) => {
       const otp = Math.floor(
         Math.pow(10, digits - 1) + Math.random() * 9 + Math.pow(10, digits - 1)
       );
-      const filePath = `/uploads/${req.file.filename}`;
-      console.log(filePath);
+      // const filePath = `/src/uploads/${req.file.filename}`;
+      // console.log(filePath);
+      const filePath = req.file
+      ? `/src/uploads/${req.file.filename}`
+      : "/src/uploads/default.png";
+
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await User.create({
