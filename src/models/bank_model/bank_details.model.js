@@ -11,16 +11,36 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.INTEGER,
         },
         pan_card_no: {
+<<<<<<< HEAD
             type: DataTypes.INTEGER,
+=======
+            type: DataTypes.STRING
         },
-        aadhar_no: DataTypes.STRING,
-        acc_no: DataTypes.STRING,
-        acc_holder_name: DataTypes.STRING,
-        ifsc_code: DataTypes.STRING,
-        bank_name: DataTypes.STRING,
-        pan_doc: DataTypes.STRING,
-        aadhar_doc: DataTypes.STRING,
-        passbook_img: DataTypes.STRING,
+        aadhar_no: {
+            type:DataTypes.STRING
+        },
+        acc_no: {
+            type: DataTypes.STRING
+        },
+        acc_holder_name: {
+            type:DataTypes.STRING
+        },
+        ifsc_code: {
+            type:DataTypes.STRING
+        },
+        bank_name: {
+            type:DataTypes.STRING
+        },
+        pan_doc: {
+            type:DataTypes.STRING
+        },
+        aadhar_doc: {
+            type:DataTypes.STRING
+        },
+        passbook_img: {
+            type:DataTypes.STRING
+>>>>>>> d71fd1ba129facc3dfbfe5747b2d479c5db7aacb
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,

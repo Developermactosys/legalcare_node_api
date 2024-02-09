@@ -17,6 +17,16 @@ const Routes = require('./src/routes/main.routes');
 
 app.use('/', Routes);
 
+app.get('/', (req, res, next) => {
+    try {
+        res.json({
+            status: 'success',
+            message: 'Server is on Listning :"' + process.env.PORT + '" ',
+        });
+    } catch (err) {
+        return next(err);
+    }
+});
 // Start server
 const PORT = process.env.PORT || 7878;
 app.listen(PORT, () => {

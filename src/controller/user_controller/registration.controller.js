@@ -6,9 +6,9 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const moment = require('moment');
 const twilio = require('twilio');
-const accountSid=process.env.TWILIO_ACCOUNT_SID;
-const authToken=process.env.TWILIO_AUTH_TOKEN;
-const client = new twilio(accountSid, authToken);
+// const accountSid=process.env.TWILIO_ACCOUNT_SID;
+// const authToken=process.env.TWILIO_AUTH_TOKEN;
+// const client = new twilio(accountSid, authToken);
 const { validationResult } = require('express-validator');
 const { CallPage } = require("twilio/lib/rest/api/v2010/account/call");
 
