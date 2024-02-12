@@ -79,12 +79,12 @@ const registration = async (req, res) => {
       // for(let i=0;i<4;i++){
       //   OTP += digit[Math.floor(Math.random() * 10)];
       // }
-      await client.messages.create({
-        from: +19163827578,
-        messagingServiceSid:process.env.TwilioMsg,
-        to:process.env.to,
-        body: `Your coder house OTP is ${otp}`,
-      });
+      // await client.messages.create({
+      //   from: +19163827578,
+      //   messagingServiceSid:process.env.TwilioMsg,
+      //   to:process.env.to,
+      //   body: `Your coder house OTP is ${otp}`,
+      // });
   
       return res.json({
         status: true,

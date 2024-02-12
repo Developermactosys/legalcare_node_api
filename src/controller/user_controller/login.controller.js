@@ -1,9 +1,9 @@
 const db = require("../../../config/db.config");
 const User = db.User;
 const bcrypt = require("bcryptjs");
-const jwt = require("jsonwebtoken");
-const moment = require("moment");
-const twilio = require("twilio");
+// const jwt = require("jsonwebtoken");
+// const moment = require("moment");
+// const twilio = require("twilio");
 // let accountSid = process.env.TWILIO_ACCOUNT_SID;
 // let authToken = process.env.TWILIO_AUTH_TOKEN;
 // const client = new twilio(accountSid, authToken);
@@ -50,11 +50,11 @@ exports.login = async (req, res) => {
         { where: { phone_no } }
       );
       // await sendOtp(phone_no, otp);
-      await client.messages.create({
-        from: process.env.from, // Use an environment variable
-        to: process.env.to, // Send to the user's phone number
-        body: `Your verification OTP is ${otp}`,
-      });
+      // await client.messages.create({
+      //   from: process.env.from, // Use an environment variable
+      //   to: process.env.to, // Send to the user's phone number
+      //   body: `Your verification OTP is ${otp}`,
+      // });
 
       return res.status(202).json({
         status: true,
