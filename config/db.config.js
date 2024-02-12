@@ -19,7 +19,7 @@ const db = {}
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.sequelize.sync({ alter: true});
+db.sequelize.sync();
 
 // Creating Table
 db.User = require("../src/models/user_model/userRegistration.model")(sequelize, DataTypes);
@@ -40,6 +40,7 @@ db.service_image = require("../src/models/service_model/service_image.model")(se
 db.static_data = require("../src/models/static_model/static_data.model")(sequelize, DataTypes);
 db.transaction_history = require("../src/models/wallet_model/trancation_histroy.model")(sequelize, DataTypes);
 db.wallet_system = require("../src/models/wallet_model/walletSystem.model")(sequelize, DataTypes);
+db.add_category = require("../src/models/category_model/add_category.model")(sequelize, DataTypes);
 
 //------Associations of tables--------//
 

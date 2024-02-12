@@ -52,9 +52,6 @@ async function updateUser(req, res) {
         }
 
         await User.update(update, { where: { id } });
-
-       
-
         res.json({
             status: true,
             message: 'User update successfully',

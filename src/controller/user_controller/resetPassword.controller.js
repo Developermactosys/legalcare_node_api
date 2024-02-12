@@ -7,6 +7,7 @@ const bcrypt = require('bcrypt');
 exports.resetPasswordController = async (req, res) => {
     try {
       const { user_id, password } = req.body;
+      
 
       // Validate request data
       if (!user_id || !password || password.length < 6) {

@@ -4,6 +4,13 @@ const bodyParser = require('body-parser');
 const multer = require("multer");
 const app = express();
 
+const path = require('path');
+const http = require('http');
+const { Server } = require('socket.io');
+const cookieParser = require('cookie-parser');
+const server = http.createServer(app);
+const io = new Server(server);
+
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -27,6 +34,15 @@ app.get('/', (req, res, next) => {
         return next(err);
     }
 });
+
+// Socket.io
+io.on('connection', (socket) => {
+    socket.on('userMessage', (message) => {
+        // Consider saving the message to your database here
+        io.emit('message', message);
+    });
+});
+
 // Start server
 const PORT = process.env.PORT || 7878;
 app.listen(PORT, () => {

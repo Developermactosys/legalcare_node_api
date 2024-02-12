@@ -15,6 +15,8 @@ const userRoutes = require("./user_routes/user.routes");
 const walletRoutes = require("./wallet_routes/wallet.routes");
 const astroRoutes = require("./astro_avalibility_routes/astro-avalibility.routes")
 
+const categoryRoutes = require("./category_routes/add_category.routes");
+
 router.use("/",bankRoutes);
 router.use("/",callRoutes);
 router.use("/",chatRoutes);
@@ -26,9 +28,9 @@ router.use("/",queryRoutes);
 router.use("/",staticRoutes);
 router.use("/",userRoutes);
 router.use("/",walletRoutes);
-router.use("/",astroRoutes)
+router.use("/",astroRoutes);
 
-
+router.use("/",categoryRoutes);
 
 
 module.exports = router
