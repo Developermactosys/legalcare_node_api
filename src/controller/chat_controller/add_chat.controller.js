@@ -3,7 +3,13 @@ const Message = db.chat;
 
 const messageUser = async (req, res) => {
   try {
+    const { sender_id } = req.body;
+
     const newMessage = await Message.create(req.body)
+    // Saving the sender_id as UserId in chat table
+    newMessage.UserId=sender_id
+    await newMessage.save();
+
     if (newMessage) {
       return res.status(200).json({
         success: true,

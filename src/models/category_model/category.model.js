@@ -1,8 +1,8 @@
 
 module.exports = (sequelize, DataTypes) => {
-const add_category = sequelize.define('add_category', {
+const category = sequelize.define('category', {
     id: {
-        type: DataTypes.INTEGER,
+        type: DataTypes.BIGINT,
         autoIncrement: true,
         primaryKey: true,
         allowNull: false 
@@ -43,5 +43,5 @@ const add_category = sequelize.define('add_category', {
    
     });
     
-    return add_category
+    return category
   }

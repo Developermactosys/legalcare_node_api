@@ -10,12 +10,20 @@ const { Server } = require('socket.io');
 const cookieParser = require('cookie-parser');
 const server = http.createServer(app);
 const io = new Server(server);
+const cors = require("cors");
+
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 // app.use(multer().none());
+
+const corsOption = {
+    credentials: true,
+    origin: '*',
+};
+app.use(cors(corsOption));
 
 // Routes
 const Routes = require('./src/routes/main.routes');

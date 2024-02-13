@@ -19,7 +19,7 @@ const db = {}
 db.sequelize = sequelize;
 db.Sequelize = Sequelize;
 
-db.sequelize.sync();
+db.sequelize.sync({alter:true});
 
 // Creating Table
 db.User = require("../src/models/user_model/userRegistration.model")(sequelize, DataTypes);
@@ -40,7 +40,10 @@ db.service_image = require("../src/models/service_model/service_image.model")(se
 db.static_data = require("../src/models/static_model/static_data.model")(sequelize, DataTypes);
 db.transaction_history = require("../src/models/wallet_model/trancation_histroy.model")(sequelize, DataTypes);
 db.wallet_system = require("../src/models/wallet_model/walletSystem.model")(sequelize, DataTypes);
-db.add_category = require("../src/models/category_model/category.model")(sequelize, DataTypes);
+db.category = require("../src/models/category_model/category.model")(sequelize, DataTypes);
+db.rating = require("../src/models/rating_model/rating.model")(sequelize, DataTypes);
+db.booking_detail = require("../src/models/booking_model/booking.model")(sequelize, DataTypes);
+db.subcategory = require("../src/models/category_model/subcategory.model")(sequelize,DataTypes);
 
 //------Associations of tables--------//
 
@@ -117,5 +120,70 @@ db.astro_availability.belongsTo(db.User,{
     forienKey : "UserId",
     as : "User" 
 })
+
+// User and Rating One to Many relationship
+db.User.hasMany(db.rating,{
+    forienKey : "UserId",
+    as : "rating" 
+})
+db.rating.belongsTo(db.User,{
+    forienKey : "UserId",
+    as : "User" 
+})
+
+// Booking and services have One to Many relationship
+db.service.hasMany(db.booking_detail,{
+    forienKey : "serviceId",
+    as : "booking_detail" 
+})
+db.booking_detail.belongsTo(db.service,{
+    forienKey : "serviceId",
+    as : "service" 
+})
+
+// category and subcategory relationship
+
+db.category.hasMany(db.subcategory, {
+    forienKey: "categoryId",
+    as: "subcategory",
+  });
+  
+  db.subcategory.belongsTo(db.category, {
+    forienKey: "categoryId",
+    as: "category",
+  });
+
+ // category and service have One to Many relationship
+
+ db.category.hasMany(db.service,{
+    forienKey : "categoryId",
+    as : "service" 
+})
+db.service.belongsTo(db.category,{
+    forienKey : "categoryId",
+    as : "category" 
+})
+
+  // Booking and User have One to Many relationship
+db.User.hasMany(db.booking_detail,{
+    forienKey : "UserId",
+    as : "booking_detail" 
+})
+db.booking_detail.belongsTo(db.User,{
+    forienKey : "UserId",
+    as : "User" 
+})
+
+// subcategory and service one to many relationship
+db.subcategory.hasMany(db.service, {
+    forienKey: "subcategoryId",
+    as: "service",
+  });
+  
+  db.service.belongsTo(db.subcategory, {
+    forienKey: "subcategoryId",
+    as: "subcategory",
+  });
+
 
 module.exports = db;
