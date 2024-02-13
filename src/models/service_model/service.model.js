@@ -3,7 +3,7 @@
 module.exports = (sequelize, DataTypes) => {
   const service = sequelize.define('service', {
     id: {
-      type: DataTypes.INTEGER,
+      type: DataTypes.BIGINT,
       autoIncrement: true,
       primaryKey: true,
       allowNull :false
