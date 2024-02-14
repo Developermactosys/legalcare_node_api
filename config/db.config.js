@@ -44,7 +44,8 @@ db.category = require("../src/models/category_model/category.model")(sequelize, 
 db.rating = require("../src/models/rating_model/rating.model")(sequelize, DataTypes);
 db.booking_detail = require("../src/models/booking_model/booking.model")(sequelize, DataTypes);
 db.subcategory = require("../src/models/category_model/subcategory.model")(sequelize,DataTypes);
-
+db.client_testimonial= require("../src/models/testimonial_model/testimonial.model")(sequelize,DataTypes);
+db.live_event = require("../src/models/live_event_model/live_event.model")(sequelize,DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history

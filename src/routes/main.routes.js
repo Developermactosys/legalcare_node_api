@@ -22,6 +22,12 @@ const bookingRoutes = require("./booking_routes/booking.routes");
 
 const serviceRoutes =  require("./service_routes/service.routes")
 
+const refreshTokenRoutes = require("./refreshToken_routes/refreshToken.routes");
+const adminRoutes = require("./admin_routes/admin.routes");
+const testimonialRoutes = require("./testimonial_routes/testimonial.routes")
+
+const bannerRoutes = require("./admin_routes/banner_routes/banner.routes")
+
 router.use("/",bankRoutes);
 router.use("/",callRoutes);
 router.use("/",chatRoutes);
@@ -42,4 +48,9 @@ router.use("/",ratingRoutes);
 router.use("/",bookingRoutes);
 router.use("/",serviceRoutes);
 
+router.use("/",refreshTokenRoutes);
+router.use("/",adminRoutes);
+router.use("/",testimonialRoutes);
+
+router.use("/",bannerRoutes);
 module.exports = router

@@ -3,14 +3,14 @@ const db = require("../../../config/db.config");
 
 const User = db.User;
 const WalletSystem = db.wallet_system;
-const TransactionHistory = db.trancation_histroy;
+const TransactionHistory = db.transaction_history;
 
 
 
 const addWalletAmount = async (req, res) => {
 
   try {
-    const { user_id, payment_method, wallet_amount, trancation_id, device_id, payment_status } = req.body;
+    const { user_id, payment_method, wallet_amount, transaction_id, device_id, payment_status } = req.body;
 
     const isEmptykey = Object.keys(req.body).some(key => {
       const value = req.body[key]
@@ -39,8 +39,9 @@ const addWalletAmount = async (req, res) => {
         UserId: user_id,
         payment_method,
         payment_status,
-        wallet_amount,
-        trancation_id,
+        transaction_amount :wallet_amount,
+        transaction_id,
+        device_id,
         status: 1
       });
 
@@ -62,7 +63,7 @@ const addWalletAmount = async (req, res) => {
         payment_method,
         payment_status,
         wallet_amount,
-        trancation_id,
+        transaction_id,
         status: 1
       });
 

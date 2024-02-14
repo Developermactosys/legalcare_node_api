@@ -58,6 +58,9 @@ const wallet_system = sequelize.define('wallet_system', {
     type: DataTypes.DATE,
     defaultValue: DataTypes.NOW,
   },
+  device_id : {
+    type: DataTypes.STRING,
+  },
   deleted_At: {
     type: DataTypes.DATE,
     allowNull: true,

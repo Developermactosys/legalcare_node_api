@@ -12,7 +12,7 @@ const generateAccessToken = (user) => {
 };
 
 const generateRefreshToken = () => {
-    return jwt.sign({}, refresh_secret_key, { expiresIn: '3h' });
+    return jwt.sign({}, refresh_secret_key, { expiresIn: '7d' });
 };
 
 module.exports = { generateAccessToken, generateRefreshToken }

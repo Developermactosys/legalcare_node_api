@@ -16,7 +16,7 @@ const registration = async (req, res) => {
   try {
     const {
       name,
-      email,
+      email_id,
       password,
       user_type,
       phone_no,
@@ -56,7 +56,7 @@ const registration = async (req, res) => {
 
       const user = await User.create({
         name: name,
-        email: email,
+        email_id: email_id,
         password: hashedPassword,
         user_type: user_type,
         phone_no: phone_no,
@@ -154,7 +154,7 @@ const otpVerify = async (req, res) => {
           user_type: checkotps.user_type,
           profile_image: `${req.protocol}://${req.get('host')}/images/profile_image/${checkotps.profile_image}`,
           name: checkotps.name,
-          email: checkotps.email,
+          email_id: checkotps.email_id,
           is_free: checkotps.free_redeem,
           message: "Otp successfully verified",
       });
