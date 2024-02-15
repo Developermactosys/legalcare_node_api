@@ -90,6 +90,62 @@ async function saveBankDetails(req, res) {
     }
 }
 
+
+const getBankDetails = async (req, res) => {
+    try {
+      const userDetails = await BankDetails.findAll({});
+  
+      if (!userDetails) {
+        return res.status(404).json({
+          success: false,
+          message: "Bank Details not found",
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: "BankDetails retrieved successfully",
+        data: userDetails,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
+  // get BankDetails by id
+  const getBankDetailsById = async (req, res) => {
+    if (!req.params.id) {
+      return res.json({
+        success: false,
+        message: "bankDetails is Not provide",
+      });
+    }
+    try {
+      const userDetails = await BankDetails.findOne({
+        where: {
+          id: req.params.id,
+        },
+      });
+      if (!userDetails) {
+        return res.status(404).json({
+          success: false,
+          message: "BankDetails not found",
+        });
+      }
+      return res.status(200).json({
+        success: true,
+        message: "BankDetails retrieved successfully",
+        data: userDetails,
+      });
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
 module.exports = {
-    saveBankDetails,
+    saveBankDetails,getBankDetails,getBankDetailsById
 };

@@ -30,6 +30,7 @@ exports.authorize = (requiredUserType) => {
                     if (requiredUserType[i] !== '0'
                      && requiredUserType[i] !== '1'
                      && requiredUserType[i] !== '2'
+                     && requiredUserType[i] !== '3'
                     && requiredUserType[i] !== '4') {
                         return res.status(400).json({ message: "Permission denied" })
                     }

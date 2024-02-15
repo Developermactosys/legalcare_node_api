@@ -7,7 +7,7 @@ const createCategory = async (req, res) => {
   const { id, categoryName, description, color, status } = req.body;
   try {
     const filePath = req.file
-      ? `/src/uploads/category_img/${req.file.filename}`
+      ? `category_img/${req.file.filename}`
       : "/src/uploads/category_img/default.png";
 
     const addCategory = await Category.create(req.body);
@@ -93,7 +93,7 @@ const updateCategory = async (req, res) => {
   }
   try {
     const filePath = req.file
-      ? `/src/uploads/category_img/${req.file.filename}`
+      ? `category_img/${req.file.filename}`
       : "/src/uploads/category_img/default.png";
 
     const category = await Category.findOne({

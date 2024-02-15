@@ -18,7 +18,13 @@ exports.Admin_login = async (req, res) => {
         if (!user) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
-
+        if(user.user_type === "1"){
+            return res.status(401).json({ error: 'Unauthorized User' });
+        }
+        if(user.user_type === "0" || user.user_type === "2" || user.user_type === "3" || 
+        user.user_type === "4"  ){
+            
+        
         const validPassword = await bcrypt.compare(req.body.password, user.password);
 
         if (!validPassword) {
@@ -49,6 +55,12 @@ exports.Admin_login = async (req, res) => {
             data: user,
             access_token: access_token
         })
+    }
+    else{
+        return res.status(403).json({
+            message:"Access denied"
+        })
+    }
     }
     catch (error) {
         console.error(error);

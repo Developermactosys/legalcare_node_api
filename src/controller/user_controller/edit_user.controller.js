@@ -60,6 +60,37 @@ const edit_user = async (req, res) => {
     }
   };
   
+ const view_user = async(req,res)=>{
+  try {
+    const {user_id , device_id} = req.body;
+    const totalUsers = await User.findOne({
+      where: {
+        id: user_id,
+        device_id:device_id,
+      },
+  
+    });
+    if (totalUsers) {
+      return res.status(200).json({
+        success: true,
+        message: "user retrieve successfully",
+        data: totalUsers,
+      });
+    } else {
+      return res.status(400).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
+ 
   module.exports = {
-    edit_user
+    edit_user,view_user
 }

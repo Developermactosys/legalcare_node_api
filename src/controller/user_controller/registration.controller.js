@@ -48,8 +48,8 @@ const registration = async (req, res) => {
       // const filePath = `/src/uploads/${req.file.filename}`;
       // console.log(filePath);
       const filePath = req.file
-      ? `/src/uploads/${req.file.filename}`
-      : "/src/uploads/default.png";
+      ? `profile_image${req.file.filename}`
+      : "/src/uploads/profile_image/default.png";
       
 
       const hashedPassword = await bcrypt.hash(password, 10);
@@ -166,6 +166,7 @@ const otpVerify = async (req, res) => {
       });
   }
 };
+
 
 module.exports= {
   registration,otpVerify

@@ -132,3 +132,44 @@ exports.totalUser = async (req, res) => {
       });
     }
   };
+ 
+  // Count Total user
+  exports.totalUserForCa = async (req, res) => {
+    try {
+      const userTypes = ["2", "3"]; 
+  
+      // Create a promise array to fetch counts for both user types concurrently
+      const countsPromises = userTypes.map(type => 
+        User.findAndCountAll({
+          where: { user_type: type },
+        })
+      );
+  
+      // Use Promise.all to execute all count queries concurrently for efficiency
+      const counts = await Promise.all(countsPromises);
+  
+      // Calculate the total count by summing up the counts for both user types
+      const totalCount = counts.reduce((acc, current) => acc + current.count, 0);
+  
+      if (counts.length === userTypes.length) { // Ensure we got results for both types
+        return res.status(200).json({
+          success: true,
+          message: "Show Data and Count all data",
+          data: {
+            totalUserCount: totalCount, // total count for user types "2" and "3"
+            data: counts
+          }
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "Data not found",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };

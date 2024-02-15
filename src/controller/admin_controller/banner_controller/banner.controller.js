@@ -1,57 +1,57 @@
 const db = require("../../../../config/db.config");
 const { literal } = require("sequelize");
-const LiveEvent = db.live_events;
+const LiveEvent = db.live_event;
 
-async function getBannerImages(req, res) {
-  try {
-    const validator = true; // Replace with actual validation logic if needed
+// async function getBannerImages(req, res) {
+//   try {
+//     const validator = true; // Replace with actual validation logic if needed
 
-    if (!validator) {
-      const error_msg = "Validation failed"; // Replace with actual validation error message
-      const data = {
-        status: false,
-        code: 201,
-        message: error_msg,
-        data: req.body,
-      };
-      res.json(data);
-    } else {
-      const liveevents = await LiveEvent.findAll({
-        attributes: [
-          "id",
-          "event_img",
-          [
-            literal(
-              'CONCAT("https://legalcare.mactosys.com/images/event_img", "", event_img)'
-            ),
-            "img_url",
-          ],
-        ],
-        where: {
-          page_type: 1,
-        },
-      });
+//     if (!validator) {
+//       const error_msg = "Validation failed"; // Replace with actual validation error message
+//       const data = {
+//         status: false,
+//         code: 201,
+//         message: error_msg,
+//         data: req.body,
+//       };
+//       res.json(data);
+//     } else {
+//       const liveevents = await LiveEvent.findAll({
+//         attributes: [
+//           "id",
+//           "banner_image",
+//           [
+//             literal(
+//               'CONCAT("https://legalcare.mactosys.com/images/banner_image", "", banner_image)'
+//             ),
+//             "img_url",
+//           ],
+//         ],
+//         where: {
+//           page_type: 1,
+//         },
+//       });
 
-      if (liveevents.length > 0) {
-        const data = {
-          status: true,
-          live_events: liveevents,
-          message: "All events",
-        };
-        res.json(data);
-      } else {
-        const data = {
-          status: false,
-          message: "Data does not found",
-        };
-        res.json(data);
-      }
-    }
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
-  }
-}
+//       if (liveevents.length > 0) {
+//         const data = {
+//           status: true,
+//           live_events: liveevents,
+//           message: "All events",
+//         };
+//         res.json(data);
+//       } else {
+//         const data = {
+//           status: false,
+//           message: "Data does not found",
+//         };
+//         res.json(data);
+//       }
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).json({ error: "Internal Server Error" });
+//   }
+// }
 // src\uploads\event_image
 const addBanner = async (req, res) => {
   if (Object.keys(req.body).length === 0) {
@@ -61,12 +61,12 @@ const addBanner = async (req, res) => {
   const { event_name, event_url, event_date } = req.body;
   try {
     const filePath = req.file
-      ? `/src/uploads/event_image/${req.file.filename}`
+      ? `banner_img/${req.file.filename}`
       : "/src/uploads/event_image/";
     const add_banner = await LiveEvent.create({
       event_name,
       event_date,
-      event_img: filePath,
+      banner_image: filePath,
       event_url,
     });
     if (!addBanner) {
@@ -94,46 +94,58 @@ const editBanner = async (req, res) => {
     });
   }
   try {
-    let filePath = null;
-    if (req.file) {
-      filePath = `/src/uploads/event_image/${req.file.filename}`;
-    } else {
-      const existingBanner = await LiveEvent.findOne({
-        where: {
-          id: req.params.id,
-        },
-        attributes: ["event_img"],
-      });
-      if (existingBanner && existingBanner.event_img) {
-        filePath = existingBanner.event_img;
-      } else {
-        return res.json({
-          success: false,
-          message: "No image provided for editing and no existing image found.",
-        });
-      }
-    }
-    const { event_name, event_url, event_date, video_url, status } = req.body;
-    console.log(event_url);
-    const banner = await LiveEvent.update(
-      {
-        event_name,
-        event_url,
-        event_date,
-        video_url,
-        event_img: filePath,
-      },
-      {
-        where: {
-          id: req.params.id,
-        },
-      }
-    );
+    const check = await LiveEvent.findOne({ where: { id: req.params.id } });
 
-    return res.json({
-      success: true,
-      message: "Banner updated successfully.",
-    });
+    if (!check) {
+      return res.json({
+        status: false,
+        message: "live event id not found",
+      });
+    }
+    const filePath = req.file
+      ? `banner_image/${req.file.filename}`
+      : "/src/uploads/event_image/";
+    const { event_name, event_status, event_date, banner_image, event_url } =
+      req.body;
+
+    if (req.file) {
+      const ImgUpdate = await LiveEvent.update(
+        {
+          event_name,
+          event_status,
+          event_date,
+          banner_image: filePath,
+          event_url,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
+      return res.json({
+        status: true,
+        message: "banner update successfully",
+      });
+    } else {
+      const fileUpdate = await await LiveEvent.update(
+        {
+          event_name,
+          event_status,
+          event_date,
+          event_url,
+        },
+        {
+          where: {
+            id: req.params.id,
+          },
+        }
+      );
+      return res.json({
+        status: true,
+        message: "banner update successfully",
+      });
+    }
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Internal Server Error" });
@@ -169,18 +181,30 @@ const deleteBanner = async (req, res) => {
 };
 
 const getAllBanner = async (req, res) => {
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 4;
+  const offset = (page - 1) * limit;
   try {
-    const banner = await LiveEvent.findAll({});
-    if (!banner) {
+    const banner = await LiveEvent.findAll({
+      limit: limit,
+      offset: offset,
+    });
+    if (!banner || banner.length <= 0) {
       return res.status(404).json({
         message: "Banner not found",
         status: false,
       });
     }
+    const totalCount = await LiveEvent.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+
     return res.status(200).json({
       message: "Banner get successfully",
       status: true,
       data: banner,
+      totalBanner: totalCount,
+      currentPage: page,
+      totalPages,
     });
   } catch (error) {
     console.error(error);
@@ -189,7 +213,6 @@ const getAllBanner = async (req, res) => {
 };
 
 module.exports = {
-  getBannerImages,
   getAllBanner,
   editBanner,
   addBanner,

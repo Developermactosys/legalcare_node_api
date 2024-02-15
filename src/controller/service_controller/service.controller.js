@@ -19,7 +19,7 @@ const createServices = async(req, res)=>{
         // }
         
             const filePath = req.file
-            ? `/src/uploads/service_img/${req.file.filename}`
+            ? `service_img/${req.file.filename}`
             : "/src/uploads/service_img/default.png";
             const addServices = await services.create({
             categoryId : categoryId,

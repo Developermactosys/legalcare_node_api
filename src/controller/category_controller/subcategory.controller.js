@@ -6,7 +6,7 @@ const createSubCategory = async (req, res) => {
   const { id, subcategoryName, description, color, status } = req.body;
   try {
     const filePath = req.file
-      ? `/src/uploads/subcategory_img/${req.file.filename}`
+      ? `subcategory_img/${req.file.filename}`
       : "/src/uploads/subcategory_img/default.png";
     const addSubCategory = await subcategory.create({
       subcategoryName,
@@ -96,7 +96,7 @@ const updateSubCategory = async (req, res) => {
   }
   try {
     const filePath = req.file
-      ? `/src/uploads/subcategory_img/${req.file.filename}`
+      ? `subcategory_img/${req.file.filename}`
       : "/src/uploads/subcategory_img/default.png";
 
     const find = await subcategory.findOne({
