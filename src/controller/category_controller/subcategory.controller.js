@@ -97,7 +97,7 @@ const updateSubCategory = async (req, res) => {
   try {
     const filePath = req.file
       ? `subcategory_img/${req.file.filename}`
-      : "/src/uploads/subcategory_img/default.png";
+      : "subcategory_img/default.png";
 
     const find = await subcategory.findOne({
       where: {
@@ -111,21 +111,39 @@ const updateSubCategory = async (req, res) => {
       });
     }
 
-    const sub_category = await subcategory.update(
-      {
-        subcategoryName,
-        status,
-        description,
-        color,
-        subcategory_img: filePath,
-      },
-      { where: { id: req.params.id } }
-    );
-    if (sub_category) {
-      return res.status(200).json({
-        success: true,
-        message: "subcategory update successfully",
-      });
+    if (req.file) {
+      const sub_category = await subcategory.update(
+        {
+          subcategoryName,
+          status,
+          description,
+          color,
+          subcategory_img: filePath,
+        },
+        { where: { id: req.params.id } }
+      );
+      if (sub_category) {
+        return res.status(200).json({
+          success: true,
+          message: "subcategory update successfully",
+        });
+      }
+    } else {
+      const sub_category = await subcategory.update(
+        {
+          subcategoryName,
+          status,
+          description,
+          color,
+        },
+        { where: { id: req.params.id } }
+      );
+      if (sub_category) {
+        return res.status(200).json({
+          success: true,
+          message: "subcategory update successfully",
+        });
+      }
     }
   } catch (error) {
     return res.status(500).json({
@@ -134,7 +152,6 @@ const updateSubCategory = async (req, res) => {
     });
   }
 };
-
 // delete Subcategory 
 const deleteSubCategory = async (req, res) => {
     if (!req.params.id) {

@@ -33,12 +33,12 @@ exports.Admin_login = async (req, res) => {
 
         const verifyEmail = await User.findOne({
             where: {
-                is_verify: 1,
+                otp_verify: 1,
                 email_id: req.body.email_id
             }
         })
         if (!verifyEmail) {
-            res.status(400).json({ message: 'Please verify your email first then try to login' })
+           return res.status(400).json({ message: 'Please verify your email first then try to login' })
         }
 
         const access_token = Token.generateAccessToken(user)
