@@ -27,7 +27,7 @@ const category = sequelize.define('category', {
         type: DataTypes.BOOLEAN,
         allowNull: true
       },
-      category_img : {
+      image : {
         type : DataTypes.STRING,
       },
       delete_At : {

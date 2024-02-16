@@ -4,7 +4,7 @@ const Category = db.category;
 
 // API for create category
 const createCategory = async (req, res) => {
-  const { id, category_name, description, color, status } = req.body;
+  const { id, category_name, description, color, status,image } = req.body;
   try {
     const filePath = req.file
       ? `category_img/${req.file.filename}`
@@ -106,7 +106,7 @@ const updateCategory = async (req, res) => {
           status,
           description,
           color,
-          category_img: filePath,
+          image: filePath,
         },
         {
           where: { id: req.param.id },
