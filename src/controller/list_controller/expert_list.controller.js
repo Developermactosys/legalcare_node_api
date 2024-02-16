@@ -27,7 +27,7 @@ exports.expert_list = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "Showing Data of expert list",
-        data: users,
+        list: users,
         currentPage: page,
         totalPages,
       });
