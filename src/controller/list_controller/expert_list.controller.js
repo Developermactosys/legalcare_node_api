@@ -6,11 +6,12 @@ const User = db.User;
 
 exports.expert_list = async (req, res) => {
   try {
-    const {user_type} = req.query;
+    const {user_type} = req.body;
 
-    const page = Number(req.query.page) || 1;
-  const limit = Number(req.query.limit) || 5;
-  const offset = (page - 1) * limit; 
+    const page = Number(req.body.page) || 1;
+  const limit = Number(req.body.limit) || 5;
+  const offset = Number(req.body.offset) || 0;
+   
 
     // Fetch users directly without counting
     const users = await User.findAll({

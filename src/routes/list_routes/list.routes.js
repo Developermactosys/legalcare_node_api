@@ -7,6 +7,6 @@ const {expert_list } = require("../../controller/list_controller/expert_list.con
 // const { } = require("../../controller/list_controller")
 
 router.get('/get_waiting_list',uploads.none(), getWaitingList);
-router.get('/expert_list',uploads.none(), expert_list);
+router.post('/expert_list',uploads.none(), expert_list);
 // router.get('/user_chatlist',uploads.none(), getUserChatList);
 module.exports = router;

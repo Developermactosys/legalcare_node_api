@@ -10,14 +10,14 @@ const {createSubCategory,getSubCategory
 
 //category Routes
 router.post("/add_category", uploads.single('category_img'),createCategory);
-router.get("/get_category", uploads.none(),getCategory);
+router.get("/view_all_category", uploads.none(),getCategory);
 router.get("/get_category/:id", uploads.none(), getCategoryById);
 router.patch("/update_category/:id", updateCategory);
 router.delete("/del_category/:id",deleteCategory)
 
 //subcategory Routes
 router.post("/add_subcategory",uploads.single("subcategory_img"),createSubCategory);  
-  router.get("/get_subcategory", getSubCategory);
+  router.get("/view_all_subcategory", getSubCategory);
   router.get("/get_subcategory/:id", getSubCategoryById);
   router.patch("/update_subcategory/:id", updateSubCategory);
 router.delete("/del_subcategory/:id",deleteSubCategory)
