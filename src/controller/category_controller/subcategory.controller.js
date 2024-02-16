@@ -17,13 +17,13 @@ const createSubCategory = async (req, res) => {
       id,
     });
     return res.status(200).json({
-      success: true,
+      status: true,
       message: "subcategory add successfully....",
       data: addSubCategory,
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -44,12 +44,12 @@ const getSubCategory = async (req, res) => {
     return res.status(200).json({
       status: true,
       code: 200,
-      message: "subcategory get Successfully",
+      message: "subcategory get successfully",
       data: sub_category,
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -59,7 +59,7 @@ const getSubCategory = async (req, res) => {
 const getSubCategoryById = async (req, res) => {
   if (!req.params.id) {
     return res.json({
-      success: false,
+      status: false,
       message: "subcategory id required",
     });
   }
@@ -69,17 +69,17 @@ const getSubCategoryById = async (req, res) => {
     });
     if (!sub_category) {
       return res.status(404).json({
-        success: false,
+        status: false,
         message: "subcategory not found",
       });
     }
     return res.status(200).json({
-      success: true,
+      status: true,
       data: sub_category,
     });
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -90,7 +90,7 @@ const updateSubCategory = async (req, res) => {
   const { subcategoryName, description, color, status } = req.body;
   if (!req.params.id) {
     return res.json({
-      success: false,
+      status: false,
       message: "subcategory id required",
     });
   }
@@ -106,7 +106,7 @@ const updateSubCategory = async (req, res) => {
     });
     if (!find) {
       return res.json({
-        success: false,
+        status: false,
         message: "id wrong",
       });
     }
@@ -124,7 +124,7 @@ const updateSubCategory = async (req, res) => {
       );
       if (sub_category) {
         return res.status(200).json({
-          success: true,
+          status: true,
           message: "subcategory update successfully",
         });
       }
@@ -140,14 +140,14 @@ const updateSubCategory = async (req, res) => {
       );
       if (sub_category) {
         return res.status(200).json({
-          success: true,
+          status: true,
           message: "subcategory update successfully",
         });
       }
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -156,7 +156,7 @@ const updateSubCategory = async (req, res) => {
 const deleteSubCategory = async (req, res) => {
     if (!req.params.id) {
       return res.json({
-        success: false,
+        status: false,
         message: "subcategory id required",
       });
     }
@@ -167,18 +167,18 @@ const deleteSubCategory = async (req, res) => {
   
       if (sub_category > 0) {
         return res.json({
-          success: true,
+          status: true,
           message: "Subcategory deleted successfully",
         });
       } else {
         return res.json({
-          success: false,
+          status: false,
           message: "Subcategory not found or delete operation failed",
         });
       }
     } catch (error) {
       return res.status(500).json({
-        success: false,
+        status: false,
         message: error.message,
       });
     }

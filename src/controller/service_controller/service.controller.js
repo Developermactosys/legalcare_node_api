@@ -13,7 +13,7 @@ const createServices = async(req, res)=>{
         const findSubCategory = await subCategory.findByPk(subCategoryId)
         // if(!findCategory && !findSubCategory){
         //     return res.status(404).json({
-        //         success : false,
+        //         status : false,
         //         message : "Category or sub Category are not found"
         //     })
         // }
@@ -29,14 +29,14 @@ const createServices = async(req, res)=>{
             })
             await addServices.update(req.body)
             return res.status(200).json({
-                success : true,
+                status : true,
                 message : "Service add succesfully",
                 data : addServices
             })
         
     } catch (error) {
         return res.status(500).json({
-            success : false,
+            status : false,
             message : error.message
         })
     }
@@ -48,19 +48,19 @@ const getALlService = async(req, res) =>{
         const getServices = await services.findAll()
         if(getServices){
             return res.status(200).json({
-                success : true,
+                status : true,
                 message : " get all services",
                 data : getServices
             })
         }else{
             return res.status(400).json({
-                success : false,
+                status : false,
                 message : "services not found"
             })
         }
     } catch (error) {
         return res.status(500).json({
-            success : false,
+            status : false,
             message : error.message
         })
     }
@@ -73,19 +73,19 @@ const getServiceById = async(req, res) => {
         const getServices = await services.findByPk(serviceId)
         if(getServices){
             return res.status(200).json({
-                success : true,
+                status : true,
                 message : "Show service by Id",
                 data : getServices
             })
         }else{
             return res.status(404).json({
-                success : false,
+                status : false,
                 message : "service Id is not found"
             })
         }
     } catch (error) {
         return res.status(500).json({
-            success : false,
+            status : false,
             message : error.message
         })
     } 
@@ -99,18 +99,18 @@ const deleteService = async(req, res) => {
         if(delServices){
        await delServices.destroy(delServices)
         return res.status(200).json({
-            success : true,
-            message : "Data delete successfully"
+            status : true,
+            message : "Data delete statusfully"
         })
     }else{
         return res.status(400).json({
-            success : false,
+            status : false,
             message : "service Id not found or services not deleted"
         })
     }
     } catch (error) {
         return res.status(500).json({
-            success : false,
+            status : false,
             message : error.message
         })
     }

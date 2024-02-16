@@ -25,7 +25,7 @@ exports.expert_list = async (req, res) => {
 
     if (users.length > 0) { // Ensure we got results for the specified user types
       return res.status(200).json({
-        success: true,
+        status: true,
         message: "Showing Data of expert list",
         data: users,
         currentPage: page,
@@ -33,13 +33,13 @@ exports.expert_list = async (req, res) => {
       });
     } else {
       return res.status(400).json({
-        success: false,
+        status: false,
         message: `Data not found for user_type ${user_type}`,
       });
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }

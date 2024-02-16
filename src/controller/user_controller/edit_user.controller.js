@@ -49,7 +49,7 @@ const edit_user = async (req, res) => {
   
       res.json({
         status: true,
-        message: "Data Update successfully",
+        message: "Data Update Successfully",
       });
     } catch (error) {
       console.error(error);
@@ -72,19 +72,19 @@ const edit_user = async (req, res) => {
     });
     if (totalUsers) {
       return res.status(200).json({
-        success: true,
-        message: "user retrieve successfully",
+        status: true,
+        message: "user retrieve Successfully",
         data: totalUsers,
       });
     } else {
       return res.status(400).json({
-        success: false,
+        status: false,
         message: "User not found",
       });
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }

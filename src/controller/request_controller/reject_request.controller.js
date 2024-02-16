@@ -4,7 +4,7 @@ const db = require("../../../config/db.config");
 
 const User = db.User;
 const chat_request = db.chat_request;
-const walletSystem = db.walletSystem;
+const walletSystem = db.wallet_system;
 const crypto = require('crypto')
 const axios = require('axios')
 const { Op } = require('sequelize')

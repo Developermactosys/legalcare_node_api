@@ -51,6 +51,7 @@ exports.Admin_login = async (req, res) => {
         res.cookie("refresh_token", refresh_token, { httpOnly: true })
 
         return res.status(200).json({
+            status: true,
             message: "Successfully login",
             data: user,
             access_token: access_token
@@ -58,6 +59,7 @@ exports.Admin_login = async (req, res) => {
     }
     else{
         return res.status(403).json({
+            status : true,
             message:"Access denied"
         })
     }

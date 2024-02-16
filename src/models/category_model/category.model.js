@@ -8,7 +8,7 @@ const category = sequelize.define('category', {
         allowNull: false 
 
       },
-      categoryName: {
+      category_name: {
         type: DataTypes.STRING,
       },
       description: {

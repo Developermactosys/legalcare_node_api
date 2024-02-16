@@ -13,7 +13,7 @@ async function createClientTestimonial(req, res) {
     const newClientTestimonial = await ClientTestimonial.create({
        user_name, message, cover_img, status });
 
-    return res.json({ success: true, clientTestimonial: newClientTestimonial });
+    return res.json({ status: true, clientTestimonial: newClientTestimonial });
 
   } catch (error) {
     console.error(error);
@@ -39,9 +39,9 @@ async function getClientTestimonials(req, res) {
     });
 
     if (clientTestimonials.length > 0) {
-      return res.json({ success: true, clientTestimonials, message: 'All Client reviews' });
+      return res.json({ status: true, clientTestimonials, message: 'All Client reviews' });
     } else {
-      return res.json({ success: false, message: 'Data not found' });
+      return res.json({ status: false, message: 'Data not found' });
     }
   } catch (error) {
     console.error(error);

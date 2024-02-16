@@ -12,19 +12,19 @@ const messageUser = async (req, res) => {
 
     if (newMessage) {
       return res.status(200).json({
-        success: true,
+        status: true,
         message: "send message succesfull",
         data: newMessage,
       });
     } else {
       return res.status(400).json({
-        success: false,
+        status: false,
         message: "do not message",
       });
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -35,19 +35,19 @@ const getAllMessages = async (req, res) => {
     const messages = await Message.findAll();
     if (messages) {
       return res.status(200).json({
-        success: true,
+        status: true,
         message: "get all messages",
         data: messages,
       });
     } else {
       return res.status(400).json({
-        success: false,
+        status: false,
         message: "Data not found",
       });
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }

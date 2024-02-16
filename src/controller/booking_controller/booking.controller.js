@@ -20,8 +20,8 @@ exports.Add_Booking = async (req, res) => {
     await add_booking.save();
 
     return res.status(200).json({
-      success: true,
-      message: "Booking successfull",
+      status: true,
+      message: "Booking statusfull",
       data: add_booking,
     });
   } catch (error) {
@@ -123,12 +123,12 @@ exports.Cancle_booking_by_id = async(req, res) => {
         if(cancel_booking){
        await cancel_booking.destroy(cancel_booking)
         return res.status(200).json({
-            success : true,
-            message : "Booking delete successfully"
+            status : true,
+            message : "Booking delete Successfully"
         })
     }else{
         return res.status(400).json({
-            success : false,
+            status : false,
             message : "Booking Id not found or Booking not deleted"
         })
     }

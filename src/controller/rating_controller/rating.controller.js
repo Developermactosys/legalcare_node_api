@@ -9,7 +9,7 @@ const addRatingBar = async (req, res) => {
     const userData = await User.findByPk(UserId);
     if (!userData) {
       return res.status(404).json({
-        success: false,
+        status: false,
         message: "User not found",
       });
     } else {
@@ -19,20 +19,20 @@ const addRatingBar = async (req, res) => {
       });
       if (createRating) {
         return res.status(200).json({
-          success: true,
+          status: true,
           message: "Rating added successfully",
           data: createRating,
         });
       } else {
         return res.status(400).json({
-          success: false,
+          status: false,
           message: "rating are not added ",
         });
       }
     }
   } catch (error) {
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -53,18 +53,18 @@ const getAllRatings = async(req, res)=>{
         })
         if(getDetail){
             return res.status(200).json({
-                success : true,
+                status : true,
                 message : "Show all ratings",
                 data : getDetail
             })
         }
         return res.status(400).json({
-            success : false,
+            status : false,
             message : "Rating not found"
         })
     } catch (error) {
         return res.status(500).json({
-            success : false,
+            status : false,
             message : error.message
         })
     }
