@@ -9,7 +9,7 @@ const {createSubCategory,getSubCategory
       ,getSubCategoryById,updateSubCategory, deleteSubCategory} = require("../../controller/category_controller/subcategory.controller")
 
 //category Routes
-router.post("/add_category", uploads.single('category_img'),createCategory);
+router.post("/add_category", uploads.single('image'),createCategory);
 router.get("/view_all_category", uploads.none(),getCategory);
 router.get("/get_category/:id", uploads.none(), getCategoryById);
 router.patch("/update_category/:id", updateCategory);
