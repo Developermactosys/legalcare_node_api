@@ -10,7 +10,15 @@ const createCategory = async (req, res) => {
       ? `category_img/${req.file.filename}`
       : "/src/uploads/category_img/default.png";
 
-    const addCategory = await Category.create(req.body);
+
+     
+    const addCategory = await Category.create({
+      category_name,
+      status,
+      description,
+      color,
+      image: filePath,
+    });
 
     return res.status(200).json({
       status: true,
