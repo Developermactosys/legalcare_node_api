@@ -8,17 +8,17 @@ module.exports = (sequelize, DataTypes) => {
         allowNull : false
       },  
       astro_id: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BIGINT,
           },
           mobile_no: {
             type: DataTypes.STRING,
             allowNull: true,
           },
           start_time: {
-            type: DataTypes.DATE,
+            type: DataTypes.TIME,
           },
           end_time: {
-            type: DataTypes.DATE,
+            type: DataTypes.TIME,
           },
           chat_status: {
             type: DataTypes.INTEGER,
@@ -29,7 +29,7 @@ module.exports = (sequelize, DataTypes) => {
             allowNull: true,
           },
           status: {
-            type: DataTypes.INTEGER,
+            type: DataTypes.BOOLEAN,
             defaultValue: 0,
           },
           deleted_At: {

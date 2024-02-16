@@ -14,6 +14,6 @@ const {getAllBanner,addBanner,editBanner,deleteBanner} = require("../../../contr
 router.post("/add_banner", uploads.single("banner_image"), addBanner); // done
 router.patch("/edit_banner/:id", uploads.single("banner_image"), editBanner); // done
 router.delete("/delete_banner/:id", deleteBanner); // done
-router.get("/get_banner_images", getAllBanner); //  done
+router.post("/get_banner_images", getAllBanner); //  done
 
 module.exports = router;

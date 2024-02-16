@@ -14,5 +14,5 @@ router.post('/login', uploads.none(), login)
 router.post('/reset_password',uploads.none(), resetPasswordController);
 router.post('/edit_user',uploads.none(),edit_user);
 router.post('/logoutUpdate',uploads.none(),logoutUpdate) // Done 
-router.get('/view_users',uploads.none(),view_user);
+router.post('/view_users',uploads.none(),view_user);
 module.exports = router;
