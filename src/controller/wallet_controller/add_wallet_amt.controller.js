@@ -81,18 +81,18 @@ const addWalletAmount = async (req, res) => {
 
 
 const transaction_details = async (req, res) => {
-  const { user_id } = req.body;
+  const { user_id, user_type } = req.query;
   try {
-    const isEmptykey = Object.keys(req.body).some(key => {
-      const value = req.body[key]
-      return value === '' || value === null || value === undefined;
-    })
-    if (isEmptykey) {
-      return res.status(400).json({ error: "please do not give empty or undefined or null fileds" })
+    if(!user_id){
+      return res.status(400).json({ status: false, message: "Please provide user_id" })
+    }
+    if(!user_type){
+      return res.status(400).json({ status: false, message: "Please provide user_type" })
     }
     const transactionData = await TransactionHistory.findAll({
       where: {
-        UserId: user_id
+        UserId: user_id,
+        
       }
     })
     if (transactionData) {
@@ -103,7 +103,7 @@ const transaction_details = async (req, res) => {
       })
     }
     else {
-      return res.status(404).json({ status: false, message: "User does not exist" })
+      return res.status(400).json({ status: false, message: "User does not exist" })
     }
   } catch (error) {
     console.error(error);

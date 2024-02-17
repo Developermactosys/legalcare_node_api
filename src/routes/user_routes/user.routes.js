@@ -12,7 +12,7 @@ router.post('/registration',uploads.single('profile_image'), registration);
 router.post('/otp_verify', uploads.none(), otpVerify)
 router.post('/login', uploads.none(), login)
 router.post('/reset_password',uploads.none(), resetPasswordController);
-router.post('/edit_user',uploads.none(),edit_user);
+router.post('/edit_user',uploads.single('profile_image'),edit_user);
 router.post('/logoutUpdate',uploads.none(),logoutUpdate) // Done 
 router.post('/view_users',uploads.none(),view_user);
 module.exports = router;

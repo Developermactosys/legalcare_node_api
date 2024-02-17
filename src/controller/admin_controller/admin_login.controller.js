@@ -30,7 +30,6 @@ exports.Admin_login = async (req, res) => {
         if (!validPassword) {
             return res.status(400).json({ error: 'Invalid email or password' });
         }
-
         const verifyEmail = await User.findOne({
             where: {
                 otp_verify: 1,
@@ -38,8 +37,11 @@ exports.Admin_login = async (req, res) => {
                 user_type : req.body.user_type
             }
         })
+        if (!verifyEmail.user_type === req.body.user_type) {
+            return res.status(400).json({ message: 'Invalid user_type' })
+         }
         if (!verifyEmail) {
-           return res.status(400).json({ message: 'Please verify your email first then try to login' })
+           return res.status(400).json({ message: 'Please verify your mobile number first then try to login' })
         }
 
         const access_token = Token.generateAccessToken(user)
