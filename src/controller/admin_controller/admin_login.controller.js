@@ -34,7 +34,8 @@ exports.Admin_login = async (req, res) => {
         const verifyEmail = await User.findOne({
             where: {
                 otp_verify: 1,
-                email_id: req.body.email_id
+                email_id: req.body.email_id,
+                user_type : req.body.user_type
             }
         })
         if (!verifyEmail) {
