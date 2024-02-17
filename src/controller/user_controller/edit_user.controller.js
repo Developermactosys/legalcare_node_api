@@ -66,7 +66,7 @@ const edit_user = async (req, res) => {
     const totalUsers = await User.findOne({
       where: {
         id: user_id,
-        device_id:device_id,
+        // device_id:device_id,
       },
   
     });
