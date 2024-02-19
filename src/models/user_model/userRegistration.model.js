@@ -56,6 +56,10 @@ const User = sequelize.define('User', {
   is_verify: DataTypes.BOOLEAN,
   login_from: DataTypes.STRING,
   device_token:DataTypes.STRING,
+  follow_count: {
+    type: DataTypes.INTEGER,
+    defaultValue: 0
+  },
   refreshToken: {
     type: DataTypes.STRING,
     allowNull: true

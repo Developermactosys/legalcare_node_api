@@ -7,6 +7,7 @@ const { login } = require("../../controller/user_controller/login.controller");
 const { resetPasswordController} = require("../../controller/user_controller/resetPassword.controller");
 const { edit_user,view_user} = require("../../controller/user_controller/edit_user.controller");
 const { logoutUpdate} = require("../../controller/user_controller/logout.controller");
+const { addFollowUsers } = require("../../controller/user_controller/add_follow_user.controller");
 
 router.post('/registration',uploads.single('profile_image'), registration);
 router.post('/otp_verify', uploads.none(), otpVerify)
@@ -15,4 +16,6 @@ router.post('/reset_password',uploads.none(), resetPasswordController);
 router.post('/edit_user',uploads.single('profile_image'),edit_user);
 router.post('/logoutUpdate',uploads.none(),logoutUpdate) // Done 
 router.post('/view_users',uploads.none(),view_user);
+
+router.post('/add_follow_user',uploads.none(), addFollowUsers);
 module.exports = router;
