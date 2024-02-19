@@ -16,6 +16,7 @@ exports.getStaticData = async (req, res) => {
         where: { keys: keys },
       });
   
+      
       return res.json({
         status: true,
         message: 'Data retrieved successfully',
