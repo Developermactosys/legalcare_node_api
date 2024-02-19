@@ -27,13 +27,10 @@ const edit_user = async (req, res) => {
         });
       }
   
-      let imagePath = '';
-      if (profile_image) {
-        imagePath = req.file
-        ? `profile_image/${profile_image.filename}`
-        : "/src/uploads/profile_image/default.png";
-      }
-     
+      const imagePath = req.file
+      ? `profile_image/${req.file.filename}`
+      : "/src/uploads/profile_image/default.png";
+      
 
       const updateUser =  await User.update(req.body, {
         where: { id: id },
