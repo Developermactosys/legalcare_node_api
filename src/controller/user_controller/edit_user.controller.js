@@ -1,4 +1,5 @@
 // controllers/userController.js
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 
 const User = db.User;
@@ -28,25 +29,20 @@ const edit_user = async (req, res) => {
   
       let imagePath = '';
       if (profile_image) {
-        imagePath = `/uploads/images/${profile_image.filename}`;
+        imagePath = req.file
+        ? `profile_image/${profile_image.filename}`
+        : "/src/uploads/profile_image/default.png";
       }
-  
-      await User.update({
-        name: name || "Enter Name",
-        phone_no: phone_no || "Enter Phone",
-        dob: dob || "Enter DOB",
-        address: address || "Enter Address",
-        blood_group: blood_group || "Enter Blood Group",
-        gender: gender || "Enter Gender",
-        country: country || "Enter Country",
-        zipcode: zipcode || "Enter Zipcode",
-        city: city || "Enter City",
-        birth_time: birth_time || "Enter BirthTime",
-        ...(imagePath && { profile_image: imagePath })
-      }, {
+     
+
+      const updateUser =  await User.update(req.body, {
         where: { id: id },
       });
-  
+  if(profile_image){
+    const updateProfile = await User.update({profile_image:imagePath},{where:{
+      id:req.body.id
+    }})
+  }
       res.json({
         status: true,
         message: "Data Update Successfully",

@@ -4,6 +4,6 @@ const {uploads} = require('../../middleware/multer');
 
 const {getStaticData } = require("../../controller/static_controller/static_data.controller")
 
-router.get('/static_data',uploads.none(),getStaticData);
+router.get('/static_data',getStaticData);
 
 module.exports = router;

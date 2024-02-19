@@ -1,5 +1,5 @@
 const db = require("../../../config/db.config")
-const User = db.User
+const User = db.User;
 const astro_availability = db.astro_availability;
 const bcrypt = require('bcryptjs')
 
@@ -21,6 +21,7 @@ exports.astro_profile_update = async (req, res) => {
     week_day,
     week_start_time,
     week_end_time,
+    categoryName
   } = req.body;
 
   if (!id) {
@@ -43,6 +44,8 @@ exports.astro_profile_update = async (req, res) => {
     gender,
     user_aboutus,
     per_minute,
+    categoryName
+    
   };
 
 //   if (req.files["profile_image"]) {
@@ -61,6 +64,8 @@ exports.astro_profile_update = async (req, res) => {
 
   try {
     await User.update(updateData, { where: { id } });
+   // const categoryUpdate = await category.update(updateData, { where : { id : id }})
+
 
     if (week_day && week_start_time && week_end_time) {
       const weekDays = week_day.split(",");
