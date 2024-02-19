@@ -2,18 +2,18 @@ const db = require("../../../config/db.config");
 
 exports.getStaticData = async (req, res) => {
     try {
-      const { key } = req.body; 
+      const { keys } = req.query; 
   
-      if (!key) {
+      if (!keys) {
         return res.status(400).json({
           status: false,
           message: 'Parameter "key" is required',
         });
       }
-  
+
       const data = await db.static_data.findAll({
         attributes: ['value'],
-        where: { keys: key },
+        where: { keys: keys },
       });
   
       return res.json({
