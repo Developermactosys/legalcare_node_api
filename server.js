@@ -45,6 +45,8 @@ app.get('/', (req, res, next) => {
         return next(err);
     }
 });
+app.set("views", path.join(__dirname, "views"));
+app.set("view engine", "ejs");
 
 // Socket.io
 io.on('connection', (socket) => {
@@ -53,6 +55,8 @@ io.on('connection', (socket) => {
         io.emit('message', message);
     });
 });
+
+
 
 // Start server
 const PORT = process.env.PORT || 7878;

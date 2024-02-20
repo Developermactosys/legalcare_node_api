@@ -1,4 +1,4 @@
-
+require("dotenv").config();
 // API for reject User Chat Request
 const db = require("../../../config/db.config");
 
@@ -32,7 +32,7 @@ exports.cancelRequest = async (req, res) => {
                 title: `Your request has been cancelled from ${astro.name}`,
                 body: `Your request has been cancelled ${astro.name}`,
                 priority: "high",
-                image: process.env.image,
+                image: process.env.IMAGE,
             },
             data: {
                 id: "",
@@ -43,7 +43,7 @@ exports.cancelRequest = async (req, res) => {
                 time: Date.now(),
                 title: `Your chat request accepted from ${astro.name}`,
                 icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                image: process.env.image,
+                image: process.env.IMAGE,
                 sound: "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
             },
             to: user.device_id,

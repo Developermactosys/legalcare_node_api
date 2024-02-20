@@ -1,4 +1,5 @@
 // API for chat Approval 
+require('dotenv').config()
 const db = require("../../../config/db.config");
 
 const User = db.User;
@@ -11,7 +12,7 @@ const { Op } = require('sequelize')
 exports.approveRequest = async (req, res) => {
     try {
         const { id, receiver_id, sender_id } = req.body;
-        const serverKey = process.env.SERVER_KEY_HERE; 
+        const serverKey =process.env.SERVER_KEY_HERE; 
         const fcmUrl = process.env.FCMURL;
   
         // Update chat_request status and notify_user
@@ -33,7 +34,8 @@ exports.approveRequest = async (req, res) => {
             return res.status(404).json({ success: false, message: "User or Astrologer not found" });
         }
   
-        const wallet = await walletSystem.findOne({ where: { user_id: receiver_id } });
+        const wallet = await walletSystem.findOne({ where: { UserId: receiver_id } });
+
         if (!wallet) {
             return res.status(404).json({ success: false, message: "Wallet not found" });
         }
@@ -54,7 +56,7 @@ exports.approveRequest = async (req, res) => {
                     title: `Your request has been accepted from ${astro.name}`,
                     body: `Your request has been accepted from ${astro.name}`,
                     priority: "high",
-                    image: process.env.image
+                    image: process.env.IMAGE
                 },
                 data: {
                   id: "",
@@ -65,7 +67,7 @@ exports.approveRequest = async (req, res) => {
                   time: Date.now(),
                   title: `Chat request approved by ${astro.name}`,
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                  image: process.env.image,
+                  image: process.env.IMAGE,
                   sound: "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
               },
               to: user.device_id,

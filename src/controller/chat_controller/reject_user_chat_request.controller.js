@@ -1,3 +1,4 @@
+require("dotenv").config();
 const db= require("../../../config/db.config");
 const  ChatRequest = db.chat_request;
 const User = db.User;
@@ -34,7 +35,7 @@ exports.rejectUserChatRequest = async (req, res) => {
 
             // Send FCM notification
             var message = {
-                to: 'DEVICE_TOKEN_OF_RECEIVER', // Replace this with the receiver's device token
+                to: process.env.DEVICE_ID, // Replace this with the receiver's device token
                 notification: {
                     title: 'Chat Request Rejected',
                     body: 'Your chat request has been rejected.'

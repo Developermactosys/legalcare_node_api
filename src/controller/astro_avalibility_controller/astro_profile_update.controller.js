@@ -64,11 +64,13 @@ const imagePath = req.file
     await User.update(updateData, { where: { id : id} });
    // const categoryUpdate = await category.update(updateData, { where : { id : id }})
 
-   if(profile_image){
+   if(req.file){
     const updateProfile = await User.update({profile_image:imagePath},{where:{
       id:req.body.id
     }})
+  
   }
+
   if (week_day && week_start_time && week_end_time) {
     const weekDays = week_day.split(",");
     const startTimes = week_start_time.split(",");
@@ -103,12 +105,9 @@ const imagePath = req.file
       }
     }
   }
-  
-
     res.json({
       status: true,
-      message: "User update successfully",
-      data: {},
+      message: "User update successfully"
     });
   } catch (error) {
     console.error(error);

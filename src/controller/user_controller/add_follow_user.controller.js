@@ -3,10 +3,9 @@ const  db  = require('../../../config/db.config');
 const User = db.User;
 
 exports.addFollowUsers = async (req, res) => {
-  const { user_id } = req.body;
-
+  const { provider_id } = req.body;
   try {
-    const user = await User.findByPk(user_id);
+    const user = await User.findByPk(provider_id);
 
     if (!user) {
       return res.json({

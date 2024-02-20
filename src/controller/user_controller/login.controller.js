@@ -85,14 +85,15 @@ exports.login = async (req, res) => {
 
       return res.json({
         status: true,
-        id: updatedUser.id,
-        access_token: access_token,
-        user_type: updatedUser.user_type,
-        otp_verify: updatedUser.otp_verify,
-        is_free: updatedUser.free_redeem,
-        profile_image: `http://yourserver.com/images/profile_image/${updatedUser.profile_image}`,
-        name: updatedUser.name,
-        message: "success",
+        data:updatedUser
+        // id: updatedUser.id,
+        // access_token: access_token,
+        // user_type: updatedUser.user_type,
+        // otp_verify: updatedUser.otp_verify,
+        // is_free: updatedUser.free_redeem,
+        // profile_image: `http://yourserver.com/images/profile_image/${updatedUser.profile_image}`,
+        // name: updatedUser.name,
+        // message: "success",
       });
     }
   } catch (error) {

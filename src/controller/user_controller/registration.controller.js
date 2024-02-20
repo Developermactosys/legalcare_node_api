@@ -48,7 +48,7 @@ const registration = async (req, res) => {
       // const filePath = `/src/uploads/${req.file.filename}`;
       // console.log(filePath);
       const filePath = req.file
-      ? `profile_image${req.file.filename}`
+      ? `profile_image/${req.file.filename}`
       : "/src/uploads/profile_image/default.png";
       
 

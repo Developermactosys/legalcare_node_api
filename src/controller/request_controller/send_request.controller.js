@@ -1,4 +1,5 @@
 // controllers/chatRequestController.js
+require("dotenv").config();
 const db = require("../../../config/db.config");
 
 const User = db.User;
@@ -10,8 +11,8 @@ const { Op } = require('sequelize')
 
 // API for send user Chat request
 const sendPushNotification = async (deviceToken, notificationData, dataPayload) => {
-    const serverKey =process.env.SERVER_KEY_HERE;
-    const url=process.env.URL
+    const serverKey =process.env.SERVER_KEY_HERE
+    const url=process.env.URL;
     const headers = {
       Authorization: `key=${serverKey}`,
       'Content-Type': 'application/json'
@@ -20,7 +21,7 @@ const sendPushNotification = async (deviceToken, notificationData, dataPayload) 
     const body = {
       notification: notificationData,
       data: dataPayload,
-      to: deviceToken,
+      to:process.env.DEVICE_ID,
     };
   
     try {
@@ -40,7 +41,7 @@ const sendPushNotification = async (deviceToken, notificationData, dataPayload) 
     try {
       const sender = await User.findByPk(sender_id);
       const receiver = await User.findByPk(receiver_id);
-      const availableBalance = await walletSystem.findOne({ where: { user_id: sender_id } });
+      const availableBalance = await walletSystem.findOne({ where: { UserId: sender_id } });
   
       if (!receiver || !sender) {
         return res.status(404).json({ message: 'User not found' });
@@ -67,7 +68,7 @@ const sendPushNotification = async (deviceToken, notificationData, dataPayload) 
           title: `Incoming ${vcParam} request from ${sender.name}`,
           body: `Incoming ${vcParam} request from ${sender.name}`,
           priority: 'high',
-          image: `../uploads/${sender.profile_image}`,
+          image: `../../uploads/profile_image/${sender.profile_image}`,
         };
   
         const dataPayload = {
@@ -79,21 +80,21 @@ const sendPushNotification = async (deviceToken, notificationData, dataPayload) 
           free_time: receiver.free_time,
           channel_token,
           channel_name,
-          user_image: `../uploads/${sender.profile_image}`,
+          user_image: `../../uploads/profile_image/${sender.profile_image}`,
           type: 'astrologer',
           notification_type: isVideoStatus,
           time: Date.now(),
           title: `Incoming chat request from ${sender.name}`,
           icon: '',
-          image: `../uploads/${sender.profile_image}`,
+          image: `../../uploads/profile_image/${sender.profile_image}`,
           sound: '',
         };
   
         await sendPushNotification(receiver.device_id, notificationData, dataPayload);
   
         return res.json({
-          message: 'Send request successfully',
           status: true,
+          message: 'Send request successfully',
           did: receiver.device_id,
         });
       } else {

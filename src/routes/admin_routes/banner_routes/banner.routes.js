@@ -16,4 +16,7 @@ router.patch("/edit_banner/:id", uploads.single("banner_image"), editBanner); //
 router.delete("/delete_banner/:id", deleteBanner); // done
 router.post("/get_banner_images", getAllBanner); //  done
 
+// For FrontEnd Team (admin_section)
+router.get("/get_banner_images", getAllBanner); //  done
+
 module.exports = router;
