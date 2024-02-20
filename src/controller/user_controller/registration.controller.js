@@ -12,74 +12,85 @@ const twilio = require('twilio');
 const { validationResult } = require('express-validator');
 const { CallPage } = require("twilio/lib/rest/api/v2010/account/call");
 
-
 const registration = async (req, res) => {
   try {
     const {
       name,
-      email,
+      email_id,
       password,
       user_type,
       phone_no,
-      dob: userInputDate,
+      dob : userInputDate,
       birth_time,
       birth_place,
       device_id,
       device_token,
       address,
-      sender_id,
-      receiver_id,
     } = req.body;
 
-    const dateFormat = "DD-MM-YYYY";
-    const parsedDate = moment(userInputDate, dateFormat, true);
+    const dateFormat = "YYYY-MM-DD"; 
+    const parsedDate = moment(userInputDate, dateFormat);
 
     if (!parsedDate.isValid()) {
-      return res.status(400).json({
-        status: false,
-        message: "The provided date is invalid. Please use DD-MM-YYYY format.",
-      });
+      console.error("The provided date is invalid.");
+    } else {
+      // Proceed with your database insertion logic
+      const formattedDateForDB = parsedDate.format("YYYY-MM-DD");
+      // Use `formattedDateForDB` in your INSERT statement for the `dob` column
     }
-
     const existingUser = await User.findOne({ where: { phone_no: phone_no } });
 
-    if (existingUser) {
-      return res.status(409).json({
-        // 409 Conflict might be more appropriate for duplicate entries
+    if (!existingUser) {
+      const digits = 6;
+      const otp = Math.floor(
+        Math.pow(10, digits - 1) + Math.random() * 9 + Math.pow(10, digits - 1)
+      );
+      // const filePath = `/src/uploads/${req.file.filename}`;
+      // console.log(filePath);
+      const filePath = req.file
+      ? `profile_image${req.file.filename}`
+      : "/src/uploads/profile_image/default.png";
+      
+
+      const hashedPassword = await bcrypt.hash(password, 10);
+
+      const user = await User.create(req.body);
+      user.dob = userInputDate,
+      user.profile_image=filePath,
+      user.password= hashedPassword,
+      await user.save();
+      // ... insert into wallet_system ...
+
+      // ... send OTP ...
+      // let digit= '0123456789'
+      // OTP = "";
+      // for(let i=0;i<4;i++){
+      //   OTP += digit[Math.floor(Math.random() * 10)];
+      // }
+      // await client.messages.create({
+      //   from: +19163827578,
+      //   messagingServiceSid:process.env.TwilioMsg,
+      //   to:process.env.to,
+      //   body: `Your coder house OTP is ${otp}`,
+      // });
+  
+      return res.json({
+        status: true,
+        message:
+          "Registration successfully, send OTP to your registered number for verification",
+        data: user,
+      });
+    } else {
+      return res.json({
         status: false,
-        message: "This Phone Number already exists.",
+        message: "This Phone Number already exists",
       });
     }
-
-    const otp = Math.floor(100000 + Math.random() * 900000); // Generates a 6-digit OTP
-    const filePath = req.file
-    ? `profile_image/${req.file.filename}`
-    : "/src/uploads/profile_image/default.png";
-
-    const hashedPassword = await bcrypt.hash(password, 10);
-
-    const user = await User.create(req.body);
-    user.password = hashedPassword,
-    user.dob = parsedDate.format("DD-MM-YYYY"), // Use the formatted and validated date
-    user.profile_image = filePath,
-    await user.save();
- 
-
-    return res.json({
-      status: true,
-      message:
-        "Registration successful. OTP sent to your registered number for verification.",
-      data: user,
-    });
   } catch (error) {
     console.error(error);
-    res.status(500).json({
-      status: false,
-      message: "Internal Server Error",
-    });
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
-
 
 // API for verify otp
 const otpVerify = async (req, res) => {
