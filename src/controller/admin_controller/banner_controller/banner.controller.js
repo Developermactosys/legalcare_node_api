@@ -61,8 +61,8 @@ const addBanner = async (req, res) => {
   const { event_name, event_url, event_date } = req.body;
   try {
     const filePath = req.file
-      ? `banner_img/${req.file.filename}`
-      : "/src/uploads/event_image/";
+      ? `banner_image/${req.file.filename}`
+      : "/src/uploads/banner_image/";
     const add_banner = await LiveEvent.create({
       event_name,
       event_date,
@@ -104,7 +104,7 @@ const editBanner = async (req, res) => {
     }
     const filePath = req.file
       ? `banner_image/${req.file.filename}`
-      : "/src/uploads/event_image/";
+      : "/src/uploads/banner_image/";
     const { event_name, event_status, event_date, banner_image, event_url } =
       req.body;
 
