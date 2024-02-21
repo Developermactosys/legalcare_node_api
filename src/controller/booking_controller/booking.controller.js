@@ -1,7 +1,7 @@
 // const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
-
+const service = db.service;
 exports.Add_Booking = async (req, res) => {
   try {
     const { serviceId } = req.body;
@@ -45,7 +45,11 @@ exports.get_booking_by_status = async (req, res) => {
       const pending_booking = await Booking_details.findAll({
         where: {
           status: status,
-        },
+        }, include: [{
+          model: service,
+          as: "service",
+          attributes: ['service_img', 'service_cost','serviceName','id'],
+      }]
       });
 
       return res.status(200).json({
@@ -59,7 +63,11 @@ exports.get_booking_by_status = async (req, res) => {
         const rejected_booking = await Booking_details.findAll({
           where: {
             status: status,
-          },
+          },include: [{
+            model: service,
+            as: "service",
+            attributes: ['service_img', 'service_cost','serviceName','id'],
+        }]
         });
   
         return res.status(200).json({
@@ -73,7 +81,11 @@ exports.get_booking_by_status = async (req, res) => {
         const approved_booking = await Booking_details.findAll({
           where: {
             status: status,
-          },
+          },include: [{
+            model: service,
+            as: "service",
+            attributes: ['service_img', 'service_cost','serviceName','id'],
+        }]
         });
   
         return res.status(200).json({
@@ -96,7 +108,12 @@ exports.get_booking_by_status = async (req, res) => {
 // get all Bookings 
 exports.getAll_bookings = async(req, res) => {
     try {
-        const get_all_booking = await Booking_details.findAll()
+        const get_all_booking = await Booking_details.findAll({
+          include: [{
+          model: service,
+          as: "service",
+          attributes: ['service_img', 'service_cost','serviceName','id'],
+      }]})
 
         return res.status(200).json({
             status : true,

@@ -27,6 +27,7 @@ const adminRoutes = require("./admin_routes/admin.routes");
 const testimonialRoutes = require("./testimonial_routes/testimonial.routes")
 
 const bannerRoutes = require("./admin_routes/banner_routes/banner.routes")
+const reviewRoutes = require("./review_routes/review.routes");
 
 router.use("/",bankRoutes);
 router.use("/",callRoutes);
@@ -53,4 +54,5 @@ router.use("/",adminRoutes);
 router.use("/",testimonialRoutes);
 
 router.use("/",bannerRoutes);
+router.use("/",reviewRoutes);
 module.exports = router

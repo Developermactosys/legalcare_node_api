@@ -48,6 +48,7 @@ db.client_testimonial= require("../src/models/testimonial_model/testimonial.mode
 db.live_event = require("../src/models/live_event_model/live_event.model")(sequelize,DataTypes);
 db.admin_query = require("../src/models/query_model/admin_query.model")(sequelize,DataTypes);
 db.notification = require("../src/models/query_model/notification.model")(sequelize, DataTypes);
+db.expert_review = require("../src/models/review_model/review.model")(sequelize,DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -195,6 +196,17 @@ db.User.hasMany(db.admin_query, {
   });
   
   db.admin_query.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
+
+    // User and admin_query one to many relationship
+db.User.hasMany(db.expert_review, {
+    forienKey: "UserId",
+    as: "expert_review",
+  });
+  
+  db.expert_review.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
   });
