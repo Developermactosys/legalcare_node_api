@@ -188,5 +188,16 @@ db.subcategory.hasMany(db.service, {
     as: "subcategory",
   });
 
+  // User and admin_query one to many relationship
+db.User.hasMany(db.admin_query, {
+    forienKey: "UserId",
+    as: "admin_query",
+  });
+  
+  db.admin_query.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
+
 
 module.exports = db;

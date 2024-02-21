@@ -15,7 +15,7 @@ exports.userQueries = async (req, res) => {
 
     // Fetch user queries
     const queries = await AdminQuery.findAll({
-      where: { userid: user_id },
+      where: { Userid: user_id },
       order: [['id', 'DESC']]
     });
 
