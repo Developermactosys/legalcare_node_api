@@ -35,7 +35,7 @@ async function getDetails(req, res) {
             });
         }
 
-        const imageUrlBasePath = 'http://134.209.229.112/images/profile_image';
+        const imageUrlBasePath = 'http://134.209.229.112/src/uploads/profile_image';
 
         const formattedDetails = {
             ...details.dataValues,

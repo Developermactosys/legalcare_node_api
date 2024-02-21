@@ -1,5 +1,4 @@
 const db = require("../../../config/db.config");
-
 exports.getChatStatus = async (req, res) => {
   try {
     const { astro_id } = req.body;

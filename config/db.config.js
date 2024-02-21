@@ -33,7 +33,7 @@ db.chat_active_status = require("../src/models/chat_model/chat_active_status.mod
 db.chat_request = require("../src/models/chat_model/chat_request.model")(sequelize, DataTypes);
 db.feedback = require("../src/models/feedback_model/feedback.model")(sequelize, DataTypes);
 db.waiting_join_list = require("../src/models/list_model/waitingList.model")(sequelize, DataTypes);
-db.admin_query = require("../src/models/query_model/user_query.model")(sequelize, DataTypes);
+db.admin_query = require("../src/models/query_model/admin_query.model")(sequelize, DataTypes);
 db.business = require("../src/models/service_model/business.model")(sequelize, DataTypes);
 db.service = require("../src/models/service_model/service.model")(sequelize, DataTypes);
 db.service_image = require("../src/models/service_model/service_image.model")(sequelize, DataTypes);
@@ -46,6 +46,8 @@ db.booking_detail = require("../src/models/booking_model/booking.model")(sequeli
 db.subcategory = require("../src/models/category_model/subcategory.model")(sequelize,DataTypes);
 db.client_testimonial= require("../src/models/testimonial_model/testimonial.model")(sequelize,DataTypes);
 db.live_event = require("../src/models/live_event_model/live_event.model")(sequelize,DataTypes);
+db.admin_query = require("../src/models/query_model/admin_query.model")(sequelize,DataTypes);
+db.notification = require("../src/models/query_model/notification.model")(sequelize, DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history

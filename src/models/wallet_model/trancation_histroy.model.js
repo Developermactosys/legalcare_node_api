@@ -20,10 +20,6 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.STRING,
           allowNull: true,
         },
-        wallet_amount: {
-          type: DataTypes.STRING,
-          allowNull: true,
-        },
         approve_amount: {
           type: DataTypes.TEXT,
           allowNull: true,

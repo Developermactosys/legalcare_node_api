@@ -79,6 +79,7 @@ const addWalletAmount = async (req, res) => {
   }
 };
 
+// Recharge History
 
 const transaction_details = async (req, res) => {
   const { user_id, user_type } = req.query;
