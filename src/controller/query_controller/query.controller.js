@@ -13,7 +13,7 @@ async function getDetails(req, res) {
 
         if (type === 'chat') {
             details = await ChatHistory.findOne({
-                where: { id },
+                where: { UserId : id },
                 include: [{
                     model: User,
                     as: "User",
@@ -22,7 +22,7 @@ async function getDetails(req, res) {
             });
         } else {
             details = await CallDetails.findOne({
-                where: { id },
+                where: { UserId:id },
                 include: [{
                     model: User,
                     as: "User",
