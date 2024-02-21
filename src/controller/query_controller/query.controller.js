@@ -1,7 +1,7 @@
 // controllers/queryController.js
 const db = require("../../../config/db.config");
 
-const  User  = db.User;
+const User = db.User;
 const ChatHistory = db.chat_history;
 const CallDetails = db.call_details;
 
@@ -14,33 +14,39 @@ async function getDetails(req, res) {
         if (type === 'chat') {
             details = await ChatHistory.findOne({
                 where: { id },
-                include: [
-                    {
-                        model: User,
-                        as: "User",
-                        attributes: ['name', 'profile_image'],
-                    },
-                ],
+                include: [{
+                    model: User,
+                    as: "User",
+                    attributes: ['name', 'profile_image'],
+                }],
             });
         } else {
             details = await CallDetails.findOne({
                 where: { id },
-                include: [
-                    {
-                        model: User,
-                        as: "User",
-                        attributes: ['name', 'profile_image'],
-                    },
-                ],
+                include: [{
+                    model: User,
+                    as: "User",
+                    attributes: ['name', 'profile_image'],
+                }],
             });
         }
 
-        const imageUrlBasePath = 'http://134.209.229.112/src/uploads/profile_image';
+        if (!details) {
+            return res.status(404).json({
+                status: false,
+                code: 404,
+                message: 'Details not found',
+                data: null,
+            });
+        }
+
+        const imageUrlBasePath = 'http://134.209.229.112:7878';
 
         const formattedDetails = {
-            ...details.dataValues,
+            id: details.id,
             astro_name: details.User.name,
             image_url: `${imageUrlBasePath}/${details.User.profile_image}`,
+            // Add other necessary fields from details if needed
         };
 
         const data = {
@@ -56,7 +62,7 @@ async function getDetails(req, res) {
             status: false,
             code: 500,
             message: 'Internal Server Error',
-            data: '',
+            data: null,
         });
     }
 }

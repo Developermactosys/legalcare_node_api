@@ -85,7 +85,7 @@ exports.sendRequest = async (req, res) => {
       fcm.send(message, function (err, response) {
         // console.log("1", message);
         if (err) {
-          console.log("Something Has Gone Wrong !");
+          console.log("Something Has Gone Wrong !",err);
         } else {
           console.log("Successfully Sent With Resposne :", response);
           var body = message.notification.body;
