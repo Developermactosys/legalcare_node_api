@@ -38,7 +38,7 @@ exports.submitQuery = async (req, res) => {
       query_type,
       query_id,
       status: 0,
-      user_id: user_id,
+      UserId: user_id,
       query: text_query,
       date: new Date(),
       ticketid: ticketID,
@@ -47,14 +47,14 @@ exports.submitQuery = async (req, res) => {
 
    await Notification.create({
       message: "New query request from User",
-      user_id: user_id,
+      UserId: user_id,
       title: "New Query Arrived",
       type: "query",
     });
 
     res.json({
       status: true,
-      data: [],
+      
       message: "We will resolve your query in 24 Hours",
     });
   } catch (error) {
