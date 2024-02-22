@@ -19,10 +19,10 @@ exports.cancelRequest = async (req, res) => {
       const serverKey = process.env.SERVER_KEY_HERE;
       const fcmUrl = process.env.fcmUrl;
   
-      const user = await User.findByPk(receiver_id);
-      const astro = await User.findByPk(sender_id);
+      const receiver = await User.findByPk(receiver_id);//Expert CA 
+      const sender = await User.findByPk(sender_id);
   
-      if (!user || !astro) {
+      if (!receiver || !sender) {
         return res
           .status(404)
           .send({ success: false, message: "User or Astrologer not found" });
@@ -36,30 +36,30 @@ exports.cancelRequest = async (req, res) => {
   
   
       var message = {
-        to: user.device_id,
+        to: sender.device_id,
         collapse_key: "green",
         
         notification: {
-          title: `Your request has been cancelled from ${user.name}`,
-           body: `Your request has been cancelled ${user.name}`,
+          title: `Your request has been cancelled from ${receiver.name}`,
+           body: `Your request has been cancelled ${receiver.name}`,
            priority: "high",
            image: process.env.IMAGE,
         },
         data: {
           id: "",
-          user_name: astro.name,
+          user_name: sender.name,
           user_image:
             "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
           type: "customer",
           notification_type: "cancle",
           time: Date.now(),
-          title: `Chat request cancle by ${user.name}`,
+          title: `Chat request cancle by ${receiver.name}`,
           icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
           image: process.env.IMAGE,
           sound:
             "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
         },
-        to: user.device_id,
+        to: sender.device_id,
       };
   
       fcm.send(message, function (err, response) {

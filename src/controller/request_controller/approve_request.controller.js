@@ -31,10 +31,10 @@ exports.approveRequest = async (req, res) => {
         }
       );
   
-      const user = await User.findByPk(receiver_id);
-      const astro = await User.findByPk(sender_id);
+      const sender = await User.findByPk(sender_id);
+      const receiver = await User.findByPk(receiver_id); //RECEIVER expert CA
   
-      if (!user || !astro) {
+      if (!receiver || !sender) {
         return res
           .status(404)
           .json({ success: false, message: "User or Astrologer not found" });
@@ -49,10 +49,10 @@ exports.approveRequest = async (req, res) => {
           .json({ success: false, message: "Wallet not found" });
       }
   
-      const max_time = Math.floor(wallet.wallet_amount / astro.per_minute);
-      await user.update({ wait_time: max_time }, { where: { id: sender_id } });
+      const max_time = Math.floor(wallet.wallet_amount / sender.per_minute);
+      await sender.update({ wait_time: max_time }, { where: { id: sender_id } });
   
-      if (user.login_from === "web") {
+      if (receiver.login_from === "web") {
         return res.json({ success: 1, failure: 0 });
       } else {
         const headers = {
@@ -61,30 +61,30 @@ exports.approveRequest = async (req, res) => {
         };
   
         var message = {
-          to: user.device_id,
+          to: sender.device_id,
           collapse_key: "green",
           
           notification: {
-            title: `Your request has been accepted by ${astro.name}`,
-                body: `Your request has been accepted by ${astro.name}`,
+            title: `Your request has been accepted by ${receiver.name}`,
+                body: `Your request has been accepted by ${receiver.name}`,
                 priority: "high",
                 image: process.env.IMAGE,
           },
           data: {
             id: "",
-            user_name: astro.name,
+            user_name: sender.name,
             user_image:
               "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
             type: "customer",
             notification_type: "approved",
             time: Date.now(),
-            title: `Chat request approved by ${astro.name}`,
+            title: `Chat request approved by ${sender.name}`,
             icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
             image: process.env.IMAGE,
             sound:
               "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
           },
-          to: user.device_id,
+          to: receiver.device_id,
         };
   
        
