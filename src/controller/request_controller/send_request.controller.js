@@ -51,7 +51,7 @@ exports.sendRequest = async (req, res) => {
       });
 
       var message = {
-        to: process.env.DEVICE_ID,
+        to: sender.device_id,
         collapse_key: "green",
         
         notification: {
@@ -86,12 +86,16 @@ exports.sendRequest = async (req, res) => {
         // console.log("1", message);
         if (err) {
           console.log("Something Has Gone Wrong !",err);
+          return res.status(400).json({
+            success : false,
+            message : err.message
+          })
         } else {
           console.log("Successfully Sent With Resposne :", response);
           var body = message.notification.body;
           console.log("notification body for add order <sent to manager>", body);
           return res.json({
-            status: true,
+            success: true,
             message: "Send request successfully",
             did: receiver.device_id,
           });
@@ -100,7 +104,7 @@ exports.sendRequest = async (req, res) => {
     } else {
       const message = `Minimum balance of 5 minutes (INR ${astroCharge}) is required to start chat with ${receiver.name}`;
       return res.status(400).json({
-        status: false,
+        success: false,
         message,
         did: receiver.device_id,
       });

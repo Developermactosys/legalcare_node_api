@@ -61,7 +61,7 @@ exports.approveRequest = async (req, res) => {
         };
   
         var message = {
-          to: process.env.DEVICE_ID,
+          to: user.device_id,
           collapse_key: "green",
           
           notification: {
@@ -94,6 +94,10 @@ exports.approveRequest = async (req, res) => {
           // console.log("1", message);
           if (err) {
             console.log("Something Has Gone Wrong !");
+            return res.status(400).json({
+              status : false,
+              message : err.message
+            })
           } else {
             console.log("Successfully Sent With Resposne :", response);
             var body = message.notification.body;
