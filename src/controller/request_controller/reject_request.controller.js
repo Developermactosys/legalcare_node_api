@@ -76,7 +76,7 @@ exports.cancelRequest = async (req, res) => {
           console.log("notification body for add order <sent to manager>", body);
           return res.json({
             success: true,
-            message: "Request approved and notification sent",
+            message: "Request cancled and notification sent",
             data: response.data,
           });
         }
