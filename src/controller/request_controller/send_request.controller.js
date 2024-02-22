@@ -98,6 +98,7 @@ exports.sendRequest = async (req, res) => {
             success: true,
             message: "Send request successfully",
             did: receiver.device_id,
+            chat_request_id: newChatRequest.id,
           });
         }
       })
