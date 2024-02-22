@@ -61,12 +61,12 @@ exports.approveRequest = async (req, res) => {
         };
   
         var message = {
-          to: sender.device_id,
+          to: receiver.device_id,
           collapse_key: "green",
           
           notification: {
-            title: `Your request has been accepted by ${receiver.name}`,
-                body: `Your request has been accepted by ${receiver.name}`,
+            title: `Your request has been accepted by ${sender.name}`,
+                body: `Your request has been accepted by ${sender.name}`,
                 priority: "high",
                 image: process.env.IMAGE,
           },

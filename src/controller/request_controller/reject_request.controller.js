@@ -36,12 +36,12 @@ exports.cancelRequest = async (req, res) => {
   
   
       var message = {
-        to: sender.device_id,
+        to: receiver.device_id,
         collapse_key: "green",
         
         notification: {
-          title: `Your request has been cancelled from ${receiver.name}`,
-           body: `Your request has been cancelled ${receiver.name}`,
+          title: `Your request has been cancelled from ${sender.name}`,
+           body: `Your request has been cancelled ${sender.name}`,
            priority: "high",
            image: process.env.IMAGE,
         },
@@ -59,8 +59,10 @@ exports.cancelRequest = async (req, res) => {
           sound:
             "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
         },
-        to: sender.device_id,
+        to: receiver.device_id,
       };
+
+      
   
       fcm.send(message, function (err, response) {
         // console.log("1", message);

@@ -51,7 +51,7 @@ exports.sendRequest = async (req, res) => {
       });
 
       var message = {
-        to: sender.device_id,
+        to: receiver.device_id,
         collapse_key: "green",
         
         notification: {
