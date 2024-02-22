@@ -65,8 +65,8 @@ exports.approveRequest = async (req, res) => {
           collapse_key: "green",
           
           notification: {
-            title: `Your request has been accepted from ${astro.name}`,
-                body: `Your request has been accepted from ${astro.name}`,
+            title: `Your request has been accepted by ${user.name}`,
+                body: `Your request has been accepted by ${user.name}`,
                 priority: "high",
                 image: process.env.IMAGE,
           },
