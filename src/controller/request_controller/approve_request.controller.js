@@ -15,7 +15,9 @@ exports.approveRequest = async (req, res) => {
       const { id, receiver_id, sender_id } = req.body;
       const serverKey = process.env.SERVER_KEY_HERE;
       const fcmUrl = process.env.FCMURL;
-  
+      
+      console.log("sender_id",sender_id)
+      console.log(receiver_id)
       // Update chat_request status and notify_user
       await chat_request.update(
         {

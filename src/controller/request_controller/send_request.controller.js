@@ -22,6 +22,10 @@ exports.sendRequest = async (req, res) => {
     is_free,
   } = req.body;
 
+console.log("sender_id",sender_id)
+console.log(receiver_id)
+
+
   try {
     const sender = await User.findByPk(sender_id);
     const receiver = await User.findByPk(receiver_id);

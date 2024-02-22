@@ -18,6 +18,8 @@ exports.cancelRequest = async (req, res) => {
       const { receiver_id, sender_id } = req.body;
       const serverKey = process.env.SERVER_KEY_HERE;
       const fcmUrl = process.env.fcmUrl;
+      console.log("sender_id",sender_id)
+console.log(receiver_id)
   
       const receiver = await User.findByPk(receiver_id);//Expert CA 
       const sender = await User.findByPk(sender_id);
