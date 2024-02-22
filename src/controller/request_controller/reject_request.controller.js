@@ -40,8 +40,8 @@ exports.cancelRequest = async (req, res) => {
         collapse_key: "green",
         
         notification: {
-          title: `Your request has been cancelled from ${astro.name}`,
-           body: `Your request has been cancelled ${astro.name}`,
+          title: `Your request has been cancelled from ${user.name}`,
+           body: `Your request has been cancelled ${user.name}`,
            priority: "high",
            image: process.env.IMAGE,
         },
@@ -53,7 +53,7 @@ exports.cancelRequest = async (req, res) => {
           type: "customer",
           notification_type: "cancle",
           time: Date.now(),
-          title: `Chat request cancle by ${astro.name}`,
+          title: `Chat request cancle by ${user.name}`,
           icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
           image: process.env.IMAGE,
           sound:

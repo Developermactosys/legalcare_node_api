@@ -90,7 +90,6 @@ async function saveBankDetails(req, res) {
     }
 }
 
-
 const getBankDetails = async (req, res) => {
     try {
       const userDetails = await BankDetails.findAll({});
@@ -146,6 +145,7 @@ const getBankDetails = async (req, res) => {
       });
     }
   };
+
 module.exports = {
     saveBankDetails,getBankDetails,getBankDetailsById
 };

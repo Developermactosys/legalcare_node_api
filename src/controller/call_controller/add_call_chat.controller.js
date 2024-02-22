@@ -32,7 +32,7 @@ const  Chat = db.chat;
         receiver_id,
         message,
         device_id,
-        user_id,
+        UserId:user_id,
         sent_date: new Date(),
         sent_time: time,
       });
