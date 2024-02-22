@@ -97,7 +97,7 @@ console.log(receiver_id)
         } else {
           console.log("Successfully Sent With Resposne :", response);
           var body = message.notification.body;
-          console.log("notification body for add order <sent to manager>", message);
+          console.log("notification body for add order <sent to manager>", body);
           return res.json({
             success: true,
             message: "Send request successfully",

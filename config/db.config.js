@@ -200,13 +200,24 @@ db.User.hasMany(db.admin_query, {
     as: "User",
   });
 
-    // User and admin_query one to many relationship
+// User and expert_review one to many relationship
 db.User.hasMany(db.expert_review, {
     forienKey: "UserId",
     as: "expert_review",
   });
   
   db.expert_review.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
+
+// User and Service one to many relationship
+db.User.hasMany(db.service, {
+    forienKey: "UserId",
+    as: "service",
+  });
+  
+  db.service.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
   });

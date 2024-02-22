@@ -76,8 +76,8 @@ console.log(receiver_id)
           })
         } else {
           console.log("Successfully Sent With Resposne :", response);
-          // var body = message.notification.body;
-          console.log("notification body for add order <sent to manager>", message);
+          var body = message.notification.body;
+          console.log("notification body for add order <sent to manager>", body);
           return res.json({
             success: true,
             message: "Request cancled and notification sent",

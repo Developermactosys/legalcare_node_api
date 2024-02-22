@@ -5,7 +5,7 @@ const services = db.service;
 
 // API for add Services
 const createServices = async(req, res)=>{
-    const { categoryId, subCategoryId,serviceName  } = req.body;
+    const { categoryId, subCategoryId,serviceName, expert_id  } = req.body;
     // const { serviceName } = req.body
     try {
         const findCategory = await category.findByPk(categoryId)
@@ -25,7 +25,8 @@ const createServices = async(req, res)=>{
             categoryId : categoryId,
             subcategoryId: subCategoryId,
             service_img : filePath,
-            serviceName
+            serviceName : serviceName,
+            UserId :expert_id
             })
             await addServices.update(req.body)
             return res.status(200).json({
@@ -91,6 +92,48 @@ const getServiceById = async(req, res) => {
     } 
 }
 
+
+// API for get service by expert_id
+const getServiceBy_expertId = async(req, res) => {
+    try {
+        const { expert_id } = req.query;
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 4;
+        const offset = (page - 1) * limit;
+
+        const getServices = await services.findAll({where :{
+            UserId:expert_id
+        },
+         limit: limit,
+         offset: offset,
+    })
+    const totalCount = await services.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+
+        if(getServices){
+            return res.status(200).json({
+                status : true,
+                message : "Showing service by expert_id",
+                data : getServices,
+                totalServices: totalCount,
+                currentPage: page,
+                totalPages:totalPages,
+            })
+        }else{
+            return res.status(404).json({
+                status : false,
+                message : "expert_id is not found"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    } 
+}
+
+
 // API for delete Services
 const deleteService = async(req, res) => {
     const { serviceId } = req.params;
@@ -119,5 +162,6 @@ module.exports = {
     createServices,
     getALlService,
     getServiceById,
-    deleteService
+    deleteService,
+    getServiceBy_expertId
 }

@@ -1,3 +1,4 @@
+const { service } = require("../../../config/db.config");
 
 
 module.exports = (sequelize, DataTypes) => {
@@ -35,6 +36,18 @@ module.exports = (sequelize, DataTypes) => {
     service_cost : {
       type : DataTypes.FLOAT
     },
+    service_type: {
+      type: DataTypes.ENUM,
+      values: ["Top Services", "Other Services"],
+      allowNull: false,
+      defaultValue: "Top Services"
+  },
+  ca_fees :{
+    type : DataTypes.FLOAT
+  },
+  GST :{
+    type : DataTypes.FLOAT
+  },
     deleted_At : {
       type : DataTypes.DATE,
       allowNull : true,

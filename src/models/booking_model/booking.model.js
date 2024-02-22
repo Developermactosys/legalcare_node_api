@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
       total_amount :{
         type: DataTypes.FLOAT,
       },
+      discounted_amount :{
+        type: DataTypes.FLOAT,
+      },
+      GST : {
+        type : DataTypes.FLOAT,
+      },
       status: {
         type: DataTypes.ENUM,
         values: ["pending", "approved", "reject"],

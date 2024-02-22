@@ -1,10 +1,11 @@
 // const { where } = require("sequelize");
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId } = req.body;
+    const { serviceId, discounted_amount, GST } = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -16,12 +17,14 @@ exports.Add_Booking = async (req, res) => {
     const add_booking = await Booking_details.create(req.body);
 
     add_booking.serviceId = serviceId;
+    add_booking.discounted_amount = discounted_amount;
+    add_booking.GST = GST;
 
     await add_booking.save();
 
     return res.status(200).json({
       status: true,
-      message: "Booking statusfull",
+      message: "Booked successfully",
       data: add_booking,
     });
   } catch (error) {
@@ -48,7 +51,7 @@ exports.get_booking_by_status = async (req, res) => {
         }, include: [{
           model: service,
           as: "service",
-          attributes: ['service_img', 'service_cost','serviceName','id'],
+          // attributes: ['service_img', 'service_cost','serviceName','id'],
       }]
       });
 
@@ -66,7 +69,7 @@ exports.get_booking_by_status = async (req, res) => {
           },include: [{
             model: service,
             as: "service",
-            attributes: ['service_img', 'service_cost','serviceName','id'],
+            // attributes: ['service_img', 'service_cost','serviceName','id'],
         }]
         });
   
@@ -84,7 +87,7 @@ exports.get_booking_by_status = async (req, res) => {
           },include: [{
             model: service,
             as: "service",
-            attributes: ['service_img', 'service_cost','serviceName','id'],
+            // attributes: ['service_img', 'service_cost','serviceName','id'],
         }]
         });
   
@@ -108,11 +111,12 @@ exports.get_booking_by_status = async (req, res) => {
 // get all Bookings 
 exports.getAll_bookings = async(req, res) => {
     try {
+      
         const get_all_booking = await Booking_details.findAll({
           include: [{
           model: service,
           as: "service",
-          attributes: ['service_img', 'service_cost','serviceName','id'],
+          // attributes: ['service_img', 'service_cost','serviceName','id'],
       }]})
 
         return res.status(200).json({
@@ -130,9 +134,46 @@ exports.getAll_bookings = async(req, res) => {
     }
 }
 
+// get Bookings by id 
+exports.get_bookings_by_user_id= async(req, res) => {
+  try {
+    const { user_id } = req.query;
+    const page = parseInt(req.query.page) || 1;
+    const pageSize = parseInt(req.query.pageSize) || 5;
+    const offset = (page - 1) * pageSize;
+      const get_booking = await Booking_details.findAll({
+        where : {UserId : user_id},
+        include: [{
+        model: service,
+        as: "service",
+        // attributes: ['service_img', 'service_cost','serviceName','id'],
+    }],
+    order:[['createdAt','DESC']],
+    offset:offset,
+    limit:pageSize,
+  })
+
+
+      return res.status(200).json({
+          status : true,
+          message : "All Booking",
+          data : get_booking,
+          currentPages:page,
+
+      })
+      
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+      });
+  }
+}
+
+
 
 // Cancle Booking 
-
 exports.Cancle_booking_by_id = async(req, res) => {
     try {
         const {booking_id}  = req.params
