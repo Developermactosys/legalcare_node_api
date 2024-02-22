@@ -50,7 +50,7 @@ exports.approveRequest = async (req, res) => {
       }
   
       const max_time = Math.floor(wallet.wallet_amount / astro.per_minute);
-      await astro.update({ wait_time: max_time }, { where: { id: sender_id } });
+      await user.update({ wait_time: max_time }, { where: { id: sender_id } });
   
       if (user.login_from === "web") {
         return res.json({ success: 1, failure: 0 });
