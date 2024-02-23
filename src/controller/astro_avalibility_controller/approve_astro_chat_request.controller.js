@@ -3,11 +3,10 @@ const admin = require('firebase-admin');
 const User = db.User;
 const chat_request = db.chat_request;
 const axios = require('axios')
-var serviceAccount = require("../../../fcm.json");
+var FCM = require("fcm-node");
+const serverkey =process.env.SERVER_KEY_HERE;
+var fcm = new FCM(serverkey);
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount)
-});
 
 // API for approve Astro chat request
 exports.approveAstroChatRequest = async (req, res) => {

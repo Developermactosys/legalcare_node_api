@@ -7,6 +7,9 @@ const walletSystem = db.wallet_system;
 const crypto = require('crypto')
 const axios = require('axios')
 const { Op } = require('sequelize')
+var FCM = require("fcm-node");
+const serverkey =process.env.SERVER_KEY_HERE;
+var fcm = new FCM(serverkey);
 
 // API for astro reject approval
 exports.rejectAstroChatRequest = async (req, res) => {
