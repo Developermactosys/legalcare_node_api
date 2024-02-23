@@ -3,11 +3,6 @@ const admin = require('firebase-admin');
 const User = db.User;
 const chat_request = db.chat_request;
 const axios = require('axios')
-
-
-
-
-
 var serviceAccount = require("../../../fcm.json");
 
 admin.initializeApp({
@@ -54,17 +49,18 @@ exports.approveAstroChatRequest = async (req, res) => {
 
         const astrologer = await User.findByPk(chatRequest.to_user_id);
         const user = await User.findByPk(chatRequest.from_user_id);
-
-        const notificationPayload = {
-            to: astrologer.device_id,
-            notification: {
-                title: `Chat Request Accepted By ${user.name}`,
+        var message = {
+          to: astrologer.device_id,
+          collapse_key: "green",
+          
+          notification: {
+            title: `Chat Request Accepted By ${user.name}`,
                 body: `Chat Request Accepted By ${user.name}`,
                 priority: "high",
-                image: process.env.image,
-            },
-            data: {
-                id: chatRequest.id.toString(),
+                image: process.env.IMAGE,
+          },
+          data: {
+            id: chatRequest.id.toString(),
                 sender_id: chatRequest.from_user_id.toString(),
                 receiver_id: chatRequest.to_user_id.toString(),
                 user_name: user.name,
@@ -76,14 +72,28 @@ exports.approveAstroChatRequest = async (req, res) => {
                 title: `Chat Request Accepted By ${user.name}`,
                 icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
                 image: process.env.image,
-            },
+          },
         };
-
-        const headers = {
-            Authorization: `key=${process.env.SERVER_KEY_HERE}`,
-            "Content-Type": "application/json",
-        };
-
+    
+        fcm.send(message, function (err, response) {
+          // console.log("1", message);
+          if (err) {
+            console.log("Something Has Gone Wrong !");
+            return res.status(400).json({
+              success : false,
+              message : err.message
+            })
+          } else {
+            console.log("Successfully Sent With Resposne :", response);
+            var body = message.notification.body;
+            console.log("notification body for add order <sent to manager>", body);
+            return res.json({
+              success: true,
+              message: "Request approved and notification sent",
+              data: response.data,
+            });
+          }
+        })
         const response = await axios.post(process.env.fcmUrl, notificationPayload, { headers });
         return res.json({ success: true, data: response.data });
     } catch (error) {
@@ -91,3 +101,4 @@ exports.approveAstroChatRequest = async (req, res) => {
         return res.status(500).json({ success: false, message: "Internal Server Error" });
     }
 };
+
