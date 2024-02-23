@@ -5,7 +5,7 @@ const Booking_details = db.booking_detail;
 const service = db.service;
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId, discounted_amount, GST } = req.body;
+    const { serviceId, discounted_amount, GST,user_id } = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -19,6 +19,7 @@ exports.Add_Booking = async (req, res) => {
     add_booking.serviceId = serviceId;
     add_booking.discounted_amount = discounted_amount;
     add_booking.GST = GST;
+    add_booking.UserId = user_id;
 
     await add_booking.save();
 
