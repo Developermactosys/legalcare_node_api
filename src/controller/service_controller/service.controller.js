@@ -47,7 +47,16 @@ const createServices = async(req, res)=>{
 // API for getAll Services
 const getALlService = async(req, res) =>{
     try {
-        const getServices = await services.findAll()
+        const getServices = await services.findAll({
+            include:[{
+                model: category,
+                as: "category",
+              },
+            {
+                model:subCategory,
+                as:"subCategory",
+            }]
+        })
         if(getServices){
             return res.status(200).json({
                 status : true,
@@ -72,7 +81,16 @@ const getALlService = async(req, res) =>{
 const getServiceById = async(req, res) => {
     const { serviceId } = req.query;
     try {
-        const getServices = await services.findByPk(serviceId)
+        const getServices = await services.findByPk(serviceId, {
+            include:[{
+                model: category,
+                as: "category",
+              },
+            {
+                model:subCategory,
+                as:"subCategory",
+            }]
+        })
         if(getServices){
             return res.status(200).json({
                 status : true,
@@ -106,6 +124,14 @@ const getServiceBy_expertId = async(req, res) => {
             UserId:expert_id,
             service_type :service_type,
         },
+        include:[{
+            model: category,
+            as: "category",
+          },
+        {
+            model:subCategory,
+            as:"subCategory",
+        }],
          limit: limit,
          offset: offset,
     })
@@ -147,6 +173,14 @@ const getAllserviceBy_expert_id = async(req, res) => {
         const getServices = await services.findAll({where :{
             UserId:expert_id,
         },
+        include:[{
+            model: category,
+            as: "category",
+          },
+        {
+            model:subCategory,
+            as:"subCategory",
+        }],
          limit: limit,
          offset: offset,
     })

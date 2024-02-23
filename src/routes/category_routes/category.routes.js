@@ -18,7 +18,7 @@ router.delete("/del_category/:id",deleteCategory)
 //subcategory Routes
 router.post("/add_subcategory",uploads.single("subcategory_img"),createSubCategory);  
   router.get("/view_all_subcategory", getSubCategory);
-  router.get("/get_subcategory/:id", getSubCategoryById);
+  router.get("/get_subcategory_by_id", getSubCategoryById);
   router.patch("/update_subcategory/:id", updateSubCategory);
 router.delete("/del_subcategory/:id",deleteSubCategory)
 module.exports= router;

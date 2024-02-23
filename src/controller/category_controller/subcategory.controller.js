@@ -1,9 +1,11 @@
 // sub category controller
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const subcategory = db.subcategory;     
+const category = db.category;
 
 const createSubCategory = async (req, res) => {
-  const { id, subcategoryName, description, color, status } = req.body;
+  const { categoryId , subcategoryName, description, color, status } = req.body;
   try {
     const filePath = req.file
       ? `subcategory_img/${req.file.filename}`
@@ -14,7 +16,7 @@ const createSubCategory = async (req, res) => {
       description,
       color,
       subcategory_img: filePath,
-      id,
+      categoryId  : categoryId ,
     });
     return res.status(200).json({
       status: true,
@@ -32,9 +34,14 @@ const createSubCategory = async (req, res) => {
 // get subCategory Api
 const getSubCategory = async (req, res) => {
   try {
-    const sub_category = await subcategory.findAll({});
+    const sub_category = await subcategory.findAll({
+include:[{
+  model: category,
+  as: "category",
+}]
+    });
 
-    if (sub_category.length <= 0) {
+    if (!sub_category) {
       return res.status(204).json({
         status: false,
         code: 204,
@@ -57,7 +64,7 @@ const getSubCategory = async (req, res) => {
 
 // get sub category by id
 const getSubCategoryById = async (req, res) => {
-  if (!req.params.id) {
+  if (!req.query.subcategory_id) {
     return res.json({
       status: false,
       message: "subcategory id required",
@@ -65,7 +72,11 @@ const getSubCategoryById = async (req, res) => {
   }
   try {
     const sub_category = await subcategory.findOne({
-      where: { id: req.params.id },
+      where: { id: req.query.subcategory_id },
+      include:[{
+        model: category,
+        as: "category",
+      }]
     });
     if (!sub_category) {
       return res.status(404).json({

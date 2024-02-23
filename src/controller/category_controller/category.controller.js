@@ -1,6 +1,7 @@
 
 const db = require("../../../config/db.config");
 const Category = db.category;
+const subcategory = db.subcategory;
 
 // API for create category
 const createCategory = async (req, res) => {
@@ -10,8 +11,6 @@ const createCategory = async (req, res) => {
       ? `category_img/${req.file.filename}`
       : "/src/uploads/category_img/default.png";
 
-
-     
     const addCategory = await Category.create({
       category_name,
       status,
@@ -36,7 +35,12 @@ const createCategory = async (req, res) => {
 // Get Category Api
 const getCategory = async (req, res) => {
   try {
-    const category = await Category.findAll({});
+    const category = await Category.findAll({
+      include:[{
+        model: subcategory,
+        as: "subcategory",
+      }]
+    });
 
     if (!category) {
       return res.status(404).json({
@@ -69,7 +73,11 @@ const getCategoryById = async (req, res) => {
     const category = await Category.findOne({
       where: {
         id: req.params.id,
-      },
+      }, 
+      include:[{
+        model: subcategory,
+        as: "subcategory",
+      }]
     });
     if (!category) {
       return res.status(404).json({
