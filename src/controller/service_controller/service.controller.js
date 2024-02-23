@@ -54,7 +54,7 @@ const getALlService = async(req, res) =>{
               },
             {
                 model:subCategory,
-                as:"subCategory",
+                as:"subcategory",
             }]
         })
         if(getServices){
@@ -88,7 +88,7 @@ const getServiceById = async(req, res) => {
               },
             {
                 model:subCategory,
-                as:"subCategory",
+                as:"subcategory",
             }]
         })
         if(getServices){
@@ -130,7 +130,7 @@ const getServiceBy_expertId = async(req, res) => {
           },
         {
             model:subCategory,
-            as:"subCategory",
+            as:"subcategory",
         }],
          limit: limit,
          offset: offset,
