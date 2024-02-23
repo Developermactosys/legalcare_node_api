@@ -69,7 +69,7 @@ const getALlService = async(req, res) =>{
 
 // API for get service by Id
 const getServiceById = async(req, res) => {
-    const { serviceId } = req.params;
+    const { serviceId } = req.query;
     try {
         const getServices = await services.findByPk(serviceId)
         if(getServices){
@@ -96,13 +96,14 @@ const getServiceById = async(req, res) => {
 // API for get service by expert_id
 const getServiceBy_expertId = async(req, res) => {
     try {
-        const { expert_id } = req.query;
+        const { expert_id ,service_type} = req.query;
         const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 4;
+        const limit = Number(req.query.limit) || 5;
         const offset = (page - 1) * limit;
 
         const getServices = await services.findAll({where :{
-            UserId:expert_id
+            UserId:expert_id,
+            service_type :service_type,
         },
          limit: limit,
          offset: offset,
@@ -113,7 +114,7 @@ const getServiceBy_expertId = async(req, res) => {
         if(getServices){
             return res.status(200).json({
                 status : true,
-                message : "Showing service by expert_id",
+                message : `Showing ${service_type} by expert_id`,
                 data : getServices,
                 totalServices: totalCount,
                 currentPage: page,

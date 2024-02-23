@@ -9,7 +9,7 @@ const { createServices,getALlService,
 
 router.post('/add_service', uploads.single('service_img'), createServices) 
 router.get('/get_all_services' ,getALlService)
-router.get('/get_service_by_id/:serviceId', getServiceById)
-router.delete('/del_service_by_id/:serviceId', deleteService )
+router.get('/get_service_by_id', getServiceById)
+router.delete('/del_service_by_id/:serviceId', deleteService)
 router.get("/get_service_by_expert_id",getServiceBy_expertId);
 module.exports = router

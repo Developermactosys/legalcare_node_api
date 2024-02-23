@@ -36,7 +36,7 @@ exports.Add_Booking = async (req, res) => {
 
 exports.get_booking_by_status = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status ,user_id} = req.body;
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
       return value === "" || value === null || value === undefined;
@@ -49,6 +49,7 @@ exports.get_booking_by_status = async (req, res) => {
       const pending_booking = await Booking_details.findAll({
         where: {
           status: status,
+          UserId:user_id,
         }, include: [{
           model: service,
           as: "service",
@@ -67,6 +68,7 @@ exports.get_booking_by_status = async (req, res) => {
         const rejected_booking = await Booking_details.findAll({
           where: {
             status: status,
+            UserId:user_id,
           },include: [{
             model: service,
             as: "service",
@@ -85,6 +87,7 @@ exports.get_booking_by_status = async (req, res) => {
         const approved_booking = await Booking_details.findAll({
           where: {
             status: status,
+            UserId:user_id,
           },include: [{
             model: service,
             as: "service",
@@ -94,7 +97,7 @@ exports.get_booking_by_status = async (req, res) => {
   
         return res.status(200).json({
           status: true,
-          message: "pending bookings",
+          message: "approved bookings",
           data: approved_booking,
         });
       }
