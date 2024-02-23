@@ -13,6 +13,7 @@ var fcm = new FCM(serverkey);
 exports.approveRequest = async (req, res) => {
     try {
       const { id, receiver_id, sender_id } = req.body;
+
       const serverKey = process.env.SERVER_KEY_HERE;
       const fcmUrl = process.env.FCMURL;
 
@@ -35,7 +36,10 @@ exports.approveRequest = async (req, res) => {
   
       const sender = await User.findByPk(sender_id);
       const receiver = await User.findByPk(receiver_id); //RECEIVER expert CA
-  
+      
+  console.log(sender_id);
+  console.log(receiver_id)
+
       if (!receiver || !sender) {
         return res
           .status(404)
@@ -73,7 +77,7 @@ exports.approveRequest = async (req, res) => {
                 image: process.env.IMAGE,
           },
           data: {
-            id: "",
+            sender_id: sender_id,
             user_name: sender.name,
             user_image:
               "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
