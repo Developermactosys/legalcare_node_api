@@ -42,7 +42,7 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: "Top Services"
   },
-  ca_fees :{
+  expert_fees :{
     type : DataTypes.FLOAT
   },
   GST :{
