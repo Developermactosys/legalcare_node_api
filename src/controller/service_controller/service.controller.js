@@ -5,7 +5,7 @@ const services = db.service;
 
 // API for add Services
 const createServices = async(req, res)=>{
-    const { categoryId, subCategoryId,serviceName, expert_id  } = req.body;
+    const { categoryId, subCategoryId,serviceName, expert_id ,service_type } = req.body;
     // const { serviceName } = req.body
     try {
         const findCategory = await category.findByPk(categoryId)
@@ -26,6 +26,7 @@ const createServices = async(req, res)=>{
             subcategoryId: subCategoryId,
             service_img : filePath,
             serviceName : serviceName,
+            service_type:service_type,
             UserId :expert_id
             })
             await addServices.update(req.body)
