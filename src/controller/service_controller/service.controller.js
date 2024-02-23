@@ -179,7 +179,7 @@ const getAllserviceBy_expert_id = async(req, res) => {
           },
         {
             model:subCategory,
-            as:"subCategory",
+            as:"subcategory",
         }],
          limit: limit,
          offset: offset,
