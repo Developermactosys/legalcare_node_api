@@ -54,6 +54,11 @@ exports.get_booking_by_status = async (req, res) => {
         },
         include: [
           {
+            model: User,
+            as: "User",
+            where: { id: Sequelize.col('booking_detail.UserId') }
+          },
+          {
             model: service,
             as: "service",
             include: [
@@ -83,6 +88,11 @@ exports.get_booking_by_status = async (req, res) => {
         },
         include: [
           {
+            model: User,
+            as: "User",
+            where: { id: Sequelize.col('booking_detail.UserId') }
+          },
+          {
             model: service,
             as: "service",
             include: [
@@ -111,6 +121,11 @@ exports.get_booking_by_status = async (req, res) => {
           UserId: user_id,
         },
         include: [
+          {
+            model: User,
+            as: "User",
+            where: { id: Sequelize.col('booking_detail.UserId') }
+          },
           {
             model: service,
             as: "service",
@@ -150,6 +165,11 @@ exports.getAll_bookings = async (req, res) => {
 
     const get_all_booking = await Booking_details.findAll({
       include: [
+        {
+          model: User,
+          as: "User",
+          where: { id: Sequelize.col('booking_detail.UserId') }
+        },
         {
           model: service,
           as: "service",
@@ -191,6 +211,12 @@ exports.get_bookings_by_user_id = async (req, res) => {
     const get_booking = await Booking_details.findAll({
       where: { UserId: user_id },
       include: [
+        {
+          model: User,
+          as: "User",
+          where: { id: Sequelize.col('booking_detail.UserId') }
+        },
+      
         {
           model: service,
           as: "service",
