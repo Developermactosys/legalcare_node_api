@@ -1,8 +1,6 @@
 // models/User.js
 const { Sequelize, DataTypes } = require('sequelize');
 const sequelize = new Sequelize('sqlite::memory:');
-
-
 module.exports = (sequelize, DataTypes) => {
 const User = sequelize.define('User', {
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
@@ -55,6 +53,8 @@ const User = sequelize.define('User', {
   dial_code: DataTypes.STRING,
   is_verify: DataTypes.BOOLEAN,
   login_from: DataTypes.STRING,
+  customer_id: DataTypes.INTEGER,
+  expert_id : DataTypes.INTEGER,
   device_token:DataTypes.STRING,
   follow_count: {
     type: DataTypes.INTEGER,

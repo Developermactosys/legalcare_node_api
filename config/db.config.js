@@ -49,6 +49,7 @@ db.live_event = require("../src/models/live_event_model/live_event.model")(seque
 db.admin_query = require("../src/models/query_model/admin_query.model")(sequelize,DataTypes);
 db.notification = require("../src/models/query_model/notification.model")(sequelize, DataTypes);
 db.expert_review = require("../src/models/review_model/review.model")(sequelize,DataTypes);
+db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
