@@ -154,7 +154,8 @@ const {
     handleTimer,
     handleUserStatusWeb,
     handleRequestSending,
-    handleAcceptRequest
+    handleAcceptRequest, 
+    sendMessage
 } = require('./src/controller/socket_controller/socket.controller');
 
 const Routes = require('./src/routes/main.routes');
@@ -194,6 +195,9 @@ io.on('connection', (socket) => {
     socket.on('disconnect', () => {
         handleDisconnect(socket, users);
     });
+    socket.on("message", (data) => {
+        sendMessage(data, socket);
+      });
 });
 app.use('/', Routes);
 

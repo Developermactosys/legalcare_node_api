@@ -494,7 +494,50 @@ function getCurrent_time() {
     return formattedDate
 }
 
-
+// Define a function to handle sending messages
+const sendMessage = async (data, socket) => {
+    try {
+      // Check if the message type is text
+      if (data.message_type === 'text') {
+        // Fetch the connection_id of the recipient user
+        const recipient = await User.findOne({
+          attributes: ['connection_id'],
+          where: { id: data.to_user_id }
+        });
+  
+        // Insert the message into the database
+        const message = await chat.create({
+            sender_id: data.from_user_id,
+            receiver_id: data.to_user_id,
+          message: data.message,
+          status: "Not Send",
+          sent_date: getCurrentDate(),
+          sent_time: getCurrentTime()
+        });
+  if(data.img_url){
+    message.img_url= data.img_url;
+    await message.save();
+  }
+        // Emit the message data
+        data.id = message.id;
+        data.sent_time = getCurrentTime();
+        if (recipient && recipient.connection_id) {
+          socket.to(recipient.connection_id).emit("message_data", data);
+        } else {
+          // If recipient not found or connection_id is null, emit to all sockets
+          socket.emit("message_data", data);
+        }
+      } else {
+        // Handle other message types here
+        data.id = 0;
+        data.message_time = getCurrentTime();
+        socket.emit("message_data", data);
+      }
+    } catch (error) {
+      console.error(error);
+      // Handle errors here
+    }
+  };
 
 module.exports = { 
     handleUserData, 
@@ -510,5 +553,6 @@ module.exports = {
     checkIsBusyHandler,
     handleApproveWaitingStatus,
     handleCallStatus,
-    handleDisconnect 
+    handleDisconnect ,
+    sendMessage
 };
