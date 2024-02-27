@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           start_date: {
             type: DataTypes.DATEONLY,
-            allowNull: ture
+            allowNull: true
           },
           approve_time: {
             type: DataTypes.TIME,
