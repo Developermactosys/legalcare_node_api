@@ -41,7 +41,7 @@ module.exports = (sequelize, DataTypes) => {
           },
           status: {
             type: DataTypes.STRING,
-            allowNull: ture
+            allowNull: true
           },
           duration: {
             type: DataTypes.INTEGER,
