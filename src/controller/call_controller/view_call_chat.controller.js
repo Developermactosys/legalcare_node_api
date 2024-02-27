@@ -20,8 +20,8 @@ const  Chat = db.chat;
       if (chatHistory.length > 0) {
         return res.status(200).json({
           status: true,
-          data: chatHistory,
           message: 'All Chat Found',
+          data: chatHistory,
         });
       } else {
         return res.status(404).json({

@@ -210,12 +210,12 @@ socket.on("chat_history", async (data) => {
             where: {
                 [Sequelize.Op.or]: [
                     { 
-                        from_user_id: data.from_user_id, 
-                        to_user_id: data.to_user_id 
+                        sender_id: data.from_user_id, 
+                        receiver_id: data.to_user_id 
                     },
                     { 
-                        from_user_id: data.to_user_id, 
-                        to_user_id: data.from_user_id 
+                        receiver_id: data.to_user_id, 
+                        sender_id: data.from_user_id 
                     }
                 ]
             },
@@ -223,8 +223,8 @@ socket.on("chat_history", async (data) => {
         });
 
         var new_data = {
-            from_user_id: data.from_user_id,
-            to_user_id: data.to_user_id,
+            sender_id: data.from_user_id,
+            receiver_id: data.to_user_id,
             data: messages
         };
 

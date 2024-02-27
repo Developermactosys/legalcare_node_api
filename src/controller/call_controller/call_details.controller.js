@@ -43,9 +43,9 @@ const callHistoryController = async (req, res) => {
       }
       
       const response = {
-        data: callDetails,
         status: true,
         message: 'Call History retrieved successfully',
+        data: callDetails,
       };
       res.status(200).json(response);
     } catch (error) {
