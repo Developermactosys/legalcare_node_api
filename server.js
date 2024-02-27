@@ -157,6 +157,10 @@ const {
     handleAcceptRequest
 } = require('./src/controller/socket_controller/socket.controller');
 
+const Routes = require('./src/routes/main.routes');
+
+
+
 // Socket.io connection handler
 let users = {};
 io.on('connection', (socket) => {
@@ -191,6 +195,7 @@ io.on('connection', (socket) => {
         handleDisconnect(socket, users);
     });
 });
+app.use('/', Routes);
 
 // Start server
 const PORT = process.env.PORT || 7878;
