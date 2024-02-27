@@ -138,20 +138,10 @@ app.use(cookieParser());
 app.use(cors()); // Simplified cors setup
 
 
-const handleUserData = require('./src/controller/socket_controller/socket.controller')
-const handleTimer = require('./src/controller/socket_controller/socket.controller')
-const handleUserStatusWeb = require('./src/controller/socket_controller/socket.controller')
-const handleRequestSending = require('./src/controller/socket_controller/socket.controller')
-const handleAcceptRequest = require('./src/controller/socket_controller/socket.controller')
-const handleAstroRequest = require('./src/controller/socket_controller/socket.controller')
-const handleChatHistory = require('./src/controller/socket_controller/socket.controller')
-const fetchChatHistory = require('./src/controller/socket_controller/socket.controller')
-const handleTyping = require('./src/controller/socket_controller/socket.controller')
-const handleForceDisconnect = require('./src/controller/socket_controller/socket.controller')
-const checkIsBusyHandler = require('./src/controller/socket_controller/socket.controller')
-const handleApproveWaitingStatus = require('./src/controller/socket_controller/socket.controller')
-const handleCallStatus = require('./src/controller/socket_controller/socket.controller')
-const handleDisconnect = require('./src/controller/socket_controller/socket.controller')
+const {handleUserData,handleAstroRequest,handleChatHistory,fetchChatHistory,handleTyping,handleForceDisconnect,
+checkIsBusyHandler,handleApproveWaitingStatus,handleCallStatus,handleDisconnect,handleTimer
+,handleUserStatusWeb,handleRequestSending,handleAcceptRequest} = require('./src/controller/socket_controller/socket.controller')
+
 
 // Routes
 const Routes = require('./src/routes/main.routes');
