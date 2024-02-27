@@ -8,7 +8,10 @@ const messageUser = async (req, res) => {
     const newMessage = await Message.create(req.body)
     // Saving the sender_id as UserId in chat table
     newMessage.UserId=sender_id
+
     await newMessage.save();
+
+console.log(newMessage.UserId);
 
     if (newMessage) {
       return res.status(200).json({
