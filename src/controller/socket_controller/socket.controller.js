@@ -7,7 +7,7 @@ const call_details = db.call_details;
 const ChatLog = db.chat_log;
 const Sequelize = require('sequelize');
 const axios = require('axios');
-
+let users = {}
 const handleUserData = async (socket, users, io) => {
     socket.on("user_data", async (data) => {
         try {
