@@ -206,7 +206,7 @@ const handleChatHistory = async (socket) => {
 socket.on("chat_history", async (data) => {
     try {
         // Assuming Message is your Sequelize model for the 'message' table
-        const messages = await ChatRequest.findAll({
+        const messages = await chat.findAll({
             where: {
                 [Sequelize.Op.or]: [
                     { 
