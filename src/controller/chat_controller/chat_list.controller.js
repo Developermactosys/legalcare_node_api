@@ -39,14 +39,16 @@ if(!sender_id && !receiver_id ){
 };
 
 
+
+
 exports.getUserList_by_user_id = async (req, res) => {
   try {
     const { user_id } = req.query;
-    if(!user_id ){
+    if (!user_id) {
       return res.status(400).json({
-        status:false,
-        msg:"Please provide your user_id"
-      })
+        status: false,
+        msg: "Please provide your user_id"
+      });
     }
     // Find all distinct users with whom the specified user has had chats
     const userList = await User.findAll({
@@ -56,9 +58,22 @@ exports.getUserList_by_user_id = async (req, res) => {
           Sequelize.literal(`id IN (SELECT DISTINCT receiver_id FROM chats WHERE sender_id = ${user_id})`)
         ]
       },
-      attributes: ['id', 'name', 'profile_image'],
-      order: [['id','DESC']]
-
+      attributes: [
+        'id',
+        'name',
+        'profile_image',
+        // Subquery to get the last message sent/received by each user
+        [
+          Sequelize.literal('(SELECT message FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
+          'last_message'
+        ],
+        // Subquery to get the last message sent/received date by each user
+        [
+          Sequelize.literal('(SELECT CONCAT(sent_date, " ", sent_time) FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
+          'last_message_date'
+        ]
+      ],
+      order: [['id', 'DESC']]
     });
 
     res.json({
