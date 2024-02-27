@@ -115,46 +115,51 @@
 // http.listen(PORT, () => {
 //     console.log(`Server & Socket.io is running on port ${PORT}`);
 // });
-
 const express = require('express');
 const bodyParser = require('body-parser');
-const multer = require("multer");
 const http = require("http");
-const socketIO = require("socket.io");
+const {Server} = require("socket.io");
 const cookieParser = require('cookie-parser');
 const cors = require("cors");
 const path = require('path');
 
 const app = express();
-const server = http.createServer(app); // Create HTTP server with Express app
-const io = socketIO(server); // Attach Socket.io to the HTTP server
+const server = http.createServer(app);
+const io = new Server(server, {
+    cors: {
+        origin: "*",
+        methods: ["GET", "POST"]
+    }
+});
 
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
-app.use(express.json());
-app.use(express.static("src/uploads"));
+app.use(express.static(path.join(__dirname, "src", "uploads")));
 app.use(cookieParser());
-app.use(cors()); // Simplified cors setup
+app.use(cors());
 
+// Import controller functions
+const {
+    handleUserData,
+    handleAstroRequest,
+    handleChatHistory,
+    fetchChatHistory,
+    handleTyping,
+    handleForceDisconnect,
+    checkIsBusyHandler,
+    handleApproveWaitingStatus,
+    handleCallStatus,
+    handleDisconnect,
+    handleTimer,
+    handleUserStatusWeb,
+    handleRequestSending,
+    handleAcceptRequest
+} = require('./src/controller/socket_controller/socket.controller');
 
-const {handleUserData,handleAstroRequest,handleChatHistory,fetchChatHistory,handleTyping,handleForceDisconnect,
-checkIsBusyHandler,handleApproveWaitingStatus,handleCallStatus,handleDisconnect,handleTimer
-,handleUserStatusWeb,handleRequestSending,handleAcceptRequest} = require('./src/controller/socket_controller/socket.controller')
-
-
-// Routes
-const Routes = require('./src/routes/main.routes');
-app.use('/', Routes);
-
-// Set views
-app.set("views", path.join(__dirname, "views"));
-app.set("view engine", "ejs");
-
-// Socket.io
+// Socket.io connection handler
 let users = {};
 io.on('connection', (socket) => {
-    // Handlers moved here from individual imports
     handleUserData(socket, users, io);
     handleTimer(socket, io);
     handleUserStatusWeb(socket, io);
@@ -162,12 +167,10 @@ io.on('connection', (socket) => {
     handleAcceptRequest(socket, io);
     handleAstroRequest(socket, io);
     handleChatHistory(socket);
-    // fetchChatHistory(socket, data);
 
-  // Assuming 'data' is received from the socket event
-  socket.on('fetch_chat_history', (data) => {
-    fetchChatHistory(socket, data); // Pass 'data' to fetchChatHistory function
-});
+    socket.on('fetch_chat_history', (data) => {
+        fetchChatHistory(socket, data);
+    });
 
     socket.on('typing', (data) => {
         handleTyping(socket, data);
@@ -182,8 +185,11 @@ io.on('connection', (socket) => {
     });
 
     socket.on("approve_waiting_status", (data) => handleApproveWaitingStatus(socket, io, users, data));
-    socket.on("call_status", (data) => handleCallStatus(socket, io, CallDetail, data));
-    socket.on('disconnect', () => handleDisconnect(socket, users));
+    socket.on("call_status", (data) => handleCallStatus(socket, io, data));
+    
+    socket.on('disconnect', () => {
+        handleDisconnect(socket, users);
+    });
 });
 
 // Start server
