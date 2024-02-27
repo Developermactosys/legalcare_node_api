@@ -25,7 +25,7 @@ const handleUserData = async (socket, users, io) => {
             };
             console.log('users array', users);
              const response = { id: data.from_user_id, status: 'Online', is_busy: 1 };
-            io.emit("user_status", response);
+             socket.emit("user_status", response);
         } catch (error) {
             console.error("Error updating user:", error);
             // socket.emit("error", "An error occurred updating user status.");
