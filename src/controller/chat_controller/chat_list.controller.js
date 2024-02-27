@@ -13,11 +13,11 @@ exports.getChatList_by_user_id = async (req, res) => {
     const chatList_as_sender = await Chat.findAll({
       where: { sender_id: user_id },
       attributes: ['id', 'sent_date', 'sent_time', 'message'],
-      include: [{
-        model: User,
-        as: 'User', // Use alias for clarity
-        attributes: ['id', 'name', 'profile_image']
-      }],
+      // include: [{
+      //   model: User,
+      //   as: 'User', // Use alias for clarity
+      //   attributes: ['id', 'name', 'profile_image']
+      // }],
       order: [['sent_date', 'DESC']]
     });
 
@@ -25,11 +25,11 @@ exports.getChatList_by_user_id = async (req, res) => {
     const chatList_as_receiver = await Chat.findAll({
       where: { receiver_id: user_id },
       attributes: ['id', 'sent_date', 'sent_time', 'message'],
-      include: [{
-        model: User,
-        as: 'User', // Use alias for clarity
-        attributes: ['id', 'name', 'profile_image']
-      }],
+      // include: [{
+      //   model: User,
+      //   as: 'User', // Use alias for clarity
+      //   attributes: ['id', 'name', 'profile_image']
+      // }],
       order: [['sent_date', 'DESC']]
     });
 
