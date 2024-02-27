@@ -79,6 +79,7 @@ app.set("view engine", "ejs");
 //     });
 // });
 // Socket.io
+let users = {}
 socketIO.on('connection', (socket) => {
     
     handleUserData(socket, users, io);
@@ -102,7 +103,7 @@ socketIO.on('connection', (socket) => {
         await checkIsBusyHandler(socket, data);
     });
 
-    socket.on("approve_waiting_status", (data) => handleApproveWaitingStatus(socket, io, User, data));
+    socket.on("approve_waiting_status", (data) => handleApproveWaitingStatus(socket, io, users, data));
     socket.on("call_status", (data) => handleCallStatus(socket, io, CallDetail, data));
     socket.on('disconnect', () => handleDisconnect(socket, users));
 
