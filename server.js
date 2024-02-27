@@ -162,7 +162,12 @@ io.on('connection', (socket) => {
     handleAcceptRequest(socket, io);
     handleAstroRequest(socket, io);
     handleChatHistory(socket);
-    fetchChatHistory(socket, data);
+    // fetchChatHistory(socket, data);
+
+  // Assuming 'data' is received from the socket event
+  socket.on('fetch_chat_history', (data) => {
+    fetchChatHistory(socket, data); // Pass 'data' to fetchChatHistory function
+});
 
     socket.on('typing', (data) => {
         handleTyping(socket, data);
