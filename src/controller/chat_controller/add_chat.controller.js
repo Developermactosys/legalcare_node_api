@@ -11,7 +11,7 @@ const messageUser = async (req, res) => {
 
     await newMessage.save();
 
-console.log(newMessage.UserId);
+console.log("=====CHAT=====>",newMessage.UserId);
 
     if (newMessage) {
       return res.status(200).json({
