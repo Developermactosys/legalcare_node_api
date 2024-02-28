@@ -64,7 +64,7 @@ exports.getUserList_by_user_id = async (req, res) => {
         'profile_image',
         // Subquery to get the last message sent/received by each user
         [
-          Sequelize.literal('(SELECT message FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
+          Sequelize.literal('(SELECT chat_message FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
           'last_message'
         ],
         // Subquery to get the last message sent/received date by each user
