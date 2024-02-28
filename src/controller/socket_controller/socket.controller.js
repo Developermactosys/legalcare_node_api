@@ -510,7 +510,7 @@ const sendMessage = async (data, socket) => {
             sender_id: data.from_user_id,
             receiver_id: data.to_user_id,
           message: data.message,
-          status: "Not Send",
+          status: 1,
           sent_date: getCurrentDate(),
           sent_time: getCurrentTime()
         });
