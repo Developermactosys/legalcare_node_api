@@ -530,7 +530,7 @@ const sendMessage = async (data, socket) => {
       } else {
         // Handle other message types here
         data.id = 0;
-        data.message_time = getCurrentTime();
+        data.sent_time = getCurrentTime();
         socket.emit("message_data", data);
       }
     } catch (error) {
