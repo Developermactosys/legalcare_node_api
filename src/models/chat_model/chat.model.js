@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
       request_id : {
         type: DataTypes.INTEGER,
       },
-      message: {
+      chat_message: {
         type: DataTypes.STRING,
       },
       sent_date: {

@@ -419,7 +419,7 @@ const handleDisconnect = async (socket, users, ChatLog, getCurrent_time) => {
                 }, {
                     where: {
                         customer_id: users[socket.id].user_id,
-                        export_id: users[socket.id].astro_id,
+                        expert_id: users[socket.id].astro_id,
                         status: 0 // Include if you're only updating records where status is 0
                     }
                 });
@@ -509,7 +509,7 @@ const sendMessage = async (data, socket) => {
         const message = await chat.create({
             sender_id: data.from_user_id,
             receiver_id: data.to_user_id,
-          message: data.message,
+            chat_message: data.message,
           status: 1,
           sent_date: getCurrentDate(),
           sent_time: getCurrentTime()
