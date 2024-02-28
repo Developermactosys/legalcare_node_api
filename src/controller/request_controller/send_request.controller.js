@@ -39,8 +39,8 @@ console.log(receiver_id)
 
     // const isVideoStatus = is_video == 1 ? "Video_request" : "send_request";
     // const vcParam = is_video == 1 ? "video call" : "chat";
-    const vcParam = is_video === 0 ? "chat" : is_video === 1 ? "video call" : is_video === 2 ? "audio call" : null;
-    const isVideoStatus = is_video === 0 ? "send_request" : is_video === 1 ? "Video_request" : is_video === 2 ? "Audio_request" : null;
+    const isVideoStatus = is_video == 0 ? "send_request" : is_video == 1 ? "Video_request" : is_video == 2 ? "Audio_request" : null;
+    const vcParam = is_video == 0 ? "chat" : is_video == 1 ? "video call" : is_video == 2 ? "audio call" : null;
 
     if (!vcParam || !isVideoStatus) {
       return res.status(400).json({ message: "Invalid request type" });
