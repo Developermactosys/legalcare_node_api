@@ -1,4 +1,4 @@
-const moment= require('moment')
+require('moment')
 const db = require("../../../config/db.config")
 const User =db.User; 
 const ChatRequest = db.chat_request;
@@ -523,9 +523,14 @@ const sendMessage = async (data, socket) => {
         data.sent_time = getCurrentTime();
         if (recipient && recipient.connection_id) {
           socket.to(recipient.connection_id).emit("message_data", data);
+
+          console.log("message_data", data);
+
         } else {
           // If recipient not found or connection_id is null, emit to all sockets
           socket.emit("message_data", data);
+          console.log("error : message_data", data);
+
         }
       } else {
         // Handle other message types here
