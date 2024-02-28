@@ -37,8 +37,14 @@ console.log(receiver_id)
       return res.status(404).json({ message: "User not found" });
     }
 
-    const isVideoStatus = is_video == 1 ? "Video_request" : "send_request";
-    const vcParam = is_video == 1 ? "video call" : "chat";
+    // const isVideoStatus = is_video == 1 ? "Video_request" : "send_request";
+    // const vcParam = is_video == 1 ? "video call" : "chat";
+    const vcParam = is_video === 0 ? "chat" : is_video === 1 ? "video call" : is_video === 2 ? "audio call" : null;
+    const isVideoStatus = is_video === 0 ? "send_request" : is_video === 1 ? "Video_request" : is_video === 2 ? "Audio_request" : null;
+
+    if (!vcParam || !isVideoStatus) {
+      return res.status(400).json({ message: "Invalid request type" });
+    }
 
     const astroCharge = receiver.per_minute * 5;
 
@@ -62,7 +68,7 @@ console.log(receiver_id)
           title: `Incoming ${vcParam} request from ${sender.name}`,
           body: `Incoming ${vcParam} request from ${sender.name}`,
           priority: "high",
-          image: `../uploads/${sender.profile_image}`,
+          image: `/src/uploads/profile_image/${sender.profile_image}`,
         },
         data: {
           click_action: "FLUTTER_NOTIFICATION_CLICK",
@@ -75,13 +81,13 @@ console.log(receiver_id)
           free_time: receiver.free_time,
           channel_token,
           channel_name,
-          user_image: `../uploads/${sender.profile_image}`,
+          user_image: `/src/uploads/profile_image/${sender.profile_image}`,
           type: "astrologer",
           notification_type: isVideoStatus,
           time: Date.now(),
           title: `Incoming chat request from ${sender.name}`,
           icon: "",
-          image: `../uploads/${sender.profile_image}`,
+          image: `/src/uploads/profile_image/${sender.profile_image}`,
           sound: "",
         },
       };
