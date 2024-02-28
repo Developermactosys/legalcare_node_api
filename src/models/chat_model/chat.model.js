@@ -23,7 +23,7 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.DATEONLY,
       },
       sent_time: {
-        type: DataTypes.TIME,
+        type: DataTypes.STRING,
       },
       status: {
         type: DataTypes.INTEGER, // Assuming status is an integer, you can adjust the type accordingly
