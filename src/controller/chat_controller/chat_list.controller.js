@@ -30,7 +30,7 @@ if(!sender_id && !receiver_id ){
       ]
       },
       // attributes: [ 'message','sent_date', 'sent_time' ],
-      order: [['id', 'DESC']]
+      // order: [['id', 'DESC']]
     });
 
     res.json({
