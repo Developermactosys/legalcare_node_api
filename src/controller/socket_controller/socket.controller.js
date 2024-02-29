@@ -223,8 +223,8 @@ socket.on("chat_history", async (data) => {
         });
 
         var new_data = {
-            from_user_id: data.from_user_id,
-            to_user_id: data.to_user_id,
+            // from_user_id: data.from_user_id,
+            // to_user_id: data.to_user_id,
             data: messages
         };
 
