@@ -7,10 +7,10 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull : false
       },
-      sender_id: {
+      from_user_id: {
         type: DataTypes.INTEGER,
       },
-      receiver_id: {
+      to_user_id: {
         type: DataTypes.INTEGER,
       },
       request_id : {
@@ -19,17 +19,21 @@ module.exports = (sequelize, DataTypes) => {
       chat_message: {
         type: DataTypes.STRING,
       },
-      sent_date: {
+      message_date: {
         type: DataTypes.DATEONLY,
       },
-      sent_time: {
+      message_time: {
         type: DataTypes.STRING,
       },
-      status: {
+      message_status: {
         type: DataTypes.INTEGER, // Assuming status is an integer, you can adjust the type accordingly
         allowNull: true, // Modify as per your requirement
       },
-      img_url: {
+      image: {
+        type: DataTypes.STRING,
+        allowNull: true,
+      },
+      message_type: {
         type: DataTypes.STRING,
         allowNull: true,
       },

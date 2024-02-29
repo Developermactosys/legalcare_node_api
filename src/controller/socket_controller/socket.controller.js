@@ -120,8 +120,8 @@ const handleRequestSending = async (socket, io) => {
     socket.on("send_request", async (data) => {
         try {
             const createdRequest = await chat.create({
-                sender_id: data.senderId,
-                receiver_id: data.receiverId,
+                from_user_id: data.senderId,
+                to_user_id: data.receiverId,
                 // Add other fields as necessary
             });
 
@@ -210,12 +210,12 @@ socket.on("chat_history", async (data) => {
             where: {
                 [Sequelize.Op.or]: [
                     { 
-                        sender_id: data.from_user_id, 
-                        receiver_id: data.to_user_id 
+                        from_user_id: data.from_user_id, 
+                        to_user_id: data.to_user_id 
                     },
                     { 
-                        receiver_id: data.to_user_id, 
-                        sender_id: data.from_user_id 
+                        to_user_id: data.to_user_id, 
+                        from_user_id: data.from_user_id 
                     }
                 ]
             },
@@ -223,8 +223,8 @@ socket.on("chat_history", async (data) => {
         });
 
         var new_data = {
-            sender_id: data.from_user_id,
-            receiver_id: data.to_user_id,
+            from_user_id: data.from_user_id,
+            to_user_id: data.to_user_id,
             data: messages
         };
 
@@ -507,20 +507,20 @@ const sendMessage = async (data, socket) => {
   
         // Insert the message into the database
         const message = await chat.create({
-            sender_id: data.from_user_id,
-            receiver_id: data.to_user_id,
+            from_user_id: data.from_user_id,
+            to_user_id: data.to_user_id,
             chat_message: data.message,
-          status: 1,
-          sent_date: getCurrentDate(),
-          sent_time: getCurrentTime()
+            message_status: 1,
+            message_date: getCurrentDate(),
+            message_time: getCurrentTime()
         });
-  if(data.img_url){
-    message.img_url= data.img_url;
+  if(data.image){
+    message.image= data.image;
     await message.save();
   }
         // Emit the message data
         data.id = message.id;
-        data.sent_time = getCurrentTime();
+        data.message_time = getCurrentTime();
         if (recipient && recipient.connection_id) {
           socket.to(recipient.connection_id).emit("message_data", data);
 
@@ -535,7 +535,7 @@ const sendMessage = async (data, socket) => {
       } else {
         // Handle other message types here
         data.id = 0;
-        data.sent_time = getCurrentTime();
+        data.message_time = getCurrentTime();
         socket.emit("message_data", data);
       }
     } catch (error) {

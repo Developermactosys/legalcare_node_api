@@ -19,8 +19,8 @@ if(!sender_id && !receiver_id ){
     const chatList = await Chat.findAll({
       where: {
         [Op.and]: [
-          { sender_id: sender_id },
-          { receiver_id: receiver_id }
+          { from_user_id: sender_id },
+          { to_user_id: receiver_id }
         ]
       },
       // attributes: [ 'message','sent_date', 'sent_time' ],
@@ -54,8 +54,8 @@ exports.getUserList_by_user_id = async (req, res) => {
     const userList = await User.findAll({
       where: {
         [Op.or]: [
-          Sequelize.literal(`id IN (SELECT DISTINCT sender_id FROM chats WHERE receiver_id = ${user_id})`),
-          Sequelize.literal(`id IN (SELECT DISTINCT receiver_id FROM chats WHERE sender_id = ${user_id})`)
+          Sequelize.literal(`id IN (SELECT DISTINCT from_user_id FROM chats WHERE to_user_id = ${user_id})`),
+          Sequelize.literal(`id IN (SELECT DISTINCT to_user_id FROM chats WHERE from_user_id = ${user_id})`)
         ]
       },
       attributes: [
@@ -64,12 +64,12 @@ exports.getUserList_by_user_id = async (req, res) => {
         'profile_image',
         // Subquery to get the last message sent/received by each user
         [
-          Sequelize.literal('(SELECT chat_message FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
+          Sequelize.literal('(SELECT chat_message FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) ORDER BY message_date DESC, message_time DESC LIMIT 1)'),
           'last_message'
         ],
         // Subquery to get the last message sent/received date by each user
         [
-          Sequelize.literal('(SELECT CONCAT(sent_date, " ", sent_time) FROM chats WHERE (sender_id = User.id OR receiver_id = User.id) ORDER BY sent_date DESC, sent_time DESC LIMIT 1)'),
+          Sequelize.literal('(SELECT CONCAT(message_date, " ", message_time) FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) ORDER BY message_date DESC, message_time DESC LIMIT 1)'),
           'last_message_date'
         ]
       ],
