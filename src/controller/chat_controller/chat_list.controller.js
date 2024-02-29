@@ -18,10 +18,16 @@ if(!sender_id && !receiver_id ){
     // Find all chats where the user is either the sender or the receiver
     const chatList = await Chat.findAll({
       where: {
-        [Op.and]: [
-          { from_user_id: sender_id },
-          { to_user_id: receiver_id }
-        ]
+        [Sequelize.Op.or]: [
+          { 
+              from_user_id: sender_id, 
+              to_user_id: receiver_id 
+          },
+          { 
+              from_user_id: receiver_id, 
+              to_user_id: sender_id 
+          }
+      ]
       },
       // attributes: [ 'message','sent_date', 'sent_time' ],
       order: [['id', 'DESC']]
