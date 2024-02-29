@@ -511,6 +511,7 @@ const sendMessage = async (data, socket) => {
             to_user_id: data.to_user_id,
             chat_message: data.message,
             message_status: 1,
+            message_type :data.message_type,
             message_date: getCurrentDate(),
             message_time: getCurrentTime()
         });
