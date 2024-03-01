@@ -19,9 +19,7 @@ exports.approveRequest = async (req, res) => {
 
     const isVideoStatus = is_video == 0 ? "send_request" : is_video == 1 ? "Video_request" : is_video == 2 ? "Audio_request" : null;
     const vcParam = is_video == 0 ? "chat" : is_video == 1 ? "video call" : is_video == 2 ? "audio call" : null;
-    
-    if(isVideoStatus==0 && vcParam==0){
-
+    if(isVideoStatus=="send_request" && vcParam=="chat"){
     // Update chat_request status and notify_user
     await chat_request.update(
       {
@@ -115,7 +113,7 @@ exports.approveRequest = async (req, res) => {
      }
    }
     
-    else  if(isVideoStatus==1 && vcParam==1){
+    else  if(isVideoStatus=="Video_request"  && vcParam=="video call"){
 
       // Update chat_request status and notify_user
       await chat_request.update(
@@ -210,7 +208,7 @@ exports.approveRequest = async (req, res) => {
        }
      }
 
-   else  if(isVideoStatus==2 && vcParam==2){
+   else  if(isVideoStatus=="Audio_request" && vcParam=="audio call"){
 
     // Update chat_request status and notify_user
     await chat_request.update(
