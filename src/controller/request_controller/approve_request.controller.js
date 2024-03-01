@@ -13,7 +13,7 @@ var fcm = new FCM(serverkey);
 
 exports.approveRequest = async (req, res) => {
   try {
-    const { id, receiver_id, sender_id } = req.body;
+    const { id, receiver_id, sender_id, is_video } = req.body;
     const serverKey = process.env.SERVER_KEY_HERE;
     const fcmUrl = process.env.FCMURL;
 
