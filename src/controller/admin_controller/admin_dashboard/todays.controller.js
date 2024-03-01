@@ -1,7 +1,8 @@
 const db = require("../../../../config/db.config");
 const User = db.User;
-const Chat = db.chat;
-const { Op } = require("sequelize");
+const chat = db.chat;
+const { Op ,Sequelize} = require("sequelize");
+const { QueryTypes } = require('sequelize')
 const moment = require("moment");
 
 exports.todaysUserCount = async (req, res) => {
@@ -80,56 +81,42 @@ exports.todaysExpertCount = async (req, res) => {
     }
   };
 
+ 
   exports.todaysChatCount = async (req, res) => {
     try {
       const today = moment().startOf('day');
       const tomorrow = moment(today).add(1, 'days');
     
-      const regular_user_type = "1"; // Regular user type
-      const expert_user_type = "2"; // Expert user type
-    
-      // Count users of type 1 (regular users)
-      const countUsers = await User.findAndCountAll({
+      // Find all distinct users with whom chats have occurred today
+      const userList = await User.findAll({
         where: {
-          createdAt: {
-            [Op.between]: [today, tomorrow]
-          },
-          user_type: regular_user_type,
-        },
-        order: [['id', 'DESC']]
-      });
-    
-      // Count chats between regular users and experts
-      const countChats = await Chat.findAndCountAll({
-        where: {
-          createdAt: {
-            [Op.between]: [today, tomorrow]
-          },
           [Op.or]: [
-            { user_type: regular_user_type, user_type: expert_user_type }, // Sender is a regular user and receiver is an expert
-            { user_type: expert_user_type, user_type: regular_user_type }  // Sender is an expert and receiver is a regular user
+            Sequelize.literal(`id IN (SELECT DISTINCT from_user_id FROM chats WHERE to_user_id IN (SELECT id FROM users WHERE createdAt BETWEEN '${today}' AND '${tomorrow}'))`),
+            Sequelize.literal(`id IN (SELECT DISTINCT to_user_id FROM chats WHERE from_user_id IN (SELECT id FROM users WHERE createdAt BETWEEN '${today}' AND '${tomorrow}'))`)
           ]
         },
-        order: [['id', 'DESC']]
+        attributes: [
+          'id',
+          'name',
+          'profile_image',
+          // Subquery to count the number of chats exchanged by each user today
+          [
+            Sequelize.literal(`(SELECT COUNT(*) FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) AND createdAt BETWEEN '${today}' AND '${tomorrow}')`),
+            'chat_count'
+          ],
+        ],
+        order: [['id', 'DESC']],
+        logging: console.log,
       });
-    
-      if (countUsers && countChats) {
-        return res.status(200).json({
-          status: true,
-          message: "Show Data and Count all data",
-          userCount: countUsers.count,
-          chatCount: countChats.count,
-        });
-      } else {
-        return res.status(400).json({
-          status: false,
-          message: "Data not found",
-        });
-      }
+  
+      res.json({
+        status: true,
+        message: "User chat count retrieved successfully",
+        userList: userList
+      });
     } catch (error) {
-      return res.status(500).json({
-        status: false,
-        message: error.message,
-      });
+      console.error(error);
+      res.status(500).json({ status: false, message: "Internal server error" });
     }
   };
+  
