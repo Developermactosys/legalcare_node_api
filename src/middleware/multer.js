@@ -45,7 +45,7 @@ const uploads = multer({
     fileSize: 5000000, // 5000000 Bytes = 5 MB
   },
   fileFilter(req, file, cb) {
-    if (!file.originalname.match(/\.(png|jpg)$/)) {
+    if (!file.originalname.match(/\.(png|jpg|jpeg|doc|docx|pdf|txt|xls|xlsx|ppt|pptx)$/)) {
       // upload only png and jpg format
       return cb(new Error("Please upload an Image"));
     }
