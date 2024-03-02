@@ -70,7 +70,7 @@ const sendMessageWithImage = async (req, res) => {
       const message = await Message.create({
           from_user_id,
           to_user_id,
-          message_status: 'Not Send',
+          message_status: 1,
           chat_message: filePathMessage, // Assuming you store image path as chat_message
           image: filePathMessage,
           message_time: new Date().toLocaleTimeString(),
