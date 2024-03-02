@@ -539,11 +539,16 @@ const sendMessage = async (data, socket) => {
         data.message_time = getCurrentTime();
         socket.emit("message_data", data);
       }
+      return socket.status(200).json({
+        status : true
+      })
     } catch (error) {
       console.error(error);
       // Handle errors here
     }
   };
+
+
 
 module.exports = { 
     handleUserData, 
@@ -561,4 +566,5 @@ module.exports = {
     handleCallStatus,
     handleDisconnect ,
     sendMessage
+    
 };

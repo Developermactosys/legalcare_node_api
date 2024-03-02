@@ -179,7 +179,7 @@ exports.approveRequest = async (req, res) => {
                     type: "customer",
                     notification_type: "video_approved",
                     time: Date.now(),
-                    title: `Chat request approved by ${sender.name}`,
+                    title: `Video request approved by ${sender.name}`,
                     icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
                     image: `${sender_profile_image}${sender.profile_image}`,
                     sound:
@@ -274,7 +274,7 @@ exports.approveRequest = async (req, res) => {
                   type: "customer",
                   notification_type: "audio_approved",
                   time: Date.now(),
-                  title: `Chat request approved by ${sender.name}`,
+                  title: `Audio request approved by ${sender.name}`,
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
                   image: `${sender_profile_image}${sender.profile_image}`,
                   sound:

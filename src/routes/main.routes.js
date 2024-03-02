@@ -21,7 +21,7 @@ const serviceRoutes =  require("./service_routes/service.routes")
 const refreshTokenRoutes = require("./refreshToken_routes/refreshToken.routes");
 const testimonialRoutes = require("./testimonial_routes/testimonial.routes")
 const reviewRoutes = require("./review_routes/review.routes");
-
+const message_imageRoutes = require("./message_image_routes/message_image.routes");
 // Admin
 const adminRoutes = require("./admin_routes/admin.routes");
 const bannerRoutes = require("./admin_routes/banner_routes/banner.routes")
@@ -48,7 +48,7 @@ router.use("/",serviceRoutes);
 router.use("/",refreshTokenRoutes);
 router.use("/",testimonialRoutes);
 router.use("/",reviewRoutes);
-
+router.use("/",message_imageRoutes)
 //Admin
 router.use("/",adminRoutes);
 router.use("/",bannerRoutes);

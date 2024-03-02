@@ -56,7 +56,44 @@ const getAllMessages = async (req, res) => {
   }
 };
 
+
+const sendMessageWithImage = async (req, res) => {
+  try {
+      const { from_user_id, to_user_id, message_type} = req.body;
+
+      // Assuming you have already handled file upload and stored the file path in req.file.path
+      const filePathMessage = req.file
+      ? `chat_message/${req.file.filename}`
+      : "/src/uploads/chat_message/default.png";
+      
+
+      const message = await Message.create({
+          from_user_id,
+          to_user_id,
+          message_status: 'Not Send',
+          chat_message: filePathMessage, // Assuming you store image path as chat_message
+          image: filePathMessage,
+          message_time: new Date().toLocaleTimeString(),
+          message_type,
+          message_date: new Date().toISOString().split('T')[0],
+      });
+
+      return res.json({
+          status: true,
+          data: message,
+          message: 'Message sent successfully',
+      });
+  } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+          status: false,
+          error: 'Internal server error',
+      });
+  }
+};
+
 module.exports = {
     messageUser,
-    getAllMessages
+    getAllMessages,
+    sendMessageWithImage
 }
