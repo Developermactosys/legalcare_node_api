@@ -1,11 +1,12 @@
 require('dotenv').config()
-const { DB_HOST, DB_NAME, DB_PASSWORD, DB_USERNAME } = process.env
+const { DB_HOST, DB_NAME, DB_USERNAME, DB_PASSWORD } = process.env
 const { Sequelize, DataTypes } = require('sequelize')
 
 const sequelize = new Sequelize(DB_NAME, DB_USERNAME, DB_PASSWORD, {
     host: DB_HOST,
     dialect: 'mysql',
-    logging: false
+    logging: false,
+    
 })
 
 try {
