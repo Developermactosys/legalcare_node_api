@@ -9,6 +9,7 @@ const axios = require('axios')
 const { Op } = require('sequelize')
 var FCM = require("fcm-node");
 const serverkey =process.env.SERVER_KEY_HERE;
+const sender_profile_image = process.env.IMAGE
 var fcm = new FCM(serverkey);
 
 exports.approveRequest = async (req, res) => {
@@ -72,7 +73,8 @@ exports.approveRequest = async (req, res) => {
                   title: `Your request has been accepted by ${sender.name}`,
                       body: `Your request has been accepted by ${sender.name}`,
                       priority: "high",
-                      image: process.env.IMAGE,
+                      image: `${sender_profile_image}${sender.profile_image}`,
+        
                 },
                 data: {
                   sender_id: sender_id,
@@ -84,7 +86,7 @@ exports.approveRequest = async (req, res) => {
                   time: Date.now(),
                   title: `Chat request approved by ${sender.name}`,
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                  image: process.env.IMAGE,
+                  image: `${sender_profile_image}${sender.profile_image}`,
                   sound:
                     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                 },
@@ -167,7 +169,7 @@ exports.approveRequest = async (req, res) => {
                     title: `Your request has been accepted by ${sender.name}`,
                         body: `Your request has been accepted by ${sender.name}`,
                         priority: "high",
-                        image: process.env.IMAGE,
+                        image: `${sender_profile_image}${sender.profile_image}`,
                   },
                   data: {
                     sender_id: sender_id,
@@ -179,7 +181,7 @@ exports.approveRequest = async (req, res) => {
                     time: Date.now(),
                     title: `Chat request approved by ${sender.name}`,
                     icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                    image: process.env.IMAGE,
+                    image: `${sender_profile_image}${sender.profile_image}`,
                     sound:
                       "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                   },
@@ -262,7 +264,7 @@ exports.approveRequest = async (req, res) => {
                   title: `Your request has been accepted by ${sender.name}`,
                       body: `Your request has been accepted by ${sender.name}`,
                       priority: "high",
-                      image: process.env.IMAGE,
+                      image: `${sender_profile_image}${sender.profile_image}`,
                 },
                 data: {
                   sender_id: sender_id,
@@ -274,7 +276,7 @@ exports.approveRequest = async (req, res) => {
                   time: Date.now(),
                   title: `Chat request approved by ${sender.name}`,
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                  image: process.env.IMAGE,
+                  image: `${sender_profile_image}${sender.profile_image}`,
                   sound:
                     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                 },

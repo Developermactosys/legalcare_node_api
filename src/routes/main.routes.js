@@ -26,8 +26,9 @@ const reviewRoutes = require("./review_routes/review.routes");
 const adminRoutes = require("./admin_routes/admin.routes");
 const bannerRoutes = require("./admin_routes/banner_routes/banner.routes")
 const adminDashboardRoutes = require("./admin_routes/admin_dashboard/todays.routes");
+const Your_channel = require('./agora_routes/channel.route');
 
-
+router.use('/', Your_channel);
 router.use("/",bankRoutes);
 router.use("/",callRoutes);
 router.use("/",chatRoutes);
