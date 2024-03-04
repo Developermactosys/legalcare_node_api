@@ -16,7 +16,7 @@ const createCategory = async (req, res) => {
       status,
       description,
       color,
-      image: filePath,
+      category_image: filePath,
     });
 
     return res.status(200).json({
@@ -122,7 +122,7 @@ const updateCategory = async (req, res) => {
           status,
           description,
           color,
-          image: filePath,
+          category_image: filePath,
         },
         {
           where: { id: req.param.id },
