@@ -146,6 +146,38 @@ const getBankDetails = async (req, res) => {
     }
   };
 
+  const editBankInfo = async (req, res) => {
+    const caId = req.params.id;
+    try {
+      const bankInfo = await BankDetails.findOne({
+        where: {
+          astro_id: caId,
+        },
+      });
+  
+      if (!bankInfo) {
+        return res.json({
+          message: "Bank information not found for the provided CA ID",
+        });
+      }
+  
+      const updatedBankInfo = await bankInfo.update(req.body);
+  
+      return res.json({
+        success: true,
+        message: "Bank information updated successfully",
+        data: updatedBankInfo,
+      });
+    } catch (error) {
+      // Handle errors
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
+
 module.exports = {
-    saveBankDetails,getBankDetails,getBankDetailsById
+    saveBankDetails,getBankDetails,getBankDetailsById,editBankInfo
 };

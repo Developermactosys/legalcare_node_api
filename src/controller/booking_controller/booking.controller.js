@@ -15,12 +15,15 @@ exports.Add_Booking = async (req, res) => {
     if (isEmptykey) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
+
+    const findService = await service.findByPk(serviceId)
     const add_booking = await Booking_details.create(req.body);
 
     add_booking.serviceId = serviceId;
     add_booking.discounted_amount = discounted_amount;
     add_booking.GST = GST;
     add_booking.UserId = user_id;
+    add_booking.expert_id = findService.UserId;
 
     await add_booking.save();
 
@@ -209,12 +212,22 @@ exports.get_bookings_by_user_id = async (req, res) => {
     const pageSize = parseInt(req.query.pageSize) || 5;
     const offset = (page - 1) * pageSize;
     const get_booking = await Booking_details.findAll({
-      where: { UserId: user_id },
+      // where: { UserId: user_id },
+      where: {
+        [Sequelize.Op.or]: [
+          { 
+              UserId: user_id, 
+          },
+          { 
+            expert_id: user_id, 
+          }
+      ]
+      },
       include: [
         {
           model: User,
           as: "User",
-          where: { id: Sequelize.col('booking_detail.UserId') }
+          where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
         },
       
         {
@@ -233,6 +246,33 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
       limit: pageSize,
     })
+    if(get_booking==[]){
+      const get_booking = await Booking_details.findAll({
+        where: { UserId: user_id },
+        include: [
+          {
+            model: User,
+            as: "User",
+            where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
+          },
+        
+          {
+            model: service,
+            as: "service",
+            include: [
+              {
+                model: User,
+                as: "User",
+                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+              }
+            ]
+          }
+        ],
+        order: [['createdAt', 'DESC']],
+        offset: offset,
+        limit: pageSize,
+      })
+    }
 
     return res.status(200).json({
       status: true,
@@ -249,8 +289,6 @@ exports.get_bookings_by_user_id = async (req, res) => {
     });
   }
 }
-
-
 
 // Cancle Booking 
 exports.Cancle_booking_by_id = async (req, res) => {
@@ -277,3 +315,34 @@ exports.Cancle_booking_by_id = async (req, res) => {
     });
   }
 }
+
+exports.update_Booking_by_status = async (req, res) => {
+  try {
+    const { status } = req.body;
+
+    const isEmptykey = Object.keys(req.body).some((key) => {
+      const value = req.body[key];
+      return value === "" || value === null || value === undefined;
+    });
+    if (isEmptykey) {
+      return res.status(400).json({ error: "please do not give empty fileds" });
+    }
+    const add_booking = await Booking_details.create(req.body);
+
+    add_booking.serviceId = serviceId;
+    add_booking.discounted_amount = discounted_amount;
+    add_booking.GST = GST;
+    add_booking.UserId = user_id;
+
+    await add_booking.save();
+
+    return res.status(200).json({
+      status: true,
+      message: "Booked successfully",
+      data: add_booking,
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};

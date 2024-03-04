@@ -28,11 +28,15 @@ module.exports = (sequelize, DataTypes) => {
       GST : {
         type : DataTypes.FLOAT,
       },
+
       status: {
         type: DataTypes.ENUM,
         values: ["pending", "approved", "reject"],
         allowNull: false,
         defaultValue: "pending"
+    },
+    expert_id : {
+      type : DataTypes.INTEGER,
     },
       deleted_At: {
         type: DataTypes.DATE,
