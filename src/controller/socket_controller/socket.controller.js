@@ -510,7 +510,7 @@ const sendMessage = async (data, socket) => {
             from_user_id: data.from_user_id,
             to_user_id: data.to_user_id,
             chat_message: data.message,
-            message_status: 1,
+            message_status: 0,
             message_type :data.message_type,
             message_date: getCurrentDate(),
             message_time: getCurrentTime()
@@ -548,9 +548,23 @@ const sendMessage = async (data, socket) => {
     }
   };
 
+  const updateMessageStatus = async (data) => {
+    try {
+        await chat.update(
+            { message_status: data.action },
+            { where: { id: data.id } }
+        );
+        // Assuming socketIO is defined elsewhere
+        socketIO.emit("update_message_data", data);
 
+    } catch (error) {
+        // Handle errors here
+        console.error("Error updating message status:", error);
+    }
+};
 
 module.exports = { 
+    
     handleUserData, 
     handleTimer, 
     handleUserStatusWeb, 
@@ -565,6 +579,7 @@ module.exports = {
     handleApproveWaitingStatus,
     handleCallStatus,
     handleDisconnect ,
-    sendMessage
+    sendMessage,
+    updateMessageStatus
     
 };

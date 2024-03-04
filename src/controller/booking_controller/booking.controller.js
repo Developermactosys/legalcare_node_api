@@ -3,7 +3,8 @@ const { where,Sequelize } = require("sequelize");
 const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
-const User = db.User
+const User = db.User;
+
 exports.Add_Booking = async (req, res) => {
   try {
     const { serviceId, discounted_amount, GST, user_id } = req.body;
@@ -160,7 +161,6 @@ exports.get_booking_by_status = async (req, res) => {
     });
   }
 };
-
 
 // get all Bookings 
 exports.getAll_bookings = async (req, res) => {
@@ -334,6 +334,40 @@ exports.update_Booking_by_status = async (req, res) => {
         where: {
           id:id,
           status: "Pending",
+          payment_status:"paid"
+        },
+      }
+    );
+
+    return res.status(200).json({
+      status: true,
+      message: "Updated successfully",
+    });
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
+};
+
+exports.update_Booking_by_payment_status = async (req, res) => {
+  try {
+    const { payment_status ,id } = req.body;
+
+  
+    if (!payment_status) {
+      return res.status(400).json({ error: "please do not give empty fileds" });
+    }
+
+    const add_booking = await Booking_details.update( 
+       
+      {
+        payment_status: payment_status,
+      },
+      {
+        where: {
+          id:id,
+          status: "Pending",
+          payment_status:"paid"
         },
       }
     );

@@ -6,7 +6,7 @@ const TransactionHistory = db.transaction_history;
 
 const deductWalletAmount = async (req, res) => {
   try {
-    const { user_id, payment_method, amount, transaction_id, device_id, payment_status } = req.body;
+    const { user_id, payment_method, amount, transaction_id, device_id, payment_status,expert_id } = req.body;
 
     // Check for empty or undefined fields
     const isEmptyKey = Object.values(req.body).some(value => value === '' || value === null || value === undefined);
@@ -48,6 +48,9 @@ const deductWalletAmount = async (req, res) => {
       device_id,
       status: 1
     });
+
+    const walletSystem_of_expert  = await WalletSystem.findOne({ where: { UserId: expert_id } });
+    const walletSystem_of_admin = await WalletSystem.findOne({ where: { UserId: expert_id } });
 
     return res.json({ status: true, message: "Wallet amount updated successfully", wallet_amount: newBalance });
   } catch (error) {

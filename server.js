@@ -155,7 +155,8 @@ const {
     handleUserStatusWeb,
     handleRequestSending,
     handleAcceptRequest, 
-    sendMessage
+    sendMessage,
+    updateMessageStatus
 } = require('./src/controller/socket_controller/socket.controller');
 
 const Routes = require('./src/routes/main.routes');
@@ -198,6 +199,10 @@ io.on('connection', (socket) => {
     socket.on("message", (data) => {
         sendMessage(data, socket);
       });
+    socket.on("update_message_status", (data) => {
+    updateMessageStatus(data);
+});
+
 });
 app.use('/', Routes);
 
