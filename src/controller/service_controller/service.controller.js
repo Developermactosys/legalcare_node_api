@@ -2,7 +2,8 @@ const db = require("../../../config/db.config")
 const category = db.category;
 const subCategory = db.subcategory;
 const services = db.service;
-
+const User = db.User;
+const {Sequelize} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
     const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees} = req.body;
@@ -125,14 +126,20 @@ const getServiceBy_expertId = async(req, res) => {
             UserId:expert_id,
             service_type :service_type,
         },
-        include:[{
-            model: category,
-            as: "category",
-          },
-        {
-            model:subCategory,
-            as:"subcategory",
-        }],
+        include: [
+            {
+                model: User,
+                as: "User",
+            },
+            {
+                model: category,
+                as: "category",
+            },
+            {
+                model: subCategory,
+                as: "subcategory",
+            }
+        ],
          limit: limit,
          offset: offset,
     })

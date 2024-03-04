@@ -318,28 +318,29 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status } = req.body;
+    const { status ,id } = req.body;
 
-    const isEmptykey = Object.keys(req.body).some((key) => {
-      const value = req.body[key];
-      return value === "" || value === null || value === undefined;
-    });
-    if (isEmptykey) {
+  
+    if (!status) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
-    const add_booking = await Booking_details.create(req.body);
 
-    add_booking.serviceId = serviceId;
-    add_booking.discounted_amount = discounted_amount;
-    add_booking.GST = GST;
-    add_booking.UserId = user_id;
-
-    await add_booking.save();
+    const add_booking = await Booking_details.update( 
+       
+      {
+        status: status,
+      },
+      {
+        where: {
+          id:id,
+          status: "Pending",
+        },
+      }
+    );
 
     return res.status(200).json({
       status: true,
-      message: "Booked successfully",
-      data: add_booking,
+      message: "Updated successfully",
     });
   } catch (error) {
     console.error(error);
