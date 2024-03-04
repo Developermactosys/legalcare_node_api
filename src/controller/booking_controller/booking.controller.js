@@ -318,7 +318,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status ,id } = req.body;
+    const { status ,booking_id } = req.body;
 
   
     if (!status) {
@@ -332,7 +332,7 @@ exports.update_Booking_by_status = async (req, res) => {
       },
       {
         where: {
-          id:id,
+          id:booking_id,
           status: "Pending",
           payment_status:"paid"
         },
@@ -351,7 +351,7 @@ exports.update_Booking_by_status = async (req, res) => {
 
 exports.update_Booking_by_payment_status = async (req, res) => {
   try {
-    const { payment_status ,id } = req.body;
+    const { payment_status ,booking_id } = req.body;
 
   
     if (!payment_status) {
@@ -365,16 +365,15 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       },
       {
         where: {
-          id:id,
-          status: "Pending",
-          payment_status:"paid"
+          id:booking_id,
+          payment_status:"unpaid"
         },
       }
     );
 
     return res.status(200).json({
       status: true,
-      message: "Updated successfully",
+      message: "Payment_Status Updated successfully",
     });
   } catch (error) {
     console.error(error);
