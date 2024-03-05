@@ -441,39 +441,39 @@ exports.update_Booking_by_status = async (req, res) => {
       }
     );
 
-    const  user = await User.findByPk(add_booking.UserId)
-    const expert= await User.findByPk(add_booking.expert_id)
-    const expert_name = expert.name
+  //   const  user = await User.findByPk(add_booking.UserId)
+  //   const expert= await User.findByPk(add_booking.expert_id)
+  //   const expert_name = expert.name
 
-    var message = {
-      token: user.device_id, // Assuming the user model has a device_id field
-      notification: {
-        title: `Booking Confirmation`,
-        body: `Booking for service  ${service_name} is made ${status} by ${expert_name}.`,
-      },
-      data: {
-        // Custom data
-        bookingId: add_booking.id.toString(),
-        // Add more data as needed
-      }
-    }
+  //   var message = {
+  //     token: user.device_id, // Assuming the user model has a device_id field
+  //     notification: {
+  //       title: `Booking Confirmation`,
+  //       body: `Booking for service  ${service_name} is made ${status} by ${expert_name}.`,
+  //     },
+  //     data: {
+  //       // Custom data
+  //       bookingId: add_booking.id.toString(),
+  //       // Add more data as needed
+  //     }
+  //   }
    
   
 
-    fcm.send(message, function(err, response) {
-      if (err) {
-          console.log("Something went wrong!", err);
-          return res.status(500).json({ success: false, message: err.message });
-      } else {
-          console.log("Successfully sent with response: ", response);
-          // Proceed with your response
-          return res.status(200).json({
-              status: true,
-              message: "Booking status updated and notification sent",
-              data: add_booking,
-          });
-      }
-  });
+  //   fcm.send(message, function(err, response) {
+  //     if (err) {
+  //         console.log("Something went wrong!", err);
+  //         return res.status(500).json({ success: false, message: err.message });
+  //     } else {
+  //         console.log("Successfully sent with response: ", response);
+  //         // Proceed with your response
+  //         return res.status(200).json({
+  //             status: true,
+  //             message: "Booking status updated and notification sent",
+  //             data: add_booking,
+  //         });
+  //     }
+  // });
 
     return res.status(200).json({
       status: true,

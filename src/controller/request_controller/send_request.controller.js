@@ -8,7 +8,7 @@ const crypto = require('crypto')
 const axios = require('axios')
 const { Op } = require('sequelize')
 var FCM = require("fcm-node");
-const serverkey =process.env.SERVER_KEY_HERE;
+const serverkey =process.env.SERVER_KEY;
 var fcm = new FCM(serverkey);
 
 // Controller function
