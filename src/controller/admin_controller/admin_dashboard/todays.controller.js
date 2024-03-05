@@ -90,8 +90,8 @@ exports.todaysChatCount = async (req, res) => {
     const userList = await User.findAll({
       where: {
         [Op.or]: [
-          Sequelize.literal(`id IN (SELECT DISTINCT from_user_id FROM chats WHERE to_user_id IN (SELECT id FROM users WHERE createdAt BETWEEN '${today}' AND '${tomorrow}'))`),
-          Sequelize.literal(`id IN (SELECT DISTINCT to_user_id FROM chats WHERE from_user_id IN (SELECT id FROM users WHERE createdAt BETWEEN '${today}' AND '${tomorrow}'))`)
+          Sequelize.literal(`id IN (SELECT DISTINCT from_user_id FROM chats WHERE to_user_id IN (SELECT id FROM users WHERE DATE(createdAt) = CURDATE()))`),
+          Sequelize.literal(`id IN (SELECT DISTINCT to_user_id FROM chats WHERE from_user_id IN (SELECT id FROM users WHERE DATE(createdAt) = CURDATE()))`)
         ]
       },
       attributes: [
@@ -100,12 +100,11 @@ exports.todaysChatCount = async (req, res) => {
         'profile_image',
         // Subquery to count the number of chats exchanged by each user today
         [
-          Sequelize.literal(`(SELECT COUNT(*) FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) AND createdAt BETWEEN '${today}' AND '${tomorrow}')`),
+          Sequelize.literal(`(SELECT COUNT(*) FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) AND DATE(createdAt) = CURDATE())`),
           'chat_count'
         ],
       ],
       order: [['id', 'DESC']],
-      logging: console.log,
     });
 
     res.json({
@@ -117,7 +116,7 @@ exports.todaysChatCount = async (req, res) => {
     console.error(error);
     res.status(500).json({ status: false, message: "Internal server error" });
   }
-};
+}; 
 
 
 exports.count_chat_connections = async (req, res) => {
@@ -183,3 +182,4 @@ exports.count_chat_connections = async (req, res) => {
     });
   }
 };
+
