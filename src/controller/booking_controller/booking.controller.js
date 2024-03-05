@@ -84,11 +84,7 @@ console.log(expert.device_id)
         title: `Booking Confirmation`,
         body: `Booking for service  ${service_name} is confirmed by ${user_name}.`,
       },
-      data: {
-        // Custom data
-        bookingId: add_booking.id.toString(),
-        // Add more data as needed
-      }
+      
     }
     // {
     //   token: user.device_id, // Assuming the user model has a device_id field
@@ -106,7 +102,7 @@ console.log(expert.device_id)
 
     fcm.send(message, function(err, response) {
       if (err) {
-          console.log("Something went wrong!", err);
+          console.log("Something went wrong!", err.message);
           return res.status(400).json({
             success : false,
             message : err.message
