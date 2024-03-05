@@ -4,6 +4,7 @@ const db = require("../../../config/db.config")
 const User = db.User;
 const Sequelize = require("sequelize");
 const wallet_system = db.wallet_system;
+const chat = db.chat;
 
 // API for count total user
 exports.totalUser = async (req, res) => {
@@ -173,3 +174,35 @@ exports.totalUser = async (req, res) => {
       });
     }
   };
+
+  exports.getuserDetailsAndChat = async (req, res) => {
+    const { UserId } = req.params;
+    try {
+      const userDetails = await User.findByPk(UserId, {
+        include: {
+          model: chat,
+          as: 'chat',
+        },
+      });
+      if (userDetails) {
+        return res.status(200).json({
+          success: true,
+          message: "Get user details",
+          data: userDetails,
+        });
+      } else {
+        return res.status(400).json({
+          success: false,
+          message: "user Id not found ",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        success: false,
+        message: error.message,
+      });
+    }
+  };
+  
+  
+  

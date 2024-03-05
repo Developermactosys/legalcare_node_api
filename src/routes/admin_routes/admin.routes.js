@@ -5,7 +5,7 @@ const {uploads} = require('../../middleware/multer');
 
 const {Admin_login} = require("../../controller/admin_controller/admin_login.controller");
 const {totalUser, getuserDetails
-    ,delUserDetails,searchUser,totalUserForCa} = require("../../controller/admin_controller/customer_crud.controller")
+    ,delUserDetails,searchUser,totalUserForCa,getuserDetailsAndChat} = require("../../controller/admin_controller/customer_crud.controller")
 
 const { forgotPassword , resetPassword} = require("../../controller/admin_controller/forgetPassword.controller")    
 
@@ -19,4 +19,6 @@ router.get('/total_expert_list',totalUserForCa);
 
 router.post("/forgotPassword", forgotPassword);
 router.get("/resetPassword/:token", resetPassword);
+
+router.get('/get_user_and_chat/:UserId', getuserDetailsAndChat)
 module.exports = router;
