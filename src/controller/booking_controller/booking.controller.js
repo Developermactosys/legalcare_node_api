@@ -333,8 +333,7 @@ exports.update_Booking_by_status = async (req, res) => {
       {
         where: {
           id:booking_id,
-          status: "Pending",
-          payment_status:"paid"
+          // payment_status:"paid"
         },
       }
     );
