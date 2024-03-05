@@ -100,30 +100,56 @@ console.log(expert.device_id)
     // }
   
     console.log(message , "======>")
-    
-    fcm.send(message, function(err, response) {
-      if (err) {
-        console.log(message)
-          console.log("Something went wrong!", err.message);
-          return res.status(400).json({
-            success : false,
-            message : err.message
-          })
-      } else {
-          console.log("Successfully sent with response: ", response);
-          // Proceed with your response
-          return res.status(200).json({
-              status: true,
-              message: "Booked successfully and notification sent",
-              data: add_booking,
-          });
-      }
-  });
+
+//     fcm.send(message, function(err, response) {
+//       if (err) {
+//         console.log(message)
+//           console.log("Something went wrong!", err.message);
+//           return res.status(400).json({
+//             success : false,
+//             message : err.message
+//           })
+//       } else {
+//           console.log("Successfully sent with response: ", response);
+//           // Proceed with your response
+//           return res.status(200).json({
+//               status: true,
+//               message: "Booked successfully and notification sent",
+//               data: add_booking,
+//           });
+//       }
+//   });
+// } catch (error) {
+//   console.error(error);
+//   return res.status(500).json({ error: "Internal Server Error" });
+// }
+// };
+fcm.send(message, function (err, response) {
+  // console.log("1", message);
+  if (err) {
+    console.log("Something Has Gone Wrong !",err);
+    return res.status(400).json({
+      success : false,
+      message : err.message
+    })
+  } else {
+    console.log("Successfully Sent With Resposne :", response);
+    var body = message.notification.body;
+    console.log("notification body for add order <sent to manager>", body);
+    return res.json({
+      success: true,
+      message: "Send request successfully",
+      data : add_booking,
+    });
+  }
+})
 } catch (error) {
-  console.error(error);
-  return res.status(500).json({ error: "Internal Server Error" });
+console.error("Error in sendRequest:", error);
+return res
+.status(500)
+.json({ message: "An error occurred", error: error.message });
 }
-};
+}
 
 exports.get_booking_by_status = async (req, res) => {
   try {
