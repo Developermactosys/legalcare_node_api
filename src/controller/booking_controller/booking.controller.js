@@ -79,7 +79,7 @@ console.log(expert.device_id)
 
 
     var message = {
-      token: expert.device_id, // Assuming the user model has a device_id field
+      to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
         body: `Booking for service  ${service_name} is confirmed by ${user_name}.`,
