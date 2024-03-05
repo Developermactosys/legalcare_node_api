@@ -76,7 +76,7 @@ exports.Add_Booking = async (req, res) => {
     const expert_name = expert.name
    
 
-    var message = [{
+    var message = {
       token: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
@@ -87,25 +87,28 @@ exports.Add_Booking = async (req, res) => {
         bookingId: add_booking.id.toString(),
         // Add more data as needed
       }
-    },
-    {
-      token: user.device_id, // Assuming the user model has a device_id field
-      notification: {
-        title: `Booking Confirmation`,
-        body: `Your booking for service  ${service_name} is confirmed for the expert ${expert_name}.`,
-      },
-      data: {
-        // Custom data
-        bookingId: add_booking.id.toString(),
-        // Add more data as needed
-      }
     }
-  ]
+    // {
+    //   token: user.device_id, // Assuming the user model has a device_id field
+    //   notification: {
+    //     title: `Booking Confirmation`,
+    //     body: `Your booking for service  ${service_name} is confirmed for the expert ${expert_name}.`,
+    //   },
+    //   data: {
+    //     // Custom data
+    //     bookingId: add_booking.id.toString(),
+    //     // Add more data as needed
+    //   }
+    // }
+  
 
     fcm.send(message, function(err, response) {
       if (err) {
           console.log("Something went wrong!", err);
-          return res.status(500).json({ success: false, message: err.message });
+          return res.status(400).json({
+            success : false,
+            message : err.message
+          })
       } else {
           console.log("Successfully sent with response: ", response);
           // Proceed with your response
