@@ -99,9 +99,11 @@ console.log(expert.device_id)
     //   }
     // }
   
-
+    console.log(message , "======>")
+    
     fcm.send(message, function(err, response) {
       if (err) {
+        console.log(message)
           console.log("Something went wrong!", err.message);
           return res.status(400).json({
             success : false,
