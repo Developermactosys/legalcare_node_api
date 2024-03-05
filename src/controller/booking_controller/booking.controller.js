@@ -40,7 +40,7 @@ const User = db.User;
 // };
 
 const FCM = require('fcm-node');
-const serverKey = process.env.SERVER_KEY_HERE; // Replace this with your actual FCM server key
+const serverKey = "AAAA-_VsSio:APA91bH83R8IYdq1L8uZUofvo-2YwTmXIFj_vu6cuQVszRoZsyC9IW9qd1YoLHypcX8CYZR-8omdVkYs-YNKrTS_8oDw3td7SCcp_c3eJz_QFb_4Kvsav-IvESUb26-KGo3g1WlTBq7z"; // Replace this with your actual FCM server key
 const fcm = new FCM(serverKey);
 
 
@@ -75,6 +75,8 @@ exports.Add_Booking = async (req, res) => {
     const expert = await User.findByPk(expert_id) 
     const expert_name = expert.name
    
+console.log(expert.device_id)
+
 
     var message = {
       token: expert.device_id, // Assuming the user model has a device_id field
