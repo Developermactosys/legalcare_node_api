@@ -1,5 +1,5 @@
 // const { where } = require("sequelize");
-const { where,Sequelize } = require("sequelize");
+const { Sequelize } = require("sequelize");
 const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
@@ -40,7 +40,7 @@ const User = db.User;
 // };
 
 const FCM = require('fcm-node');
-const serverKey = process.env.SERVER_KEY; // Replace this with your actual FCM server key
+const serverKey = process.env.SERVER_KEY_HERE; // Replace this with your actual FCM server key
 const fcm = new FCM(serverKey);
 
 
