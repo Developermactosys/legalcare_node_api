@@ -18,7 +18,10 @@ module.exports = (sequelize, DataTypes) => {
         type: DataTypes.STRING,
       },
       event_status: {
-        type: DataTypes.STRING,
+        type: DataTypes.ENUM,
+        values: ["Active", "Inactive"],
+        allowNull: false,
+        defaultValue: "Active"
         //allowNull: false,
       },
       event_date: {

@@ -3,7 +3,7 @@ const router = express.Router();
 const {uploads} = require('../../../middleware/multer');
 const { authorize } = require("../../../middleware/authorization")
 
-const {getAllBanner,addBanner,editBanner,deleteBanner} = require("../../../controller/admin_controller/banner_controller/banner.controller");
+const {getAllBanner,addBanner,editBanner,deleteBanner,update_banner_status} = require("../../../controller/admin_controller/banner_controller/banner.controller");
 
 // router.get("/get_banner_images",authorize(['0']),getBannerImages);
 // router.post("/add_banner", authorize(['0']), uploads.single("event_img"),addBanner);
@@ -18,5 +18,5 @@ router.post("/get_banner_images", getAllBanner); //  done
 
 // For FrontEnd Team (admin_section)
 router.get("/get_banner_images", getAllBanner); //  done
-
+router.patch("/update_event_status",uploads.none(), update_banner_status);
 module.exports = router;

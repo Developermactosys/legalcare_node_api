@@ -69,33 +69,36 @@ const addBanner = async (req, res) => {
       banner_image: filePath,
       event_url,
     });
-    if (!addBanner) {
+    if (!add_banner) {
       return res.json({
         success: false,
         message: "failed to create",
       });
     }
-    return res.json({
+    return res.status(200).json({
       success: true,
       message: "banner add successfully....",
-      data: addBanner,
+      data: add_banner,
     });
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+   return res.status(500).json({ status:false, error: "Internal Server Error" });
   }
 };
 
 const editBanner = async (req, res) => {
-  if (!req.params.id) {
-    return res.json({
-      success: false,
-      message: "No ID provided for the banner.",
-    });
-  }
+ 
   try {
+    const { event_name, event_status, event_date } = req.body;
+
     const check = await LiveEvent.findOne({ where: { id: req.params.id } });
 
+    if (!req.params.id) {
+      return res.json({
+        success: false,
+        message: "No ID provided for the banner.",
+      });
+    }
     if (!check) {
       return res.json({
         status: false,
@@ -105,52 +108,75 @@ const editBanner = async (req, res) => {
     const filePath = req.file
       ? `banner_image/${req.file.filename}`
       : "/src/uploads/banner_image/";
-    const { event_name, event_status, event_date, banner_image, event_url } =
-      req.body;
 
     if (req.file) {
       const ImgUpdate = await LiveEvent.update(
         {
-          event_name,
-          event_status,
-          event_date,
+          event_name:event_name,
+          event_status:event_status,
+          event_date:event_date,
           banner_image: filePath,
-          event_url,
+          
         },
         {
           where: {
             id: req.params.id,
           },
-        }
-      );
-      return res.json({
-        status: true,
-        message: "banner update successfully",
-      });
-    } else {
-      const fileUpdate = await await LiveEvent.update(
-        {
-          event_name,
-          event_status,
-          event_date,
-          event_url,
         },
-        {
-          where: {
-            id: req.params.id,
-          },
-        }
       );
-      return res.json({
+      return res.status(200).json({
         status: true,
         message: "banner update successfully",
       });
-    }
+    } 
   } catch (error) {
     console.error(error);
-    res.status(500).json({ error: "Internal Server Error" });
+   return res.status(500).json({ status:false, error: "Internal Server Error" });
   }
 };
+
+const update_banner_status = async (req, res) => {
+  try {
+    const { event_status ,banner_id} = req.body;
+
+    const check = await LiveEvent.findOne({ where: { id:banner_id } });
+
+    if (!banner_id) {
+      return res.json({
+        success: false,
+        message: "No ID provided for the banner.",
+      });
+    }
+    if (!check) {
+      return res.json({
+        status: false,
+        message: "live event id not found",
+      });
+    }
+
+    const event_status_Update = await LiveEvent.update(
+      {
+        event_status: event_status,
+      },
+      {
+        where: {
+          id: banner_id,
+        },
+      },
+    );
+
+    return res.status(200).json({
+      status: true,
+      message: "event status updated successfully",
+
+    });
+    
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ status: false, error: "Internal Server Error" });
+  }
+};
+
 
 const deleteBanner = async (req, res) => {
   if (!req.params.id) {
@@ -217,4 +243,5 @@ module.exports = {
   editBanner,
   addBanner,
   deleteBanner,
+  update_banner_status
 };
