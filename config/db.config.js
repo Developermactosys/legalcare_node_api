@@ -51,6 +51,7 @@ db.admin_query = require("../src/models/query_model/admin_query.model")(sequeliz
 db.notification = require("../src/models/query_model/notification.model")(sequelize, DataTypes);
 db.expert_review = require("../src/models/review_model/review.model")(sequelize,DataTypes);
 db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
+db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history

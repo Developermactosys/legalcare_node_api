@@ -27,6 +27,8 @@ const adminRoutes = require("./admin_routes/admin.routes");
 const bannerRoutes = require("./admin_routes/banner_routes/banner.routes")
 const adminDashboardRoutes = require("./admin_routes/admin_dashboard/todays.routes");
 const Your_channel = require('./agora_routes/channel.route');
+//Document
+const documentRoutes = require("./document_routes/document.routes")
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -53,5 +55,6 @@ router.use("/",message_imageRoutes)
 router.use("/",adminRoutes);
 router.use("/",bannerRoutes);
 router.use("/",adminDashboardRoutes);
-
+//Document
+router.use("/",documentRoutes);
 module.exports = router
