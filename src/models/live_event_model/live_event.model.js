@@ -1,44 +1,46 @@
 module.exports = (sequelize, DataTypes) => {
-  const live_event = sequelize.define(
-    "live_event",
+  
+  const live_event = sequelize.define("live_event", 
     {
       id: {
         type: DataTypes.INTEGER,
         primaryKey: true,
         autoIncrement: true,
+        allowNull: false,
+
       },
       video_url: {
         type: DataTypes.STRING,
-        //allowNull: false,
+        allowNull: true,
       },
       event_url: {
         type: DataTypes.STRING,
+        allowNull: true,
       },
       event_name: {
         type: DataTypes.STRING,
+        allowNull: true, 
       },
       event_status: {
         type: DataTypes.ENUM,
         values: ["Active", "Inactive"],
         allowNull: false,
-        defaultValue: "Active"
-        //allowNull: false,
+        defaultValue: "Active",
       },
       event_date: {
         type: DataTypes.STRING,
-        //allowNull: false,
+        allowNull: true,
       },
       event_type: {
         type: DataTypes.STRING,
-        //allowNull: false,
+        allowNull: true, 
       },
       page_type: {
         type: DataTypes.STRING,
-        //allowNull: false,
+        allowNull: true, 
       },
       banner_image: {
         type: DataTypes.STRING,
-        allowNull: false,
       },
       // Add more columns if needed
     },
@@ -49,5 +51,6 @@ module.exports = (sequelize, DataTypes) => {
       deletedAt: "deletedAt",
     }
   );
-  return live_event;
+
+  return live_event; 
 };
