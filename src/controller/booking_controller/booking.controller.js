@@ -39,9 +39,9 @@ exports.Add_Booking = async (req, res) => {
   }
 };
 
-// const FCM = require('fcm-node');
-// const serverKey = "AAAA-_VsSio:APA91bH83R8IYdq1L8uZUofvo-2YwTmXIFj_vu6cuQVszRoZsyC9IW9qd1YoLHypcX8CYZR-8omdVkYs-YNKrTS_8oDw3td7SCcp_c3eJz_QFb_4Kvsav-IvESUb26-KGo3g1WlTBq7z"; // Replace this with your actual FCM server key
-// const fcm = new FCM(serverKey);
+const FCM = require('fcm-node');
+const serverKey = process.env.SERVER_KEY_HERE;
+const fcm = new FCM(serverKey);
 
 
 // exports.Add_Booking = async (req, res) => {
@@ -422,16 +422,17 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status ,booking_id } = req.body;
+    const { status ,booking_id, discounted_amount } = req.body;
 
   
     if (!status) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
 
-    const add_booking = await Booking_details.update( 
+    const update_booking = await Booking_details.update( 
       {
         status: status,
+        discounted_amount : discounted_amount
       },
       {
         where: {
@@ -441,47 +442,49 @@ exports.update_Booking_by_status = async (req, res) => {
       }
     );
 
-    const  user = await User.findByPk(add_booking.UserId)
-    const expert= await User.findByPk(add_booking.expert_id)
+    const find_booking = await Booking_details.findByPk(booking_id)
+    const  user = await User.findByPk(find_booking.UserId)
+    const expert= await User.findByPk(find_booking.expert_id)
+
+    const find_service = await service.findByPk(find_booking.serviceId)
+    const service_name = find_service.serviceName
+
+  
+    //console.log(expert)
+
     const expert_name = expert.name
 
     var message = {
-      token: user.device_id, // Assuming the user model has a device_id field
+      to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
         body: `Booking for service  ${service_name} is made ${status} by ${expert_name}.`,
       },
-      data: {
-        // Custom data
-        bookingId: add_booking.id.toString(),
-        // Add more data as needed
-      }
+      
     }
 
     fcm.send(message, function(err, response) {
       if (err) {
-          console.log("Something went wrong!", err);
-          return res.status(500).json({ success: false, message: err.message });
+          console.error("Something went wrong!", err);
+          return res.status(400).json({ success: false, message: err.message });
       } else {
           console.log("Successfully sent with response: ", response);
           // Proceed with your response
           return res.status(200).json({
               status: true,
               message: "Booking status updated and notification sent",
-              data: add_booking,
+              data: update_booking,
           });
       }
   });
 
-    return res.status(200).json({
-      status: true,
-      message: "Updated successfully",
-    });
+    
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 
 exports.update_Booking_by_payment_status = async (req, res) => {

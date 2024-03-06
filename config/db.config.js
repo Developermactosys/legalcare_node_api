@@ -225,5 +225,14 @@ db.User.hasMany(db.service, {
     as: "User",
   });
 
+// User and Document one to many relationship
+db.User.hasMany(db.document, {
+    forienKey : "UserId",
+    as : "document"
+})
+db.document.belongsTo(db.User, {
+    forienKey : "UserId",
+    as : "User" 
+})
 
 module.exports = db;

@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
         document: {
             type: DataTypes.STRING
         },
+        expert_id: {
+            type: DataTypes.INTEGER
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,
