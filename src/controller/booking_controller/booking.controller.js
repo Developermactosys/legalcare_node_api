@@ -425,7 +425,7 @@ exports.update_Booking_by_status = async (req, res) => {
     const { status ,booking_id, discounted_amount } = req.body;
 
   
-    if (!status) {
+    if (!booking_id) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
 
