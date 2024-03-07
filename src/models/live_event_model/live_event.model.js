@@ -22,10 +22,10 @@ module.exports = (sequelize, DataTypes) => {
         allowNull: true, 
       },
       event_status: {
-        type: DataTypes.ENUM,
+        type: DataTypes.ENUM, 
         values: ["Active", "Inactive"],
         allowNull: false,
-        defaultValue: "Active",
+        defaultValue: "Active", 
       },
       event_date: {
         type: DataTypes.STRING,

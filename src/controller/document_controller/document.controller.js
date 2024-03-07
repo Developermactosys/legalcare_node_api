@@ -91,7 +91,6 @@ exports.get_document_by_user_id = async (req, res) => {
                     model: User,
                     as: "User",
                     where: { id: Sequelize.col('document.expert_id') } 
-
                 },
             ],
             order: [['createdAt', 'DESC']],
