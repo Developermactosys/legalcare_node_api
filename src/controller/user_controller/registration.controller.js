@@ -11,6 +11,7 @@ const twilio = require('twilio');
 // const client = new twilio(accountSid, authToken);
 const { validationResult } = require('express-validator');
 const { CallPage } = require("twilio/lib/rest/api/v2010/account/call");
+const { cached } = require("sqlite3");
 
 const registration = async (req, res) => {
   try {
@@ -41,10 +42,7 @@ const registration = async (req, res) => {
     const existingUser = await User.findOne({ where: { phone_no: phone_no } });
 
     if (!existingUser) {
-      const digits = 6;
-      const otp = Math.floor(
-        Math.pow(10, digits - 1) + Math.random() * 9 + Math.pow(10, digits - 1)
-      );
+     
       // const filePath = `/src/uploads/${req.file.filename}`;
       // console.log(filePath);
       const filePath = req.file
@@ -59,20 +57,6 @@ const registration = async (req, res) => {
       user.profile_image=filePath,
       user.password= hashedPassword,
       await user.save();
-      // ... insert into wallet_system ...
-
-      // ... send OTP ...
-      // let digit= '0123456789'
-      // OTP = "";
-      // for(let i=0;i<4;i++){
-      //   OTP += digit[Math.floor(Math.random() * 10)];
-      // }
-      // await client.messages.create({
-      //   from: +19163827578,
-      //   messagingServiceSid:process.env.TwilioMsg,
-      //   to:process.env.to,
-      //   body: `Your coder house OTP is ${otp}`,
-      // });
   
       return res.json({
         status: true,
@@ -156,6 +140,52 @@ const otpVerify = async (req, res) => {
 };
 
 
+// store otp 
+const store_otp = async(req, res) => {
+  try {
+    const { id, otp } = req.body;
+    // Check if user exists
+    const checkuser = await User.findOne({ where: { id: id } });
+
+    if (!checkuser) {
+        return res.json({
+            status: false,
+            message: "Your user id or token does not matched",
+        });
+    }
+    if(!otp){
+      return res.json({
+        status: false,
+        message: "please fill otp",
+    });
+
+    }
+
+    // store OTP
+    const store_otp_db = await User.update(
+     {otp : otp},{
+        where: {
+            id: id,
+           
+        }
+      }
+    );
+
+    res.status(200).json({
+      status : true, 
+      message : "OTP stored successfully"
+    })
+}catch (error) {
+  console.error('OTP store Error:', error);
+  return res.status(500).json({
+      status: false,
+      message: "Internal Server Error",
+  });
+}
+}
+
+
+
 module.exports= {
-  registration,otpVerify
+  registration,otpVerify, store_otp
 }

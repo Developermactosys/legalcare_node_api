@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const {uploads} = require('../../middleware/multer');
 
-const { registration,otpVerify } = require("../../controller/user_controller/registration.controller");
+const { registration,otpVerify, store_otp } = require("../../controller/user_controller/registration.controller");
 const { login } = require("../../controller/user_controller/login.controller");
 const { resetPasswordController} = require("../../controller/user_controller/resetPassword.controller");
 const { edit_user,view_user} = require("../../controller/user_controller/edit_user.controller");
@@ -16,6 +16,7 @@ router.post('/reset_password',uploads.none(), resetPasswordController);
 router.post('/edit_user',uploads.single('profile_image'),edit_user);
 router.post('/logoutUpdate',uploads.none(),logoutUpdate) // Done 
 router.post('/view_users',uploads.none(),view_user);
+router.post('/store_otp', uploads.none(), store_otp)
 
 router.post('/add_follow_user',uploads.none(), addFollowUsers);
 module.exports = router;

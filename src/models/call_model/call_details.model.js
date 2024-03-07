@@ -7,18 +7,26 @@ module.exports = (sequelize, DataTypes) => {
         autoIncrement: true,
         allowNull : false
       },
-      astro_id: {
+      expert_id: {
         type: DataTypes.INTEGER,
       },
-      to_number: {
+      senderName: {
         type: DataTypes.STRING,
       },
-      from_number: {
+      receiverName: {
         type: DataTypes.STRING,
       },
-      call_data: {
-        type: DataTypes.TEXT,
-        allowNull: true,
+      call_duration: {
+        type: DataTypes.STRING,
+      },
+      current_used_bal: {
+        type: DataTypes.FLOAT,
+      },
+      start_time: {
+        type: DataTypes.STRING,
+      },
+      end_time: {
+        type: DataTypes.STRING,
       },
       deleted_At: {
         type: DataTypes.DATE,
