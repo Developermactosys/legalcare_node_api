@@ -90,21 +90,21 @@ const otpVerify = async (req, res) => {
   }
 
   try {
-      const { id, otp } = req.body;
+      const { phone_no, otp } = req.body;
       // Check if user exists
-      const checkuser = await User.findOne({ where: { id: id } });
+      const checkuser = await User.findOne({ where: { phone_no: phone_no } });
 
       if (!checkuser) {
           return res.json({
               status: false,
-              message: "Your user id or token does not matched",
+              message: "Your user phone_no or token does not matched",
           });
       }
 
       // Verify OTP
       const checkotps = await User.findOne({
           where: {
-              id: id,
+              phone_no: phone_no,
               otp: otp,
           },
       });
@@ -117,12 +117,13 @@ const otpVerify = async (req, res) => {
       }
 
       // Update user as verified
-      await User.update({ otp_verify: 1 }, { where: { id: id } });
+      await User.update({ otp_verify: 1 }, { where: { phone_no: phone_no } });
 
       // Respond with user details
       return res.json({
           status: true,
-          id: checkotps.id,
+          id:checkotps.id,
+          phone_no: checkotps.phone_no,
           user_type: checkotps.user_type,
           profile_image: `${req.protocol}://${req.get('host')}/images/profile_image/${checkotps.profile_image}`,
           name: checkotps.name,
@@ -143,9 +144,9 @@ const otpVerify = async (req, res) => {
 // store otp 
 const store_otp = async(req, res) => {
   try {
-    const { id, otp } = req.body;
+    const { phone_no, otp } = req.body;
     // Check if user exists
-    const checkuser = await User.findOne({ where: { id: id } });
+    const checkuser = await User.findOne({ where: { phone_no: phone_no } });
 
     if (!checkuser) {
         return res.json({
@@ -165,7 +166,7 @@ const store_otp = async(req, res) => {
     const store_otp_db = await User.update(
      {otp : otp},{
         where: {
-            id: id,
+          phone_no: phone_no,
            
         }
       }
