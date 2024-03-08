@@ -77,7 +77,6 @@ exports.get_document_by_user_id = async (req, res) => {
             where: {
                 [Sequelize.Op.or]: [
                     { UserId: user_id },
-                    { expert_id: user_id }
                 ]
             },
             include: [
@@ -85,18 +84,21 @@ exports.get_document_by_user_id = async (req, res) => {
                     model: User,
                     as: "User"
                 },
-            ],
-            include:[
                 {
                     model: User,
                     as: "User",
                     where: { id: Sequelize.col('document.expert_id') } 
                 },
             ],
+           
             order: [['createdAt', 'DESC']],
             offset: offset,
             limit: pageSize
         });
+        
+        const expertIds = get_document.map(doc => doc.expert_id);
+
+        console.log(expertIds);
 
         return res.status(200).json({
             status: true,
@@ -112,3 +114,6 @@ exports.get_document_by_user_id = async (req, res) => {
         });
     }
 };
+
+
+

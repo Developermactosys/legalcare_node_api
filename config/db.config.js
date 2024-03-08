@@ -52,6 +52,7 @@ db.notification = require("../src/models/query_model/notification.model")(sequel
 db.expert_review = require("../src/models/review_model/review.model")(sequelize,DataTypes);
 db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
+db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -235,4 +236,13 @@ db.document.belongsTo(db.User, {
     as : "User" 
 })
 
+// User and Video one to one relationship
+db.User.hasMany(db.video, {
+    forienKey : "UserId",
+    as : "video"
+})
+db.video.belongsTo(db.User, {
+    forienKey : "UserId",
+    as : "User" 
+})
 module.exports = db;

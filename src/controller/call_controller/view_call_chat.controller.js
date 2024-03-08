@@ -2,17 +2,17 @@
 const db = require("../../../config/db.config");
 
 const sequelize = require("sequelize");
-const  Chat = db.chat;
+const  call_details = db.call_details;
 
- const viewCallChat=  async (req, res) => {
+ const view_call_details=  async (req, res) => {
     try {
-      const { sender_id, receiver_id } = req.body;
+      const { user_id, expert_id } = req.body;
 
-      const chatHistory = await Chat.findAll({
+      const chatHistory = await call_details.findAll({
         where: {
           [sequelize.Op.or]: [
-            { sender_id, receiver_id },
-            { sender_id: receiver_id, receiver_id: sender_id },
+            { UserId: expert_id, expert_id: user_id },
+            { UserId: user_id, expert_id: expert_id },
           ],
         },
       });
@@ -20,14 +20,14 @@ const  Chat = db.chat;
       if (chatHistory.length > 0) {
         return res.status(200).json({
           status: true,
-          message: 'All Chat Found',
+          message: 'User and Expert details Found',
           data: chatHistory,
         });
       } else {
         return res.status(404).json({
           status: false,
           data: null,
-          message: 'No Chat Found',
+          message: 'No Data Found',
         });
       }
     } catch (error) {
@@ -39,4 +39,4 @@ const  Chat = db.chat;
       });
     }
   }
-module.exports = { viewCallChat };
+module.exports = { view_call_details };
