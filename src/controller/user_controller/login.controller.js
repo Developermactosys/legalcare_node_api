@@ -17,7 +17,7 @@ exports.login = async (req, res) => {
 
   // Simple validation
   if (!phone_no || !password || !device_token) {
-    return res.status(400).json({
+    return res.json({
       status: false,
       message: "Please provide phone number, password, and device token.",
     });
@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
     const passwordIsValid = await bcrypt.compare(password, user.password);
 
     if (!passwordIsValid) {
-      return res.status(401).json({
+      return res.status(201).json({
         status: false,
         message: "Login Failed, please check password.",
       });
@@ -83,7 +83,7 @@ exports.login = async (req, res) => {
       const updatedUser = await User.findOne({ where: { phone_no } });
       res.cookie("refresh_token", refresh_token, { httpOnly: true });
 
-      return res.json({
+      return res.status(200).json({
         status: true,
         data:updatedUser
         // id: updatedUser.id,
