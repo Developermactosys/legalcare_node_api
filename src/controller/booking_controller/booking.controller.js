@@ -86,18 +86,6 @@ const fcm = new FCM(serverKey);
 //       },
       
 //     }
-//     // {
-//     //   token: user.device_id, // Assuming the user model has a device_id field
-//     //   notification: {
-//     //     title: `Booking Confirmation`,
-//     //     body: `Your booking for service  ${service_name} is confirmed for the expert ${expert_name}.`,
-//     //   },
-//     //   data: {
-//     //     // Custom data
-//     //     bookingId: add_booking.id.toString(),
-//     //     // Add more data as needed
-//     //   }
-//     // }
   
 //     console.log(message , "======>")
 //     fcm.send(message, function(err, response) {

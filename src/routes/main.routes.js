@@ -29,6 +29,7 @@ const adminDashboardRoutes = require("./admin_routes/admin_dashboard/todays.rout
 const Your_channel = require('./agora_routes/channel.route');
 //Document
 const documentRoutes = require("./document_routes/document.routes")
+const videoRouter = require("./video_routes/video_routes")
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -57,4 +58,5 @@ router.use("/",bannerRoutes);
 router.use("/",adminDashboardRoutes);
 //Document
 router.use("/",documentRoutes);
+router.use('/', videoRouter)
 module.exports = router

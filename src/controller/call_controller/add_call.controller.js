@@ -1,13 +1,12 @@
-const db = require('../../../config/db.config')
-const sequelize = require("sequelize");
-const  {Op}  = require("sequelize");
-const video_call_details = db.video
-const WalletSystem = db.wallet_system
+// controllers/chatController.js
+const { Op } = require("sequelize");
+const db = require("../../../config/db.config");
+
+const call_details = db.call_details;
 const User = db.User;
+const WalletSystem = db.wallet_system;
 
-
-// API for add video call
-exports.add_video_call = async (req, res) => {
+const addCall = async (req, res) => {
   try {
     const {
       user_id,
@@ -40,7 +39,7 @@ exports.add_video_call = async (req, res) => {
       where: {
         id: expert_id,
         user_type: {
-          [Op.in]: ["2", "3"],
+          [Op.in]: ["2", "3", "4"],
         },
       },
     });
@@ -80,9 +79,7 @@ exports.add_video_call = async (req, res) => {
     }
 
     const walletBalance = parseFloat(walletSystem.wallet_amount);
-    const walletBalance_of_admin = parseFloat(
-      walletSystem_of_admin.wallet_amount
-    );
+    const walletBalance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount);
     const requestedAmount = parseFloat(current_used_bal);
 
     // Check if requested amount exceeds wallet balance
@@ -95,7 +92,7 @@ exports.add_video_call = async (req, res) => {
     // Update wallet balance of customer
     const newBalance = walletBalance - requestedAmount;
     await WalletSystem.update(
-      { wallet_amount: newBalance, },
+      { wallet_amount: newBalance },
       { where: { UserId: user_id } }
     );
 
@@ -117,11 +114,11 @@ exports.add_video_call = async (req, res) => {
     // const amountDeducted = callDuration * expert_per_minute_rate;
 
     // Update the call record with duration and deducted amount
-    const result = await video_call_details.create({
+    const result = await call_details.create({
       UserId: user_id,
       expert_id: expert_id,
       senderName: name,
-      video_call_duration: duration,
+      call_duration: duration,
       current_used_bal: current_used_bal, // You might need to adjust this based on your actual logic
       start_time: start_time,
       end_time: end_time,
@@ -129,7 +126,7 @@ exports.add_video_call = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      msg: "video Data stored successfully",
+      msg: "Data stored successfully",
       data: result,
     });
   } catch (error) {
@@ -140,108 +137,5 @@ exports.add_video_call = async (req, res) => {
     });
   }
 };
-// API for view video details
-exports.view_video_details=  async (req, res) => {
-    try {
-      const { user_id, expert_id } = req.body;
 
-      const chatHistory = await video_call_details.findAll({
-        where: {
-          [sequelize.Op.or]: [
-            { UserId: expert_id, expert_id: user_id },
-            { UserId: user_id, expert_id: expert_id },
-          ],
-        },
-      });
-
-      if (chatHistory.length > 0) {
-        return res.status(200).json({
-          status: true,
-          message: 'User and Expert details Found',
-          data: chatHistory,
-        });
-      } else {
-        return res.status(404).json({
-          status: false,
-          data: null,
-          message: 'No Data Found',
-        });
-      }
-    } catch (error) {
-      console.error('Error:', error);
-      return res.status(500).json({
-        status: false,
-        data: null,
-        message: 'Internal Server Error',
-      });
-    }
-  }
-
-  
-exports.videoHistoryController = async (req, res) => {
-    try {
-        const { user_id, user_type } = req.body;
-        let callDetails;
-
-        if (user_type === "1") {
-            callDetails = await video_call_details.findAll({
-                where: { UserId: user_id },
-                include: [
-                    {
-                        model: User,
-                        as: "User",
-                    },
-                ],
-                order: [['id', 'DESC']],
-            });
-
-        } else if (user_type === "2") {
-            callDetails = await video_call_details.findAll({
-                where: { expert_id: user_id },
-                include: [
-                    {
-                        model: User,
-                        as: "User",
-                        where: { id: Sequelize.col('call_details.expert_id') }
-                    },
-                ],
-                order: [['id', 'DESC']],
-            });
-
-        }
-
-        const response = {
-            status: true,
-            message: 'Call History retrieved successfully',
-            data: callDetails,
-        };
-        res.status(200).json(response);
-    } catch (error) {
-        console.error('Error:', error);
-        res.status(500).json({
-            status: false,
-            message: 'Internal Server Error',
-        });
-    }
-};
-
-exports.getVideoStatus = async (req, res) => {
-    try {
-      const { mobile_no } = req.body;
-      // Validate mobile_no
-  
-      const call = await CallInQueue.findOne({
-        where: { mobile_no : mobile_no }
-      });
-  
-      if (call) {
-        res.json({ status: true, message: "Call status list", data: call });
-      } else {
-        res.json({ status: false, message: "Data does not found" });
-      }
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ status: false, message: "Internal server error" });
-    }
-  };
-  
+module.exports = { addCall };
