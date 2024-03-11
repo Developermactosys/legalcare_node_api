@@ -1,6 +1,6 @@
 const db = require('../../../config/db.config')
-const sequelize = require("sequelize");
-const  {Op}  = require("sequelize");
+const {Sequelize,Op} = require("sequelize");
+const  sequelize  = require("sequelize");
 const video_call_details = db.video
 const WalletSystem = db.wallet_system
 const User = db.User;
@@ -182,40 +182,60 @@ exports.videoHistoryController = async (req, res) => {
     try {
         const { user_id, user_type } = req.body;
         let callDetails;
+        let expert_Id
+        let expert_data = []
+        let final_data = []
+        let response 
 
-        if (user_type === "1") {
-            callDetails = await video_call_details.findAll({
-                where: { UserId: user_id },
-                include: [
-                    {
-                        model: User,
-                        as: "User",
-                    },
-                ],
-                order: [['id', 'DESC']],
-            });
-
-        } else if (user_type === "2") {
+        if (user_type === "2") {
             callDetails = await video_call_details.findAll({
                 where: { expert_id: user_id },
                 include: [
                     {
                         model: User,
-                        as: "User",
-                        where: { id: Sequelize.col('call_details.expert_id') }
+                        as: "User"
                     },
                 ],
                 order: [['id', 'DESC']],
             });
+             response = {
+              status: true,
+              message: 'Call History retrieved successfully',
+              data: callDetails,
+          };
+          return res.status(200).json(response);
+
+        } else if (user_type === "1") {
+            callDetails = await video_call_details.findAll({
+                where: { UserId: user_id },
+                // include: [
+                //     {
+                //         model: User,
+                //         as: "User",
+                //         where: { id: sequelize.col('video_call_details.expert_id') }
+                //         // where: sequelize.literal('User.id = video_call_details.expert_id')
+                //     },
+                // ],
+                order: [['id', 'DESC']],
+
+            });
+
+    for(let i =0; i<callDetails.length; i++){
+      expert_Id = callDetails[i].expert_id;
+      const  ex_data = await User.findByPk(expert_Id)
+      expert_data.push({data :callDetails[i], expert : ex_data})
+
+      // final_data.push()
+    }
 
         }
 
-        const response = {
+         response = {
             status: true,
             message: 'Call History retrieved successfully',
-            data: callDetails,
+            data: expert_data,
         };
-        res.status(200).json(response);
+        return res.status(200).json(response);
     } catch (error) {
         console.error('Error:', error);
         res.status(500).json({
