@@ -4,12 +4,13 @@ const db = require("../../../config/db.config");
 const User = db.User;
 const chat_request = db.chat_request;
 const walletSystem = db.wallet_system;
-const crypto = require('crypto')
-const axios = require('axios')
-const { Op } = require('sequelize')
+const crypto = require("crypto");
+const axios = require("axios");
+const { Op } = require("sequelize");
 var FCM = require("fcm-node");
-const serverkey =process.env.SERVER_KEY;
+const serverkey = process.env.SERVER_KEY;
 var fcm = new FCM(serverkey);
+const sender_profile_image = process.env.IMAGE;
 
 // Controller function
 exports.sendRequest = async (req, res) => {
@@ -22,9 +23,8 @@ exports.sendRequest = async (req, res) => {
     is_free,
   } = req.body;
 
-console.log("sender_id",sender_id)
-console.log(receiver_id)
-
+  console.log("sender_id", sender_id);
+  console.log(receiver_id);
 
   try {
     const sender = await User.findByPk(sender_id);
@@ -39,8 +39,22 @@ console.log(receiver_id)
 
     // const isVideoStatus = is_video == 1 ? "Video_request" : "send_request";
     // const vcParam = is_video == 1 ? "video call" : "chat";
-    const isVideoStatus = is_video == 0 ? "send_request" : is_video == 1 ? "Video_request" : is_video == 2 ? "Audio_request" : null;
-    const vcParam = is_video == 0 ? "chat" : is_video == 1 ? "video call" : is_video == 2 ? "audio call" : null;
+    const isVideoStatus =
+      is_video == 0
+        ? "send_request"
+        : is_video == 1
+        ? "Video_request"
+        : is_video == 2
+        ? "Audio_request"
+        : null;
+    const vcParam =
+      is_video == 0
+        ? "chat"
+        : is_video == 1
+        ? "video call"
+        : is_video == 2
+        ? "audio call"
+        : null;
 
     if (!vcParam || !isVideoStatus) {
       return res.status(400).json({ message: "Invalid request type" });
@@ -63,12 +77,12 @@ console.log(receiver_id)
       var message = {
         to: receiver.device_id,
         collapse_key: "green",
-        
+
         notification: {
           title: `Incoming ${vcParam} request from ${sender.name}`,
           body: `Incoming ${vcParam} request from ${sender.name}`,
           priority: "high",
-          image: `/src/uploads/profile_image/${sender.profile_image}`,
+          image: `${sender_profile_image}${sender.profile_image}`,
         },
         data: {
           click_action: "FLUTTER_NOTIFICATION_CLICK",
@@ -81,13 +95,13 @@ console.log(receiver_id)
           free_time: receiver.free_time,
           channel_token,
           channel_name,
-          user_image: `/src/uploads/profile_image/${sender.profile_image}`,
+          user_image: `${sender_profile_image}${sender.profile_image}`,
           type: "astrologer",
           notification_type: isVideoStatus,
           time: Date.now(),
           title: `Incoming chat request from ${sender.name}`,
           icon: "",
-          image: `/src/uploads/profile_image/${sender.profile_image}`,
+          image: `${sender_profile_image}${sender.profile_image}`,
           sound: "",
         },
       };
@@ -95,15 +109,18 @@ console.log(receiver_id)
       fcm.send(message, function (err, response) {
         // console.log("1", message);
         if (err) {
-          console.log("Something Has Gone Wrong !",err);
+          console.log("Something Has Gone Wrong !", err);
           return res.status(400).json({
-            success : false,
-            message : err.message
-          })
+            success: false,
+            message: err.message,
+          });
         } else {
           console.log("Successfully Sent With Resposne :", response);
           var body = message.notification.body;
-          console.log("notification body for add order <sent to manager>", body);
+          console.log(
+            "notification body for add order <sent to manager>",
+            body
+          );
           return res.json({
             success: true,
             message: "Send request successfully",
@@ -111,7 +128,7 @@ console.log(receiver_id)
             chat_request_id: newChatRequest.id,
           });
         }
-      })
+      });
     } else {
       const message = `Minimum balance of 5 minutes (INR ${astroCharge}) is required to start chat with ${receiver.name}`;
       return res.status(400).json({
@@ -127,9 +144,3 @@ console.log(receiver_id)
       .json({ message: "An error occurred", error: error.message });
   }
 };
-
-
-
-
-
-
