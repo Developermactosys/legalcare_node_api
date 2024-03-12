@@ -46,7 +46,7 @@ exports.approveRequest = async (req, res) => {
       }
 
     const wallet = await walletSystem.findOne({
-      where: { UserId: receiver_id },
+      where: { UserId: sender_id },
     });
     if (!wallet) {
       return res
@@ -54,7 +54,7 @@ exports.approveRequest = async (req, res) => {
         .json({ success: false, message: "Wallet not found" });
     }
 
-          const max_time = Math.floor(wallet.wallet_amount / sender.per_minute);
+          const max_time = Math.floor(wallet.wallet_amount / receiver.per_minute);
           await sender.update({ wait_time: max_time }, { where: { id: sender_id } });
 
     if (receiver.login_from === "web") {
@@ -142,7 +142,7 @@ exports.approveRequest = async (req, res) => {
         }
   
       const wallet = await walletSystem.findOne({
-        where: { UserId: receiver_id },
+        where: { UserId: sender_id },
       });
       if (!wallet) {
         return res
@@ -150,7 +150,7 @@ exports.approveRequest = async (req, res) => {
           .json({ success: false, message: "Wallet not found" });
       }
   
-            const max_time = Math.floor(wallet.wallet_amount / sender.per_minute);
+            const max_time = Math.floor(wallet.wallet_amount / receiver.per_minute);
             await sender.update({ wait_time: max_time }, { where: { id: sender_id } });
   
       if (receiver.login_from === "web") {
@@ -237,7 +237,7 @@ exports.approveRequest = async (req, res) => {
       }
 
     const wallet = await walletSystem.findOne({
-      where: { UserId: receiver_id },
+      where: { UserId: sender_id },
     });
     if (!wallet) {
       return res
@@ -245,7 +245,7 @@ exports.approveRequest = async (req, res) => {
         .json({ success: false, message: "Wallet not found" });
     }
 
-          const max_time = Math.floor(wallet.wallet_amount / sender.per_minute);
+          const max_time = Math.floor(wallet.wallet_amount / receiver.per_minute);
           await sender.update({ wait_time: max_time }, { where: { id: sender_id } });
 
     if (receiver.login_from === "web") {

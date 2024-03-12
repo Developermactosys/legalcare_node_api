@@ -227,7 +227,6 @@ exports.videoHistoryController = async (req, res) => {
 
       // final_data.push()
     }
-
         }
 
          response = {
