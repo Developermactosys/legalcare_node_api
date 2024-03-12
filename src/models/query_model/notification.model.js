@@ -6,6 +6,10 @@ const notification = sequelize.define("notification", {
   user_id: DataTypes.INTEGER,
   title: DataTypes.STRING,
   type: DataTypes.STRING,
+  is_read :{
+    type : DataTypes.BOOLEAN,
+    defaultValue:0
+  }
 });
 return notification;
 }

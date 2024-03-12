@@ -5,6 +5,7 @@ const db = require("../../../config/db.config");
 const User = db.User;
 const chat_request = db.chat_request;
 const walletSystem = db.wallet_system;
+const Notification = db.notification;
 const crypto = require("crypto");
 const axios = require("axios");
 const { Op } = require("sequelize");
@@ -61,6 +62,12 @@ exports.cancelRequest = async (req, res) => {
       },
       to: receiver.device_id,
     };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: message.data.notification_type,
+      UserId :sender
+    });
 
     fcm.send(message, function (err, response) {
       // console.log("1", message);

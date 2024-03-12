@@ -245,4 +245,15 @@ db.video.belongsTo(db.User, {
     forienKey : "UserId",
     as : "User" 
 })
+
+  // User and notification one to many relationship
+  db.User.hasMany(db.notification, {
+    forienKey: "UserId",
+    as: "notification",
+  });
+  
+  db.notification.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
 module.exports = db;
