@@ -92,9 +92,9 @@ const transaction_details = async (req, res) => {
     }
     const transactionData = await TransactionHistory.findAll({
       where: {
-        UserId: user_id,
-        
-      }
+        UserId: user_id, 
+      },
+      order: [['id', 'DESC']],
     })
     if (transactionData) {
       return res.status(200).json({
@@ -111,6 +111,7 @@ const transaction_details = async (req, res) => {
     return res.status(500).json({ status: false, message: "Internal server error" })
   }
 }
+
 module.exports = {
   addWalletAmount,
   transaction_details
