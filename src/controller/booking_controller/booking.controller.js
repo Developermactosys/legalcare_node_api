@@ -4,6 +4,45 @@ const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
 const User = db.User;
+const Notification = db.notification;
+// exports.Add_Booking = async (req, res) => {
+//   try {
+//     const { serviceId, discounted_amount, GST, user_id } = req.body;
+
+//     const isEmptykey = Object.keys(req.body).some((key) => {
+//       const value = req.body[key];
+//       return value === "" || value === null || value === undefined;
+//     });
+//     if (isEmptykey) {
+//       return res.status(400).json({ error: "please do not give empty fileds" });
+//     }
+
+//     const findService = await service.findByPk(serviceId)
+//     const add_booking = await Booking_details.create(req.body);
+
+//     add_booking.serviceId = serviceId;
+//     add_booking.discounted_amount = discounted_amount;
+//     add_booking.GST = GST;
+//     add_booking.UserId = user_id;
+//     add_booking.expert_id = findService.UserId;
+
+//     await add_booking.save();
+
+//     return res.status(200).json({
+//       status: true,
+//       message: "Booked successfully",
+//       data: add_booking,
+//     });
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
+// };
+
+const FCM = require('fcm-node');
+const serverKey = process.env.SERVER_KEY_HERE;
+const fcm = new FCM(serverKey);
+
 
 exports.Add_Booking = async (req, res) => {
   try {
@@ -14,98 +53,61 @@ exports.Add_Booking = async (req, res) => {
       return value === "" || value === null || value === undefined;
     });
     if (isEmptykey) {
-      return res.status(400).json({ error: "please do not give empty fileds" });
+      return res.status(400).json({ error: "please do not give empty fields" });
     }
-
-    const findService = await service.findByPk(serviceId)
     const add_booking = await Booking_details.create(req.body);
+
+    const find_service = await service.findByPk(serviceId)
+    const service_name = find_service.serviceName
 
     add_booking.serviceId = serviceId;
     add_booking.discounted_amount = discounted_amount;
     add_booking.GST = GST;
     add_booking.UserId = user_id;
-    add_booking.expert_id = findService.UserId;
+    add_booking.expert_id = find_service.UserId;
 
     await add_booking.save();
-
-    return res.status(200).json({
-      status: true,
-      message: "Booked successfully",
-      data: add_booking,
-    });
-  } catch (error) {
-    console.error(error);
-    return res.status(500).json({ error: "Internal Server Error" });
-  }
-};
-
-const FCM = require('fcm-node');
-const serverKey = process.env.SERVER_KEY_HERE;
-const fcm = new FCM(serverKey);
-
-
-// exports.Add_Booking = async (req, res) => {
-//   try {
-//     const { serviceId, discounted_amount, GST, user_id ,device_id} = req.body;
-
-//     const isEmptykey = Object.keys(req.body).some((key) => {
-//       const value = req.body[key];
-//       return value === "" || value === null || value === undefined;
-//     });
-//     if (isEmptykey) {
-//       return res.status(400).json({ error: "please do not give empty fields" });
-//     }
-//     const add_booking = await Booking_details.create(req.body);
-
-//     const find_service = await service.findByPk(serviceId)
-//     const service_name = find_service.serviceName
-
-//     add_booking.serviceId = serviceId;
-//     add_booking.discounted_amount = discounted_amount;
-//     add_booking.GST = GST;
-//     add_booking.UserId = user_id;
-//     add_booking.expert_id = find_service.UserId;
-
-//     await add_booking.save();
     
-//     const expert_id = find_service.UserId
+    const expert_id = find_service.UserId
 
-//     const user = await User.findByPk(user_id)
-//     const user_name =  user.name
-//     const expert = await User.findByPk(expert_id) 
-//     const expert_name = expert.name
+    const user = await User.findByPk(user_id)
+    const user_name =  user.name
+    const expert = await User.findByPk(expert_id) 
+    const expert_name = expert.name
    
-// console.log(expert.device_id)
-
-
-//     var message = {
-//       to: expert.device_id, // Assuming the user model has a device_id field
-//       notification: {
-//         title: `Booking Confirmation`,
-//         body: `Booking for service  ${service_name} is confirmed by ${user_name}.`,
-//       },
+    var message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Confirmation`,
+        body: `Booking service for  ${service_name} has been made by ${user_name}.`,
+      },
       
-//     }
+    }
   
-//     console.log(message , "======>")
-//     fcm.send(message, function(err, response) {
-//       if (err) {
-//         console.error("Error:", err.message);
-//         return res.status(400).json({ success: false, message: "Failed to send notification" });
-//       } else {
-//         console.log("Successfully sent with response: ", response);
-//         return res.status(200).json({
-//           status: true,
-//           message: "Booked successfully and notification sent",
-//           data: add_booking,
-//         });
-//       }
-//     });
-// } catch (error) {
-//   console.error(error);
-//   return res.status(500).json({ error: "Internal Server Error" });
-// }
-// };
+    await Notification.create({
+      message: message.notification.body,
+      type: " Booking ",
+      UserId : expert.id
+    });
+
+    fcm.send(message, function(err, response) {
+      if (err) {
+        console.error("Error:", err.message);
+        return res.status(400).json({ success: false, message: "Failed to send notification" });
+      } else {
+        console.log("Successfully sent with response: ", response);
+        return res.status(200).json({
+          status: true,
+          message: "Booked successfully and notification sent",
+          data: add_booking,
+        });
+      }
+    });
+} catch (error) {
+  console.error(error);
+  return res.status(500).json({ error: "Internal Server Error" });
+}
+};
 
 exports.get_booking_by_status = async (req, res) => {
   try {
@@ -388,11 +390,48 @@ exports.Cancle_booking_by_id = async (req, res) => {
     const { booking_id } = req.params
     const cancel_booking = await Booking_details.findByPk(booking_id)
     if (cancel_booking) {
-      await cancel_booking.destroy(cancel_booking)
-      return res.status(200).json({
-        status: true,
-        message: "Booking delete Successfully"
-      })
+
+
+      const  user = await User.findByPk(cancel_booking.UserId)
+      const expert= await User.findByPk(cancel_booking.expert_id)
+  
+      const find_service = await service.findByPk(cancel_booking.serviceId)
+      const service_name = find_service.serviceName
+  
+  
+      //console.log(expert)
+      const user_name = user.name;
+ 
+      var message = {
+        to: expert.device_id, // Assuming the user model has a device_id field
+        notification: {
+          title: `Booking Cancellation`,
+          body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+        }, 
+      }
+      await Notification.create({
+        message: message.notification.body,
+        type: " Booking_cancellation ",
+        UserId : expert.id
+      });
+
+     const delete_booking = await cancel_booking.destroy(cancel_booking)
+  
+      fcm.send(message, function(err, response) {
+        if (err) {
+            console.error("Something went wrong!", err);
+            return res.status(400).json({ success: false, message: err.message });
+        } else {
+            console.log("Successfully sent with response: ", response);
+            // Proceed with your response
+            return res.status(200).json({
+                status: true,
+                message: "Booking is cancelled and notification sent",
+                data: delete_booking,
+            });
+        }
+    });
+
     } else {
       return res.status(400).json({
         status: false,
@@ -446,10 +485,14 @@ exports.update_Booking_by_status = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Booking for service  ${service_name} is made ${status} by ${expert_name}.`,
-      },
-      
+        body: `Booking service for ${service_name} is made ${status} by ${expert_name}.`,
+      }, 
     }
+    await Notification.create({
+      message: message.notification.body,
+      type: " Booking_status ",
+      UserId :user.id
+    });
 
     fcm.send(message, function(err, response) {
       if (err) {
@@ -484,7 +527,7 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
 
-    const add_booking = await Booking_details.update( 
+    const update_payment_status = await Booking_details.update( 
        
       {
         payment_status: payment_status,
@@ -497,10 +540,47 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       }
     );
 
-    return res.status(200).json({
-      status: true,
-      message: "Payment_Status Updated successfully",
+
+    const find_booking = await Booking_details.findByPk(booking_id)
+    const  user = await User.findByPk(find_booking.UserId)
+    const expert= await User.findByPk(find_booking.expert_id)
+
+    const find_service = await service.findByPk(find_booking.serviceId)
+    const service_name = find_service.serviceName
+
+  
+    //console.log(expert)
+    const user_name= user.name;
+    const expert_name = expert.name
+
+    var message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Payment Confirmation`,
+        body: `Booking service for ${service_name} is ${payment_status} by ${user_name}.`,
+      }, 
+    }
+    await Notification.create({
+      message: message.notification.body,
+      type: " payment_status ",
+      UserId :expert.id
     });
+
+    fcm.send(message, function(err, response) {
+      if (err) {
+          console.error("Something went wrong!", err);
+          return res.status(400).json({ success: false, message: err.message });
+      } else {
+          console.log("Successfully sent with response: ", response);
+          // Proceed with your response
+          return res.status(200).json({
+              status: true,
+              message: "Payment_Status for the booking is Updated and notification sent",
+              data: update_payment_status,
+          });
+      }
+  });
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
