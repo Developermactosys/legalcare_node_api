@@ -8,18 +8,18 @@ exports.Admin_login = async (req, res) => {
 
     try {
         if (!req.body.email_id) {
-            return res.status(400).json({ error: 'Please enter your email ' });
+            return res.status(200).json({ error: 'Please enter your email ' });
         }
         if (!req.body.password) {
-            return res.status(400).json({ error: 'please enter your password' });
+            return res.status(200).json({ error: 'please enter your password' });
         }
         const user = await User.findOne({ where: { email_id: req.body.email_id } });
 
         if (!user) {
-            return res.status(400).json({ error: 'Invalid email or password' });
+            return res.status(200).json({ error: 'Invalid email or password' });
         }
         if(user.user_type === "1"){
-            return res.status(401).json({ error: 'Unauthorized User' });
+            return res.status(200).json({ error: 'Unauthorized User' });
         }
         if(user.user_type === "0" || user.user_type === "2" || user.user_type === "3" || 
         user.user_type === "4"  ){
@@ -28,7 +28,7 @@ exports.Admin_login = async (req, res) => {
         const validPassword = await bcrypt.compare(req.body.password, user.password);
 
         if (!validPassword) {
-            return res.status(400).json({ error: 'Invalid email or password' });
+            return res.status(200).json({ error: 'Invalid email or password' });
         }
         const verifyEmail = await User.findOne({
             where: {
@@ -38,7 +38,7 @@ exports.Admin_login = async (req, res) => {
             }
         })
         if (!verifyEmail.user_type === req.body.user_type) {
-            return res.status(400).json({ message: 'Invalid user_type' })
+            return res.status(200).json({ message: 'Invalid user_type' })
          }
         if (!verifyEmail) {
            return res.status(400).json({ message: 'Please verify your mobile number first then try to login' })

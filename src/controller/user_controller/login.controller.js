@@ -27,7 +27,7 @@ exports.login = async (req, res) => {
     const user = await User.findOne({ where: { phone_no } });
 
     if (!user) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "Login Failed, please check mobile number.",
       });
@@ -37,7 +37,7 @@ exports.login = async (req, res) => {
     const passwordIsValid = await bcrypt.compare(password, user.password);
 
     if (!passwordIsValid) {
-      return res.status(201).json({
+      return res.status(200).json({
         status: false,
         message: "Login Failed, please check password.",
       });
@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
       //   body: `Your verification OTP is ${otp}`,
       // });
 
-      return res.status(202).json({
+      return res.status(200).json({
         status: true,
         message:
           "Your OTP has not been verified yet. We have sent you a new OTP.",
