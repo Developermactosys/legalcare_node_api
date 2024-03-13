@@ -15,7 +15,12 @@ exports.expert_list = async (req, res) => {
 
     // Fetch users directly without counting
     const users = await User.findAll({
-      where: { user_type: user_type },
+      where: {
+        user_type: user_type,
+        user_status: "1",
+        chat_active: 1,
+        call_active: 1,
+      },
       limit: limit,
       offset: offset,
     });

@@ -1,7 +1,10 @@
 const db = require("../../../../config/db.config");
 const User = db.User;
 const chat = db.chat;
-const call = db.call_details
+const call = db.call_details;
+const booking = db.booking_detail;
+const service = db.service;
+const videos = db.video;
 const { Op, Sequelize } = require("sequelize");
 const { QueryTypes } = require('sequelize')
 const moment = require("moment");
@@ -46,48 +49,6 @@ exports.todaysUserCount = async (req, res) => {
       });
   }
 };
-
-
-// exports.todaysExpertCount = async (req, res) => {
-//   try {
-//       const user_type = ["2","3"];
-//       const startOfToday = new Date();
-//       startOfToday.setHours(0, 0, 0, 0); // Start of today
-//       const endOfToday = new Date();
-//       endOfToday.setHours(23, 59, 59, 999); // End of today
-
-//       const countUsers = await User.findAndCountAll({
-//           where: {
-//               createdAt: {
-//                   [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
-//                   [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
-//               },
-//               user_type: user_type,
-//           },
-//           order: [['id', 'DESC']]
-//       });
-
-//       if (countUsers.count > 0) {
-//           return res.status(200).json({
-//               status: true,
-//               message: "Show Data and Count all data",
-//               data: countUsers.rows, // Assuming you want to return the users themselves
-//               count: countUsers.count // The total count
-//           });
-//       } else {
-//           return res.status(400).json({
-//               status: false,
-//               message: "Data not found",
-//           });
-//       }
-//   } catch (error) {
-//       console.error("Error:", error);
-//       return res.status(500).json({
-//           status: false,
-//           message: error.message,
-//       });
-//   }
-// };
 
 
 exports.todaysExpertCount = async (req, res) => {
@@ -304,3 +265,118 @@ exports.count_call_for_today = async (req, res) => {
     });
   }
 }
+
+
+exports.count_video_call_for_today = async (req, res) => {
+  
+  const startOfToday = new Date();
+  startOfToday.setHours(0, 0, 0, 0);
+
+  try {
+    const results = await videos.findAll({
+      attributes: [
+        'UserId',
+        'expert_id', 
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'videos_count']
+      ],
+      where: {
+        createdAt: {
+          [Sequelize.Op.gte]: startOfToday,
+        }
+      },
+      group: ['UserId', 'expert_id']
+    });
+
+    // Assuming results is now an array of objects where each object represents a unique chat pair
+    // and their chat count for the last day.
+    if (results.length > 0) {
+      const video_call = new Set();
+          
+          results.forEach(row => {
+              const { UserId, expert_id } = row;
+              const chatPairId = [UserId, expert_id].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
+              video_call.add(chatPairId);
+          });
+
+          // Now, 'chats' contains unique IDs for each chat pair that happened today
+          return res.send({
+              status: true,
+              message: "Get Data Successfully",
+              unique_chat_pairs_count: video_call.size // Number of unique chat pairs
+          });
+      } else {
+          return res.send({
+              status: true,
+              message: "No calls found for today",
+              unique_chat_pairs_count: 0
+          });
+      }
+  } catch (error) {
+    console.error("Error:", error);
+    return res.status(500).send({
+      status: false,
+      message: "Internal Server Error",
+    });
+  }
+}
+
+// API for get today's booking 
+exports.todayBookingData = async (req, res) => {
+  try {
+      
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0); // Start of today
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999); // End of today
+
+      const countUsers = await booking.findAll({
+          where: {
+              createdAt: {
+                  [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
+                  [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
+              },
+              
+          },
+          include: [
+            {
+              model: User,
+              as: "User",
+              where: { id: Sequelize.col('booking_detail.UserId') }
+            },
+            {
+              model: service,
+              as: "service",
+              include: [
+                {
+                  model: User,
+                  as: "User",
+                  where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+                }
+              ]
+            }
+          ],
+          order: [['id', 'DESC']]
+      });
+     
+      if (countUsers) {
+          return res.status(200).json({
+              status: true,
+              message: "Show data successfully...",
+              data: countUsers, // Assuming you want to return the users themselves
+              // count: countUsers.count // The total count
+          });
+      } else {
+          return res.status(400).json({
+              status: false,
+              message: "Data not found",
+          });
+      }
+  } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+          status: false,
+          message: error.message,
+      });
+  }
+};
+

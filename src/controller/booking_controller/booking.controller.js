@@ -476,9 +476,6 @@ exports.update_Booking_by_status = async (req, res) => {
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
 
-  
-    //console.log(expert)
-
     const expert_name = expert.name
 
     var message = {

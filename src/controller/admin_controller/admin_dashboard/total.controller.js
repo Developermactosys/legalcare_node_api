@@ -2,6 +2,7 @@ const db = require("../../../../config/db.config");
 const User = db.User;
 const chat = db.chat;
 const call = db.call_details
+const video = db.video;
 const { Op, Sequelize } = require("sequelize");
 const { QueryTypes } = require('sequelize')
 const moment = require("moment");
@@ -128,3 +129,27 @@ exports.getTotalCall = async(req, res) =>{
         })
     }
 }
+
+exports.getTotalVideo = async(req, res) =>{
+    try {
+        const getTotal = await video.findAndCountAll()
+        if(getTotal){
+            return res.status(200).json({
+                status : true,
+                message : "Get Total call successfully...",
+                data : getTotal.count
+            })
+        }else{
+            return res.status(400).json({
+                status: false,
+                message : "Call not found"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
