@@ -9,5 +9,4 @@ const {submitQuery } = require('../../controller/query_controller/submit_query.c
  router.get('/query',uploads.none(), getDetails);
 router.get('/user-queries',uploads.none(), userQueries);
 router.post('/submit_query',uploads.none(),submitQuery)
-
 module.exports = router;

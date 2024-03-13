@@ -30,6 +30,8 @@ const Your_channel = require('./agora_routes/channel.route');
 //Document
 const documentRoutes = require("./document_routes/document.routes")
 const videoRouter = require("./video_routes/video_routes")
+//Notification
+const notificationRoutes = require("./notification_routes/notification.routes")
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -59,4 +61,5 @@ router.use("/",adminDashboardRoutes);
 //Document
 router.use("/",documentRoutes);
 router.use('/', videoRouter)
+router.use('/',notificationRoutes);
 module.exports = router
