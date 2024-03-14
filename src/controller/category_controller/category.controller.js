@@ -101,7 +101,7 @@ const getCategoryById = async (req, res) => {
 // updateCategory Api
 const updateCategory = async (req, res) => {
   const { category_name, description, color, status } = req.body;
-  if (!req.param.id) {
+  if (!req.params.id) {
     return res.json({
       status: false,
       message: "provide category id",
@@ -113,7 +113,7 @@ const updateCategory = async (req, res) => {
       : "/src/uploads/category_img/default.png";
 
     const category = await Category.findOne({
-      where: { id: req.param.id },
+      where: { id: req.params.id },
     });
     if (category) {
       const update = await Category.update(
@@ -125,7 +125,7 @@ const updateCategory = async (req, res) => {
           category_image: filePath,
         },
         {
-          where: { id: req.param.id },
+          where: { id: req.params.id },
         }
       );
       if (update) {

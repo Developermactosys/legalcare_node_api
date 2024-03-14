@@ -107,8 +107,8 @@ const updateSubCategory = async (req, res) => {
   }
   try {
     const filePath = req.file
-      ? `subcategory_img/${req.file.filename}`
-      : "subcategory_img/default.png";
+    ? `subcategory_img/${req.file.filename}`
+    : "/src/uploads/subcategory_img/default.png";
 
     const find = await subcategory.findOne({
       where: {
