@@ -5,6 +5,7 @@ const db = require("../../../config/db.config");
 const call_details = db.call_details;
 const User = db.User;
 const WalletSystem = db.wallet_system;
+const TransactionHistory = db.trancation_histroy;
 
 const addCall = async (req, res) => {
   try {
@@ -103,25 +104,28 @@ const addCall = async (req, res) => {
       { where: { UserId: admin_id } }
     );
 
-    // const expert_per_minute_rate = expert.per_minute;
-
-    // // Calculate the duration in minutes (assuming duration is in minutes)
-    // const start = new Date(start_time);
-    // const end = new Date(end_time);
-    // const callDuration = Math.round((end - start) / (1000 * 60)); // Duration in minutes
-
-    // // Calculate the amount based on the duration and expert's rate
-    // const amountDeducted = callDuration * expert_per_minute_rate;
-
     // Update the call record with duration and deducted amount
     const result = await call_details.create({
       UserId: user_id,
       expert_id: expert_id,
       senderName: name,
       call_duration: duration,
-      current_used_bal: current_used_bal, // You might need to adjust this based on your actual logic
+      current_used_bal: requestedAmount, // You might need to adjust this based on your actual logic
       start_time: start_time,
       end_time: end_time,
+    });
+
+     // Log transaction history
+     await TransactionHistory.create({
+      UserId: user_id,
+      payment_method,
+      payment_status,
+      transaction_amount: requestedAmount,
+      transaction_id,
+      device_id,
+      status: 1,
+      amount_receiver_id:admin_id,
+      expert_id:expert_id
     });
 
     return res.status(200).json({

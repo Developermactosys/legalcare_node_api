@@ -54,6 +54,12 @@ module.exports = (sequelize, DataTypes) => {
         device_id : {
           type: DataTypes.STRING,
         },
+        amount_receiver_id : {
+          type: DataTypes.INTEGER,
+        },
+        expert_id : {
+          type: DataTypes.INTEGER,
+        },
         deleted_At: {
           type: DataTypes.DATE,
           allowNull: true,

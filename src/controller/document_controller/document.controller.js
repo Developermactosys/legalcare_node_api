@@ -70,13 +70,18 @@ exports.get_document_by_user_id = async (req, res) => {
     try {
         const { user_id } = req.query;
         const page = parseInt(req.query.page) || 1;
-        const pageSize = parseInt(req.query.pageSize) || 5;
+        const pageSize = parseInt(req.query.pageSize) || 10;
         const offset = (page - 1) * pageSize;
+
+        let expert_Id
+        let expert_data = []
 
         const get_document = await document.findAll({
             where: {
                 [Sequelize.Op.or]: [
                     { UserId: user_id },
+                    { expert_id: user_id },
+
                 ]
             },
             include: [
@@ -96,14 +101,18 @@ exports.get_document_by_user_id = async (req, res) => {
             limit: pageSize
         });
         
-        const expertIds = get_document.map(doc => doc.expert_id);
-
-        console.log(expertIds);
+        for(let i =0; i<get_document.length; i++){
+            expert_Id = get_document[i].expert_id;
+            const  ex_data = await User.findByPk(expert_Id)
+            expert_data.push({data :get_document[i], expert : ex_data})
+      
+            // final_data.push()
+          }
 
         return res.status(200).json({
             status: true,
             message: "All Documents",
-            data: get_document,
+            data: expert_data,
             currentPage: page
         });
     } catch (error) {
