@@ -218,6 +218,63 @@ const getAllserviceBy_expert_id = async(req, res) => {
     } 
 }
 
+const updateService = async (req, res) => {
+    const {
+      categoryId,
+      subCategoryId,
+      serviceName,
+      expert_id,
+      service_type,
+      expert_fees,
+    } = req.body;
+    let id = req.params.id;
+    try {
+      const findCategory = await category.findByPk(categoryId);
+  
+      const findSubCategory = await subCategory.findByPk(subCategoryId);
+    //   if(!findCategory && !findSubCategory){
+    //       return res.status(404).json({
+    //           status : false,
+    //           message : "Category or sub Category are not found"
+    //       })
+    //   }
+  
+      const filePath = req.file
+        ? `service_img/${req.file.filename}`
+        : "/src/uploads/service_img/default.png";
+      const updateData = await services.update({
+        categoryId: categoryId,
+        subcategoryId: subCategoryId,
+        service_img: filePath,
+        serviceName: serviceName,
+        service_type: service_type,
+        expert_fees: expert_fees,
+        UserId: expert_id,
+    },{
+      where : {
+          id : id
+      }
+    });
+      if(updateData){
+          return res.status(200).json({
+              status : true,
+              message : "Service updated successfully",
+              data : updateData
+          })
+      }else{
+          return req.status(200).json({
+              status : false,
+              message : "service not updated"
+          })
+      }
+    } catch (error) {
+      return res.status(500).json({
+          status :false,
+          message : error.message
+      })
+    }
+  };
+
 
 // API for delete Services
 const deleteService = async(req, res) => {
@@ -249,5 +306,6 @@ module.exports = {
     getServiceById,
     deleteService,
     getServiceBy_expertId,
-    getAllserviceBy_expert_id
+    getAllserviceBy_expert_id,
+    updateService
 }
