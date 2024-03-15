@@ -79,7 +79,7 @@ exports.Add_Booking = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Booking service for  ${service_name} has been made by ${user_name}.`,
+        body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.id}.`,
       },
       
     }
@@ -482,9 +482,11 @@ exports.update_Booking_by_status = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Booking service for ${service_name} is made ${status} by ${expert_name}.`,
+        body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${booking_id} has been ${status} by ${expert_name}.`,
       }, 
     }
+    console.log(message)
+
     await Notification.create({
       message: message.notification.body,
       type: " Booking_status ",

@@ -80,8 +80,10 @@ exports.sendRequest = async (req, res) => {
         collapse_key: "green",
 
         notification: {
-          title: `Incoming ${vcParam} request from ${sender.name}`,
-          body: `Incoming ${vcParam} request from ${sender.name}`,
+          // title: `Incoming ${vcParam} request from ${sender.name}`,
+          // body: `Incoming ${vcParam} request from ${sender.name}`,
+          title: `Dear ${receiver.name}, ${sender.name} has requested a ${vcParam}`,
+          body: `Dear ${receiver.name}, ${sender.name} has requested a ${vcParam}`,
           priority: "high",
           image: `${sender_profile_image}${sender.profile_image}`,
         },

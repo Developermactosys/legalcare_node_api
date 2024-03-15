@@ -66,7 +66,7 @@ exports.cancelRequest = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: message.data.notification_type,
-      UserId :sender
+      UserId :sender.id
     });
 
     fcm.send(message, function (err, response) {
