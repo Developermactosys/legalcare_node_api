@@ -455,6 +455,9 @@ exports.update_Booking_by_status = async (req, res) => {
     if (!booking_id) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
+    
+    console.log(status, discounted_amount)
+
 const discounted_price = parseFloat(discounted_amount);
 const find_booking = await Booking_details.findByPk(booking_id)
 
