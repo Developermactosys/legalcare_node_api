@@ -256,4 +256,15 @@ db.video.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
   });
+
+  // booking_detail and document one to many relationship
+  db.booking_detail.hasMany(db.document, {
+    forienKey : "UserId",
+    as : "document"
+})
+db.document.belongsTo(db.booking_detail, {
+    forienKey : "UserId",
+    as : "booking_detail" 
+})
+
 module.exports = db;

@@ -7,7 +7,7 @@ const { Sequelize,Op } = require("sequelize")
 exports.uploadDocument = async(req, res)=>{
     try{
 
-        const {expert_id,user_id} = req.body;
+        const {expert_id,user_id,booking_id} = req.body;
 
         const filePath = req.file
         ? `documents/${req.file.filename}`
@@ -15,7 +15,8 @@ exports.uploadDocument = async(req, res)=>{
         const doc = await document.create({
             document: filePath,
             expert_id:expert_id,
-            UserId:user_id
+            UserId:user_id,
+            bookingDetailId :booking_id
         })
         if(doc){
             return res.status(200).json({
@@ -68,7 +69,7 @@ exports.getAllDocument = async (req, res) => {
 
 exports.get_document_by_user_id = async (req, res) => {
     try {
-        const { user_id } = req.query;
+        const { user_id ,booking_id} = req.query;
         const page = parseInt(req.query.page) || 1;
         const pageSize = parseInt(req.query.pageSize) || 10;
         const offset = (page - 1) * pageSize;
@@ -81,8 +82,8 @@ exports.get_document_by_user_id = async (req, res) => {
                 [Sequelize.Op.or]: [
                     { UserId: user_id },
                     { expert_id: user_id },
-
-                ]
+                ],
+                    bookingDetailId :booking_id
             },
             include: [
                 {

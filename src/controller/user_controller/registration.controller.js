@@ -31,7 +31,10 @@ const registration = async (req, res) => {
 
     const dateFormat = "YYYY-MM-DD"; 
     const parsedDate = moment(userInputDate, dateFormat);
-
+    
+if(!user_type){
+  return res.status(200).json({status:true, message: "Please provide user_type"})
+}
     if (!parsedDate.isValid()) {
       console.error("The provided date is invalid.");
     } else {
@@ -56,6 +59,7 @@ const registration = async (req, res) => {
       user.dob = userInputDate,
       user.profile_image=filePath,
       user.password= hashedPassword,
+      user.user_type =  user_type
       await user.save();
   
       return res.json({
