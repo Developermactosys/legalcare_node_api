@@ -455,11 +455,11 @@ exports.update_Booking_by_status = async (req, res) => {
     if (!booking_id) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
-
+const discounted_price = parseFloat(discounted_amount);
     const update_booking = await Booking_details.update( 
       {
         status: status,
-        discounted_amount : discounted_amount
+        discounted_amount : discounted_price
       },
       {
         where: {
@@ -478,14 +478,28 @@ exports.update_Booking_by_status = async (req, res) => {
 
     const expert_name = expert.name
 
+    // var message = {
+    //   to: user.device_id, // Assuming the user model has a device_id field
+    //   notification: {
+    //     title: `Booking Confirmation`,
+    //     body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${booking_id} has been ${status} by ${expert_name}.`,
+    //   }, 
+    // }
+
     var message = {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${booking_id} has been ${status} by ${expert_name}.`,
-      }, 
+        body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${booking_id}`,
+      },
+    };
+    
+    if (status) {
+      message.notification.body += ` has been ${status} by ${expert_name}.`;
+    } else if (discounted_amount) {
+      message.notification.body += ` has got an offer ${discounted_price} by ${expert_name}.`;
     }
-    console.log(message)
+    
 
     await Notification.create({
       message: message.notification.body,

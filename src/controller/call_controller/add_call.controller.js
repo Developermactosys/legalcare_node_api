@@ -5,7 +5,7 @@ const db = require("../../../config/db.config");
 const call_details = db.call_details;
 const User = db.User;
 const WalletSystem = db.wallet_system;
-const TransactionHistory = db.trancation_histroy;
+const TransactionHistory = db.transaction_history;
 
 const addCall = async (req, res) => {
   try {
