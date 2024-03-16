@@ -456,10 +456,12 @@ exports.update_Booking_by_status = async (req, res) => {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
 const discounted_price = parseFloat(discounted_amount);
+const find_booking = await Booking_details.findByPk(booking_id)
+
     const update_booking = await Booking_details.update( 
       {
         status: status,
-        discounted_amount : discounted_price
+        // discounted_amount : discounted_price
       },
       {
         where: {
@@ -469,7 +471,11 @@ const discounted_price = parseFloat(discounted_amount);
       }
     );
 
-    const find_booking = await Booking_details.findByPk(booking_id)
+    if(discounted_price){
+      find_booking.discounted_amount = discounted_price;
+      await find_booking.save();
+    }
+
     const  user = await User.findByPk(find_booking.UserId)
     const expert= await User.findByPk(find_booking.expert_id)
 
@@ -517,7 +523,6 @@ const discounted_price = parseFloat(discounted_amount);
           return res.status(200).json({
               status: true,
               message: "Booking status updated and notification sent",
-              data: update_booking,
           });
       }
   });
