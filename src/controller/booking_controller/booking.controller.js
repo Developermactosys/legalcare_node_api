@@ -578,9 +578,10 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Payment Confirmation`,
-        body: `Booking service for ${service_name} is ${payment_status} by ${user_name}.`,
+        body: `Booking service for ${service_name} ${find_booking.discounted_amount} is ${payment_status} by ${user_name}.`,
       }, 
     }
+
     await Notification.create({
       message: message.notification.body,
       type: " payment_status ",

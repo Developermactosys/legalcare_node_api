@@ -7,7 +7,7 @@ exports.view_notification = async (req, res) => {
     const { user_id } = req.body;
 
     // Validating request
-    if (!user_id ) {
+    if (!user_id) {
       return res.status(400).json({
         status: false,
         code: 201,
@@ -28,48 +28,36 @@ exports.view_notification = async (req, res) => {
     let notification;
     let count;
 
-    // Updating notification status if type is 1
-    // if (type == 1) {
-    //   await Notification.update({ is_read: 1 }, { where: { user_id } });
-    // }
+    count = await Notification.findAndCountAll({
+      where: { UserId: user_id, is_read: 0 },
+    });
 
-    // Fetching notifications based on user type
-    
-    
-    notification = await Notification.findAll({
+    if (count.count > 0) {
+      notification = await Notification.findAll({
         where: {
-          UserId:user_id,
+          UserId: user_id,
         },
         order: [["id", "DESC"]],
       });
-      count = await Notification.count({
-        where: {UserId: user_id, is_read: 0 },
-      });
-    
-    // else if (checkUser.user_type === 2) {
-    //   notification = await Notification.findAll({
-    //     where: {
-    //       user_id,
-    //       [Sequelize.Op.or]: [{ type: "ALL" }, { type: "astrologer" }],
-    //     },
-    //     order: [["id", "DESC"]],
-    //   });
-    //   count = await Notification.count({
-    //     where: { user_id, is_read: 0 },
-    //   });
-    // }
 
-    if (notification.length > 0) {
+      // Updating notification status is_read = 1
+
+      await Notification.update({ is_read: 1 }, { where: { UserId: user_id } });
+    }
+
+    if (notification) {
       return res.status(200).json({
         status: true,
         message: "All user notifications",
-        data: notification,
-        count,
+        count : count.count,
+        data: notification
       });
     } else {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "No notifications found for the user",
+        data: notification,
+        count: count.count,
       });
     }
   } catch (error) {

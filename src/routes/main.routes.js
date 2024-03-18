@@ -34,6 +34,8 @@ const videoRouter = require("./video_routes/video_routes")
 const notificationRoutes = require("./notification_routes/notification.routes")
 // CA 
 const caRoutes = require("./ca_routes/ca.routes")
+//payment_History 
+const payment_HistoryRoutes = require("./admin_routes/admin_dashboard/payment_history.routes")
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -66,4 +68,6 @@ router.use('/', videoRouter)
 router.use('/',notificationRoutes);
 //CA
 router.use("/",caRoutes);
+//paymet_History 
+router.use("/",payment_HistoryRoutes);
 module.exports = router
