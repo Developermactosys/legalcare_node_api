@@ -20,6 +20,6 @@ router.get('/total_expert_list', authorize(['0']),totalUserForCa);
 router.post("/forgotPassword", forgotPassword);
 router.get("/resetPassword/:token", resetPassword);
 
-router.get('/get_user_and_chat/:UserId', authorize(['0']), getuserDetailsAndChat);
+// router.get('/get_user_and_chat/:UserId', authorize(['0']), getuserDetailsAndChat);
 
 module.exports = router;

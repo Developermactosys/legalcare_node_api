@@ -9,12 +9,12 @@ exports.getAllCa = async (req, res) => {
   const limit = Number(req.query.limit) || 10;
   const offset = (page - 1) * limit;
 
-  const { name } = req.query;
+  const { user_type } = req.query;
 
   const whereCondition = {};
 
-  if (name) {
-    whereCondition.name = { [Op.like]: `%${name}%` };
+  if (user_type) {
+    whereCondition.name = { [Op.like]: `%${user_type}%` };
   }
   const ca = await User.findAll({
     where: {

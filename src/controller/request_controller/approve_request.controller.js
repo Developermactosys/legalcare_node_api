@@ -295,7 +295,9 @@ exports.approveRequest = async (req, res) => {
                 to: receiver.device_id,
               };
               
- await Notification.create({
+              console.log(message)
+
+                await Notification.create({
                 message: message.notification.body,
                 type: message.data.notification_type,
                 UserId : message.data.sender_id

@@ -267,4 +267,15 @@ db.document.belongsTo(db.booking_detail, {
     as : "booking_detail" 
 })
 
+  //User  and booking_detail one to many relationship
+
+db.User.hasMany(db.bank_details, {
+    forienKey: "UserId",
+    as: "bank_details",
+})
+db.bank_details.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+})
+
 module.exports = db;

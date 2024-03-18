@@ -5,6 +5,9 @@ const User = db.User;
 const Sequelize = require("sequelize");
 const wallet_system = db.wallet_system;
 const chat = db.chat;
+const call=db.call_details;
+const video = db.video;
+const document =db.document;
 
 // API for count total user
 exports.totalUser = async (req, res) => {
@@ -41,10 +44,24 @@ exports.totalUser = async (req, res) => {
     const { UserId } = req.params;
     try {
       const userDetails = await User.findByPk(UserId, {
-        include: {
+        include: [{
           model: wallet_system,
           attributes: ["wallet_amount"],
-        },
+          as: 'wallet_system', 
+        },{
+            model: chat,
+            as: 'chat'
+        },{
+            model: call,
+            as: 'call_details'
+          
+        },{
+            model: video,
+            as: 'video'
+        },{
+          model: document,
+          as: 'document'
+        }]
       });
       if (userDetails) {
         return res.status(200).json({
@@ -65,6 +82,7 @@ exports.totalUser = async (req, res) => {
       });
     }
   };
+  
   
   // API for user delete from admin
   exports.delUserDetails = async (req, res) => {
@@ -137,12 +155,37 @@ exports.totalUser = async (req, res) => {
   // Count Total user
   exports.totalUserForCa = async (req, res) => {
     try {
-      const userTypes = ["2", "3"]; 
+      const userTypes = ["2", "3","4"];
   
       // Create a promise array to fetch counts for both user types concurrently
-      const countsPromises = userTypes.map(type => 
+      const countsPromises = userTypes.map((type) =>
         User.findAndCountAll({
           where: { user_type: type },
+          include: [
+            {
+              model: wallet_system,
+              as: "wallet_system",
+            },
+            {
+              model: chat,
+              as: "chat",
+            },
+            {
+              model: call,
+              as: "call_details",
+            },{
+              model: video,
+              as: "video",
+            },
+            {
+              model: document,
+              as: "document",
+            },
+            {
+              model: bank_details,
+              as: 'bank_details'
+            },
+          ],
         })
       );
   
@@ -152,14 +195,15 @@ exports.totalUser = async (req, res) => {
       // Calculate the total count by summing up the counts for both user types
       const totalCount = counts.reduce((acc, current) => acc + current.count, 0);
   
-      if (counts.length === userTypes.length) { // Ensure we got results for both types
+      if (counts.length === userTypes.length) {
+        // Ensure we got results for both types
         return res.status(200).json({
           success: true,
           message: "Show Data and Count all data",
           data: {
             totalUserCount: totalCount, // total count for user types "2" and "3"
-            data: counts
-          }
+            data: counts,
+          },
         });
       } else {
         return res.status(400).json({
@@ -175,34 +219,34 @@ exports.totalUser = async (req, res) => {
     }
   };
 
-  exports.getuserDetailsAndChat = async (req, res) => {
-    const { UserId } = req.params;
-    try {
-      const userDetails = await User.findByPk(UserId, {
-        include: {
-          model: chat,
-          as: 'chat',
-        },
-      });
-      if (userDetails) {
-        return res.status(200).json({
-          success: true,
-          message: "Get user details",
-          data: userDetails,
-        });
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "user Id not found ",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        message: error.message,
-      });
-    }
-  };
+  // exports.getuserDetailsAndChat = async (req, res) => {
+  //   const { UserId } = req.params;
+  //   try {
+  //     const userDetails = await User.findByPk(UserId, {
+  //       include: {
+  //         model: chat,
+  //         as: 'chat',
+  //       },
+  //     });
+  //     if (userDetails) {
+  //       return res.status(200).json({
+  //         success: true,
+  //         message: "Get user details",
+  //         data: userDetails,
+  //       });
+  //     } else {
+  //       return res.status(400).json({
+  //         success: false,
+  //         message: "user Id not found ",
+  //       });
+  //     }
+  //   } catch (error) {
+  //     return res.status(500).json({
+  //       success: false,
+  //       message: error.message,
+  //     });
+  //   }
+  // };
   
   
   

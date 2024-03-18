@@ -24,9 +24,11 @@ const category = sequelize.define('category', {
         allowNull: true 
       },
       status: {
-        type: DataTypes.BOOLEAN,
-        allowNull: true
-      },
+        type: DataTypes.ENUM,
+        values: ["pending", "approved", "rejected"],
+        allowNull: false,
+        defaultValue: "pending"
+    },
       category_image : {
         type : DataTypes.STRING,
       },
