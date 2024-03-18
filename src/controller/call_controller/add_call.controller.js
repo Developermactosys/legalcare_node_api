@@ -17,6 +17,10 @@ const addCall = async (req, res) => {
       end_time,
       duration,
       current_used_bal,
+      device_id,
+      payment_status,
+      transaction_id,
+      payment_method
     } = req.body;
 
     // Validate request data
