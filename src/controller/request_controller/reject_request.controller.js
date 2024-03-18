@@ -43,7 +43,7 @@ exports.cancelRequest = async (req, res) => {
 
       notification: {
         title: `Your request has been cancelled from ${sender.name}`,
-        body: `Your request has been cancelled ${sender.name}`,
+        // body: `Your request has been cancelled ${sender.name}`,
         priority: "high",
         image: `${sender_profile_image}${sender.profile_image}`,
       },
@@ -64,7 +64,7 @@ exports.cancelRequest = async (req, res) => {
     };
 
     await Notification.create({
-      message: message.notification.body,
+      message: message.notification.title,
       type: message.data.notification_type,
       UserId :sender.id
     });
@@ -79,7 +79,7 @@ exports.cancelRequest = async (req, res) => {
         });
       } else {
         console.log("Successfully Sent With Resposne :", response);
-        var body = message.notification.body;
+        var body = message.notification.title;
         console.log("notification body for add order <sent to manager>", body);
         return res.json({
           success: true,
