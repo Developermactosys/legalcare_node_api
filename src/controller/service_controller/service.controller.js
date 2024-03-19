@@ -57,7 +57,13 @@ const getALlService = async(req, res) =>{
             {
                 model:subCategory,
                 as:"subcategory",
-            }]
+            },
+            {
+                model:User,
+                as:"User",
+                attributes:['user_type']
+            }
+        ]
         })
         if(getServices){
             return res.status(200).json({

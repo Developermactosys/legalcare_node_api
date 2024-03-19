@@ -28,6 +28,12 @@ module.exports = (sequelize, DataTypes) => {
         expert_id: {
             type: DataTypes.INTEGER
         },
+        receiver_id: {
+            type: DataTypes.INTEGER,
+          },
+          sender_id: {
+            type: DataTypes.INTEGER,
+          },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,

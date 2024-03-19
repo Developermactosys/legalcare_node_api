@@ -26,9 +26,10 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: true 
     },
     status: {
-      type: DataTypes.BOOLEAN,
+      type: DataTypes.ENUM,
+      values: ['pending', 'approved', 'reject'],
       allowNull: true,
-      defaultValue : true  
+      defaultValue : 'pending'  
     },
     service_img : {
       type : DataTypes.STRING,
