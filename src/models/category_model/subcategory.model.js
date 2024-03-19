@@ -25,6 +25,7 @@ module.exports = (sequelize, DataTypes) => {
         status: {
           type: DataTypes.BOOLEAN,
           allowNull: true,
+          defaultValue:true
         },
         subcategory_img: {
           type: DataTypes.STRING,
