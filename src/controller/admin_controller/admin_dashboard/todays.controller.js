@@ -4,149 +4,315 @@ const chat = db.chat;
 const call = db.call_details;
 const booking = db.booking_detail;
 const service = db.service;
-const videos = db.video;
+const video = db.video;
 const { Op, Sequelize } = require("sequelize");
 const { QueryTypes } = require('sequelize')
 const moment = require("moment");
 
-exports.todaysUserCount = async (req, res) => {
-  try {
-      const user_type = "1";
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0); // Start of today
-      const endOfToday = new Date();
-      endOfToday.setHours(23, 59, 59, 999); // End of today
+// exports.todaysUserCount = async (req, res) => {
+//   try {
+//       const user_type = "1";
+//       const startOfToday = new Date();
+//       startOfToday.setHours(0, 0, 0, 0); // Start of today
+//       const endOfToday = new Date();
+//       endOfToday.setHours(23, 59, 59, 999); // End of today
 
-      const countUsers = await User.findAndCountAll({
-          where: {
-              createdAt: {
-                  [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
-                  [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
-              },
-              user_type: user_type,
-          },
-          order: [['id', 'DESC']]
-      });
+//       const countUsers = await User.findAndCountAll({
+//           where: {
+//               createdAt: {
+//                   [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
+//                   [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
+//               },
+//               user_type: user_type,
+//           },
+//           order: [['id', 'DESC']]
+//       });
 
-      if (countUsers.count > 0) {
-          return res.status(200).json({
-              status: true,
-              message: "Show Data and Count all data",
-              // data: countUsers.rows, // Assuming you want to return the users themselves
-              count: countUsers.count // The total count
-          });
-      } else {
-          return res.status(400).json({
-              status: false,
-              message: "Data not found",
-          });
-      }
-  } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-          status: false,
-          message: error.message,
-      });
-  }
-};
-
-
-exports.todaysExpertCount = async (req, res) => {
-  try {
-      const user_types = ["2", "3"]; // Array of user types to filter on
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0); // Start of today
-      const endOfToday = new Date();
-      endOfToday.setHours(23, 59, 59, 999); // End of today
-
-      const countUsers = await User.findAndCountAll({
-          where: {
-              createdAt: {
-                  [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
-                  [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
-              },
-              user_type: {
-                  [Sequelize.Op.in]: user_types, // Matches any user_type in the user_types array
-              },
-          },
-          order: [['id', 'DESC']]
-      });
-
-      if (countUsers.count > 0) {
-          return res.status(200).json({
-              status: true,
-              message: "Show Data and Count all data",
-              //data: countUsers.rows, // Assuming you want to return the users themselves
-              count: countUsers.count // The total count
-          });
-      } else {
-          return res.status(400).json({
-              status: false,
-              message: "Data not found",
-          });
-      }
-  } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-          status: false,
-          message: error.message,
-      });
-  }
-};
+//       if (countUsers.count > 0) {
+//           return res.status(200).json({
+//               status: true,
+//               message: "Show Data and Count all data",
+//               // data: countUsers.rows, // Assuming you want to return the users themselves
+//               count: countUsers.count // The total count
+//           });
+//       } else {
+//           return res.status(400).json({
+//               status: false,
+//               message: "Data not found",
+//           });
+//       }
+//   } catch (error) {
+//       console.error("Error:", error);
+//       return res.status(500).json({
+//           status: false,
+//           message: error.message,
+//       });
+//   }
+// };
 
 
+// exports.todaysExpertCount = async (req, res) => {
+//   try {
+//       const user_types = ["2", "3"]; // Array of user types to filter on
+//       const startOfToday = new Date();
+//       startOfToday.setHours(0, 0, 0, 0); // Start of today
+//       const endOfToday = new Date();
+//       endOfToday.setHours(23, 59, 59, 999); // End of today
 
-// API for today chat count
-exports.count_chat_for_today = async (req, res) => {
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
+//       const countUsers = await User.findAndCountAll({
+//           where: {
+//               createdAt: {
+//                   [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
+//                   [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
+//               },
+//               user_type: {
+//                   [Sequelize.Op.in]: user_types, // Matches any user_type in the user_types array
+//               },
+//           },
+//           order: [['id', 'DESC']]
+//       });
 
-  try {
-      const results = await chat.findAll({
-          attributes: [
-              'from_user_id',
-              'to_user_id',
-              [Sequelize.fn('COUNT', Sequelize.col('id')), 'chat_count']
-          ],
-          where: {
-              createdAt: {
-                  [Sequelize.Op.gte]: startOfToday,
-              }
-          },
-          group: ['from_user_id', 'to_user_id']
-      });
+//       if (countUsers.count > 0) {
+//           return res.status(200).json({
+//               status: true,
+//               message: "Show Data and Count all data",
+//               //data: countUsers.rows, // Assuming you want to return the users themselves
+//               count: countUsers.count // The total count
+//           });
+//       } else {
+//           return res.status(400).json({
+//               status: false,
+//               message: "Data not found",
+//           });
+//       }
+//   } catch (error) {
+//       console.error("Error:", error);
+//       return res.status(500).json({
+//           status: false,
+//           message: error.message,
+//       });
+//   }
+// };
 
-      if (results.length > 0) {
-          const chats = new Set();
+
+
+// // API for today chat count
+// exports.count_chat_for_today = async (req, res) => {
+//   const startOfToday = new Date();
+//   startOfToday.setHours(0, 0, 0, 0);
+
+//   try {
+//       const results = await chat.findAll({
+//           attributes: [
+//               'from_user_id',
+//               'to_user_id',
+//               [Sequelize.fn('COUNT', Sequelize.col('id')), 'chat_count']
+//           ],
+//           where: {
+//               createdAt: {
+//                   [Sequelize.Op.gte]: startOfToday,
+//               }
+//           },
+//           group: ['from_user_id', 'to_user_id']
+//       });
+
+//       if (results.length > 0) {
+//           const chats = new Set();
           
-          results.forEach(row => {
-              const { from_user_id, to_user_id } = row;
-              const chatPairId = [from_user_id, to_user_id].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
-              chats.add(chatPairId);
-          });
+//           results.forEach(row => {
+//               const { from_user_id, to_user_id } = row;
+//               const chatPairId = [from_user_id, to_user_id].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
+//               chats.add(chatPairId);
+//           });
 
-          // Now, 'chats' contains unique IDs for each chat pair that happened today
-          return res.send({
-              status: true,
-              message: "Get Data Successfully",
-              unique_chat_pairs_count: chats.size // Number of unique chat pairs
-          });
-      } else {
-          return res.send({
-              status: true,
-              message: "No chats found for today",
-              unique_chat_pairs_count: 0
-          });
-      }
-  } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).send({
-          status: false,
-          message: "Internal Server Error",
-      });
-  }
-};
+//           // Now, 'chats' contains unique IDs for each chat pair that happened today
+//           return res.send({
+//               status: true,
+//               message: "Get Data Successfully",
+//               unique_chat_pairs_count: chats.size // Number of unique chat pairs
+//           });
+//       } else {
+//           return res.send({
+//               status: true,
+//               message: "No chats found for today",
+//               unique_chat_pairs_count: 0
+//           });
+//       }
+//   } catch (error) {
+//       console.error("Error:", error);
+//       return res.status(500).send({
+//           status: false,
+//           message: "Internal Server Error",
+//       });
+//   }
+// };
 
+// // API for today call count
+// exports.count_call_for_today = async (req, res) => {
+  
+//   const startOfToday = new Date();
+//   startOfToday.setHours(0, 0, 0, 0);
+
+//   try {
+//     const results = await call.findAll({
+//       attributes: [
+//         'from_number',
+//         'to_number', 
+//         [Sequelize.fn('COUNT', Sequelize.col('id')), 'call_count']
+//       ],
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday,
+//         }
+//       },
+//       group: ['from_number', 'to_number']
+//     });
+
+//     // Assuming results is now an array of objects where each object represents a unique chat pair
+//     // and their chat count for the last day.
+//     if (results.length > 0) {
+//       const chats = new Set();
+          
+//           results.forEach(row => {
+//               const { from_number, to_number } = row;
+//               const chatPairId = [from_number, to_number].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
+//               chats.add(chatPairId);
+//           });
+
+//           // Now, 'chats' contains unique IDs for each chat pair that happened today
+//           return res.send({
+//               status: true,
+//               message: "Get Data Successfully",
+//               unique_chat_pairs_count: chats.size // Number of unique chat pairs
+//           });
+//       } else {
+//           return res.send({
+//               status: true,
+//               message: "No calls found for today",
+//               unique_chat_pairs_count: 0
+//           });
+//       }
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return res.status(500).send({
+//       status: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// }
+
+// exports.count_video_call_for_today = async (req, res) => {
+  
+//   const startOfToday = new Date();
+//   startOfToday.setHours(0, 0, 0, 0);
+
+//   try {
+//     const results = await videos.findAll({
+//       attributes: [
+//         'UserId',
+//         'expert_id', 
+//         [Sequelize.fn('COUNT', Sequelize.col('id')), 'videos_count']
+//       ],
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday,
+//         }
+//       },
+//       group: ['UserId', 'expert_id']
+//     });
+
+//     // Assuming results is now an array of objects where each object represents a unique chat pair
+//     // and their chat count for the last day.
+//     if (results.length > 0) {
+//       const video_call = new Set();
+          
+//           results.forEach(row => {
+//               const { UserId, expert_id } = row;
+//               const chatPairId = [UserId, expert_id].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
+//               video_call.add(chatPairId);
+//           });
+
+//           // Now, 'chats' contains unique IDs for each chat pair that happened today
+//           return res.send({
+//               status: true,
+//               message: "Get Data Successfully",
+//               unique_chat_pairs_count: video_call.size // Number of unique chat pairs
+//           });
+//       } else {
+//           return res.send({
+//               status: true,
+//               message: "No calls found for today",
+//               unique_chat_pairs_count: 0
+//           });
+//       }
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return res.status(500).send({
+//       status: false,
+//       message: "Internal Server Error",
+//     });
+//   }
+// }
+
+// // API for get today's booking 
+// exports.todayBookingData = async (req, res) => {
+//   try {
+      
+//       const startOfToday = new Date();
+//       startOfToday.setHours(0, 0, 0, 0); // Start of today
+//       const endOfToday = new Date();
+//       endOfToday.setHours(23, 59, 59, 999); // End of today
+
+//       const countUsers = await booking.findAll({
+//           where: {
+//               createdAt: {
+//                   [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
+//                   [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
+//               },
+              
+//           },
+//           include: [
+//             {
+//               model: User,
+//               as: "User",
+//               where: { id: Sequelize.col('booking_detail.UserId') }
+//             },
+//             {
+//               model: service,
+//               as: "service",
+//               include: [
+//                 {
+//                   model: User,
+//                   as: "User",
+//                   where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+//                 }
+//               ]
+//             }
+//           ],
+//           order: [['id', 'DESC']]
+//       });
+     
+//       if (countUsers) {
+//           return res.status(200).json({
+//               status: true,
+//               message: "Show data successfully...",
+//               data: countUsers, // Assuming you want to return the users themselves
+//               // count: countUsers.count // The total count
+//           });
+//       } else {
+//           return res.status(400).json({
+//               status: false,
+//               message: "Data not found",
+//           });
+//       }
+//   } catch (error) {
+//       console.error("Error:", error);
+//       return res.status(500).json({
+//           status: false,
+//           message: error.message,
+//       });
+//   }
+// };
 
 exports.count_chat_connections = async (req, res) => {
   const id = req.query.id;
@@ -212,171 +378,117 @@ exports.count_chat_connections = async (req, res) => {
   }
 }
 
-// API for today call count
-exports.count_call_for_today = async (req, res) => {
-  
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
+exports.aggregateCounts = async (req, res) => {
   try {
-    const results = await call.findAll({
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const startOfToday = new Date();
+    startOfToday.setHours(0, 0, 0, 0);
+    const endOfToday = new Date();
+    endOfToday.setHours(23, 59, 59, 999);
+
+    const todaysUserCount = await User.findAndCountAll({
+      where: {
+        createdAt: {
+          [Sequelize.Op.gte]: startOfToday,
+          [Sequelize.Op.lte]: endOfToday
+        },
+        user_type: "1"
+      },
+      // order: [['id', 'DESC']]
+      limit: limit,
+      offset: offset,
+    });
+
+    const todaysExpertCount = await User.findAndCountAll({
+      where: {
+        createdAt: {
+          [Sequelize.Op.gte]: startOfToday,
+          [Sequelize.Op.lte]: endOfToday
+        },
+        user_type: { [Sequelize.Op.in]: ["2", "3"] }
+      },
+      // order: [['id', 'DESC']]
+    });
+
+    const todaysChatCount = await chat.findAndCountAll({
+      where: {
+        createdAt: {
+          [Sequelize.Op.gte]: startOfToday
+        }
+      },
       attributes: [
-        'from_number',
-        'to_number', 
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'chat_count']
+      ],
+      // group: ['from_user_id', 'to_user_id']
+    });
+
+    const todaysCallCount = await call.findAndCountAll({
+      where: {
+        createdAt: {
+          [Sequelize.Op.gte]: startOfToday
+        }
+      },
+      attributes: [
         [Sequelize.fn('COUNT', Sequelize.col('id')), 'call_count']
       ],
+      // group: ['from_number', 'to_number']
+    });
+
+    const todaysVideoCallCount = await video.findAndCountAll({
       where: {
         createdAt: {
-          [Sequelize.Op.gte]: startOfToday,
+          [Sequelize.Op.gte]: startOfToday
         }
       },
-      group: ['from_number', 'to_number']
-    });
-
-    // Assuming results is now an array of objects where each object represents a unique chat pair
-    // and their chat count for the last day.
-    if (results.length > 0) {
-      const chats = new Set();
-          
-          results.forEach(row => {
-              const { from_number, to_number } = row;
-              const chatPairId = [from_number, to_number].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
-              chats.add(chatPairId);
-          });
-
-          // Now, 'chats' contains unique IDs for each chat pair that happened today
-          return res.send({
-              status: true,
-              message: "Get Data Successfully",
-              unique_chat_pairs_count: chats.size // Number of unique chat pairs
-          });
-      } else {
-          return res.send({
-              status: true,
-              message: "No calls found for today",
-              unique_chat_pairs_count: 0
-          });
-      }
-  } catch (error) {
-    console.error("Error:", error);
-    return res.status(500).send({
-      status: false,
-      message: "Internal Server Error",
-    });
-  }
-}
-
-
-exports.count_video_call_for_today = async (req, res) => {
-  
-  const startOfToday = new Date();
-  startOfToday.setHours(0, 0, 0, 0);
-
-  try {
-    const results = await videos.findAll({
       attributes: [
-        'UserId',
-        'expert_id', 
-        [Sequelize.fn('COUNT', Sequelize.col('id')), 'videos_count']
+        [Sequelize.fn('COUNT', Sequelize.col('id')), 'video_call_count']
       ],
+      // group: ['UserId', 'expert_id']
+    });
+
+
+    const todaysBookingCount = await booking.findAndCountAll({
+      attributes:['id','status','createdAt'],
+     include:[{
+      model:User,
+      as:"User",
+      attributes:['user_type','name'],
+     }
+    ],
       where: {
         createdAt: {
           [Sequelize.Op.gte]: startOfToday,
+          [Sequelize.Op.lte]: endOfToday
         }
-      },
-      group: ['UserId', 'expert_id']
-    });
-
-    // Assuming results is now an array of objects where each object represents a unique chat pair
-    // and their chat count for the last day.
-    if (results.length > 0) {
-      const video_call = new Set();
-          
-          results.forEach(row => {
-              const { UserId, expert_id } = row;
-              const chatPairId = [UserId, expert_id].sort().join(':'); // Ensures a unique ID for each chat pair regardless of who initiated
-              video_call.add(chatPairId);
-          });
-
-          // Now, 'chats' contains unique IDs for each chat pair that happened today
-          return res.send({
-              status: true,
-              message: "Get Data Successfully",
-              unique_chat_pairs_count: video_call.size // Number of unique chat pairs
-          });
-      } else {
-          return res.send({
-              status: true,
-              message: "No calls found for today",
-              unique_chat_pairs_count: 0
-          });
       }
+    });
+    const totalCount = await booking.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+    
+    return res.status(200).json({
+      status: true,
+      message: "Data retrieved successfully",
+      counts: {
+        todaysUserCount: todaysUserCount.count || 0,
+        allCustomerData: todaysUserCount,
+        todaysExpertCount: todaysExpertCount.count || 0,
+        todaysChatCount: todaysChatCount.count || 0,
+        todaysCallCount: todaysCallCount.count || 0,
+        todaysVideoCallCount: todaysVideoCallCount.count || 0,
+        todaysBookingCount: todaysBookingCount.count || 0,
+        todayBookingData : todaysBookingCount,
+        currentPage: page,
+        totalPages: totalPages,
+      }
+    });
   } catch (error) {
     console.error("Error:", error);
-    return res.status(500).send({
+    return res.status(500).json({
       status: false,
       message: "Internal Server Error",
+      error: error.message
     });
-  }
-}
-
-// API for get today's booking 
-exports.todayBookingData = async (req, res) => {
-  try {
-      
-      const startOfToday = new Date();
-      startOfToday.setHours(0, 0, 0, 0); // Start of today
-      const endOfToday = new Date();
-      endOfToday.setHours(23, 59, 59, 999); // End of today
-
-      const countUsers = await booking.findAll({
-          where: {
-              createdAt: {
-                  [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
-                  [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
-              },
-              
-          },
-          include: [
-            {
-              model: User,
-              as: "User",
-              where: { id: Sequelize.col('booking_detail.UserId') }
-            },
-            {
-              model: service,
-              as: "service",
-              include: [
-                {
-                  model: User,
-                  as: "User",
-                  where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-                }
-              ]
-            }
-          ],
-          order: [['id', 'DESC']]
-      });
-     
-      if (countUsers) {
-          return res.status(200).json({
-              status: true,
-              message: "Show data successfully...",
-              data: countUsers, // Assuming you want to return the users themselves
-              // count: countUsers.count // The total count
-          });
-      } else {
-          return res.status(400).json({
-              status: false,
-              message: "Data not found",
-          });
-      }
-  } catch (error) {
-      console.error("Error:", error);
-      return res.status(500).json({
-          status: false,
-          message: error.message,
-      });
   }
 };
-

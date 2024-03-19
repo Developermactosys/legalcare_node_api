@@ -4,15 +4,20 @@ const router = express.Router();
  const { authorize } = require("../../../middleware/authorization")
 
 // todays
-const { todaysUserCount, todaysExpertCount, count_chat_for_today, count_chat_connections,
-    count_call_for_today,count_video_call_for_today ,todayBookingData} = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
-router.get("/todays_customer_count", authorize(['0']),todaysUserCount)
-router.get("/todays_expert_count", authorize(['0']),todaysExpertCount)
-router.get("/todays_chat_count", authorize(['0']),count_chat_for_today);
-router.get("/count_chat_connections", authorize(['0']), count_chat_connections);
-router.get("/todays_call_count", authorize(['0']),count_call_for_today)
-router.get("/todas_vedio_call_count", authorize(['0']),count_video_call_for_today);
-router.get("/todays_booking", authorize(['0']),todayBookingData);
+// const { todaysUserCount, todaysExpertCount, count_chat_for_today, count_chat_connections,
+//     count_call_for_today,count_video_call_for_today ,todayBookingData} = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
+// router.get("/todays_customer_count", authorize(['0']),todaysUserCount)
+// router.get("/todays_expert_count", authorize(['0']),todaysExpertCount)
+// router.get("/todays_chat_count", authorize(['0']),count_chat_for_today);
+// router.get("/count_chat_connections", authorize(['0']), count_chat_connections);
+// router.get("/todays_call_count", authorize(['0']),count_call_for_today)
+// router.get("/todas_vedio_call_count", authorize(['0']),count_video_call_for_today);
+// router.get("/todays_booking", authorize(['0']),todayBookingData);
+
+// All today count on dashboard
+const {aggregateCounts  } = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
+
+router.get("/get_todays_dashboard_count",aggregateCounts);
 
 // total 
 const { totalUser, totalExpert, count_total_chat, getTotalCall,getTotalVideo } = require('../../../controller/admin_controller/admin_dashboard/total.controller')
