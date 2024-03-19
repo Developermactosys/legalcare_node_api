@@ -302,19 +302,23 @@ exports.getAll_bookings = async (req, res) => {
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const get_all_booking = await Booking_details.findAll({
+      attributes:{exclude: ['GST','cosulting_fee','total_amount','service_tax','service_image']},
       include: [
         {
           model: User,
           as: "User",
+          attributes: ['id','name', 'user_type', 'phone_no'],
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
         {
           model: service,
           as: "service",
+          attributes:['serviceName','service_cost','UserId','categoryId','status'],
           include: [
             {
               model: User,
               as: "User",
+              attributes: ['id','name', 'user_type', 'phone_no'],
               where: { id: Sequelize.col('service.UserId') } 
             }
           ]
@@ -331,6 +335,7 @@ exports.getAll_bookings = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "All Booking",
+      count:totalCount,
       data: get_all_booking,
       currentPage: page,
       totalPages: totalPages,

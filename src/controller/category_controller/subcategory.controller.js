@@ -96,6 +96,42 @@ const getSubCategoryById = async (req, res) => {
   }
 };
 
+// get Subcategory by category_id
+
+const getSubCategoryBy_categoryId = async (req, res) => {
+
+  if (!req.query.category_id) {
+    return res.json({
+      status: false,
+      message: "category_id required",
+    });
+  }
+  try {
+    const sub_category = await subcategory.findAll({
+      where: { categoryId : req.query.category_id },
+      include:[{
+        model: category,
+        as: "category",
+      }]
+    });
+    if (!sub_category) {
+      return res.status(400).json({
+        status: false,
+        message: "category not found",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      data: sub_category,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
 // update sub category api
 const updateSubCategory = async (req, res) => {
   const { subcategoryName, description, color, status } = req.body;
@@ -199,5 +235,6 @@ module.exports = {
   getSubCategory,
   updateSubCategory,
   getSubCategoryById,
-  deleteSubCategory
+  deleteSubCategory,
+  getSubCategoryBy_categoryId
 };

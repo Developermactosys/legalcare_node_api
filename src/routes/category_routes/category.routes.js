@@ -7,7 +7,7 @@ const {uploads} = require('../../middleware/multer');
 const { createCategory,getCategory,getCategoryById,updateCategory,deleteCategory } = require("../../controller/category_controller/category.controller")
 
 const {createSubCategory,getSubCategory
-      ,getSubCategoryById,updateSubCategory, deleteSubCategory} = require("../../controller/category_controller/subcategory.controller")
+      ,getSubCategoryById,updateSubCategory, deleteSubCategory,getSubCategoryBy_categoryId} = require("../../controller/category_controller/subcategory.controller")
 
 //category Routes
 router.post("/add_category" ,uploads.single('category_image'),createCategory);
@@ -22,5 +22,5 @@ router.post("/add_subcategory",uploads.single("subcategory_img"),createSubCatego
   router.get("/get_subcategory_by_id", getSubCategoryById);
   router.patch("/update_subcategory/:id", uploads.single("subcategory_img"), updateSubCategory);
 router.delete("/del_subcategory/:id",deleteSubCategory)
-
+router.get("/get_subcategory_by_categoryId",getSubCategoryBy_categoryId);
 module.exports= router;
