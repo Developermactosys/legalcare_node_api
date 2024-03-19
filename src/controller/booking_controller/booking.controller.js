@@ -506,7 +506,7 @@ const find_booking = await Booking_details.findByPk(booking_id)
     if (status) {
       message.notification.body += ` has been ${status} by ${expert_name}.`;
     } else if (discounted_amount) {
-      message.notification.body += ` has got an offer ${discounted_price} by ${expert_name}.`;
+      message.notification.body += ` has got an offer of Rs.${discounted_price} by ${expert_name}.`;
     }
     
 
@@ -578,7 +578,7 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Payment Confirmation`,
-        body: `Booking service for ${service_name} Rs.${find_booking.discounted_amount} is ${payment_status} by ${user_name}.`,
+        body: `Booking service for ${service_name} of Rs.${find_booking.discounted_amount} is ${payment_status} by ${user_name}.`,
       }, 
     }
 
