@@ -291,7 +291,7 @@ const deleteService = async(req, res) => {
        await delServices.destroy(delServices)
         return res.status(200).json({
             status : true,
-            message : "Data delete statusfully"
+            message : "Data delete successfully"
         })
     }else{
         return res.status(400).json({

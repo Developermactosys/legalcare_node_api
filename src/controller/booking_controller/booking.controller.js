@@ -257,9 +257,50 @@ exports.get_booking_by_status = async (req, res) => {
 };
 
 // get all Bookings 
+// exports.getAll_bookings = async (req, res) => {
+//   try {
+
+//     const get_all_booking = await Booking_details.findAll({
+//       include: [
+//         {
+//           model: User,
+//           as: "User",
+//           where: { id: Sequelize.col('booking_detail.UserId') }
+//         },
+//         {
+//           model: service,
+//           as: "service",
+//           include: [
+//             {
+//               model: User,
+//               as: "User",
+//               where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+//             }
+//           ]
+//         }
+//       ],
+//       order: [['createdAt', 'DESC']],
+//     })
+
+//     return res.status(200).json({
+//       status: true,
+//       message: "All Booking",
+//       data: get_all_booking
+//     })
+
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// }
 exports.getAll_bookings = async (req, res) => {
   try {
-
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
     const get_all_booking = await Booking_details.findAll({
       include: [
         {
@@ -274,18 +315,25 @@ exports.getAll_bookings = async (req, res) => {
             {
               model: User,
               as: "User",
-              where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+              where: { id: Sequelize.col('service.UserId') } 
             }
           ]
         }
       ],
       order: [['createdAt', 'DESC']],
+      limit: limit,
+      offset: offset,
     })
+
+    const totalCount = await Booking_details.count({});
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: "All Booking",
-      data: get_all_booking
+      data: get_all_booking,
+      currentPage: page,
+      totalPages: totalPages,
     })
 
   } catch (error) {
