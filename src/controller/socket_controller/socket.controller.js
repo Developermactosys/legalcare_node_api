@@ -553,8 +553,8 @@ const sendMessage = async (data, socket) => {
     try {
        const user = await chat.update(
             {
-                message_status: data.action,
-                unread_msg: data.action
+                message_status: data.message_status,
+                unread_msg: data.unread_msg
             },
             { where: { id: data.id } }
         );
