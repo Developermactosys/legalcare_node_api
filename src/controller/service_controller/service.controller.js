@@ -49,6 +49,10 @@ const createServices = async(req, res)=>{
 // API for getAll Services
 const getALlService = async(req, res) =>{
     try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const offset = (page - 1) * limit;
+
         const getServices = await services.findAll({
             include:[{
                 model: category,
@@ -61,15 +65,25 @@ const getALlService = async(req, res) =>{
             {
                 model:User,
                 as:"User",
-                attributes:['user_type']
+                attributes:['id','user_type']
             }
-        ]
+        ],
+        order: [["id", "DESC"]],
+        limit: limit,
+        offset: offset,
         })
+        const totalCount = await services.count({});
+        const totalPages = Math.ceil(totalCount / limit);
+ 
+
         if(getServices){
             return res.status(200).json({
                 status : true,
+                count:totalCount,
                 message : " get all services",
-                data : getServices
+                data : getServices,
+                currentPage: page,
+                totalPages: totalPages,
             })
         }else{
             return res.status(400).json({
