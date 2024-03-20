@@ -549,7 +549,7 @@ const sendMessage = async (data, socket) => {
     }
   };
 
-  const updateMessageStatus = async (data) => {
+  const updateMessageStatus = async (data,socket) => {
     try {
        const user = await chat.update(
             {
@@ -563,7 +563,7 @@ const sendMessage = async (data, socket) => {
         console.log("Data == ",data)
 
         // Assuming socketIO is defined elsewhere
-        socketIO.emit("update_message_data", data);
+        socket.emit("update_message_data", data);
 
     } catch (error) {
         // Handle errors here
