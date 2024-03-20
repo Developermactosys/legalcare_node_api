@@ -246,6 +246,9 @@ const updateService = async (req, res) => {
       expert_id,
       service_type,
       expert_fees,
+      service_cost,
+      status,
+      description
     } = req.body;
     let id = req.params.id;
     try {
@@ -269,7 +272,11 @@ const updateService = async (req, res) => {
         serviceName: serviceName,
         service_type: service_type,
         expert_fees: expert_fees,
+        service_cost:service_cost,
+        status:status,
+        description:description,
         UserId: expert_id,
+
     },{
       where : {
           id : id
