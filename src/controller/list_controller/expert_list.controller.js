@@ -17,9 +17,9 @@ exports.expert_list = async (req, res) => {
     const users = await User.findAll({
       where: {
         user_type: user_type,
-        user_status: "1",
-        chat_active: 1,
-        call_active: 1,
+        // user_status: "1",
+        // chat_active: 1,
+        // call_active: 1,
       },
       limit: limit,
       offset: offset,
