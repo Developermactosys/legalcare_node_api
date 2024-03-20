@@ -551,15 +551,16 @@ const sendMessage = async (data, socket) => {
 
   const updateMessageStatus = async (data) => {
     try {
-        await chat.update(
+       const user = await chat.update(
             {
                 message_status: data.action,
                 unread_msg: data.action
             },
             { where: { id: data.id } }
         );
-        
-        console.log(data)
+      
+        console.log("User == ",user)
+        console.log("Data == ",data)
 
         // Assuming socketIO is defined elsewhere
         socketIO.emit("update_message_data", data);
