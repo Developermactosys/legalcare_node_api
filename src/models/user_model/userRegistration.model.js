@@ -60,6 +60,26 @@ const User = sequelize.define('User', {
     type: DataTypes.INTEGER,
     defaultValue: 0
   },
+  category_of_lawyer: {
+    type: DataTypes.STRING,
+    defaultValue: null
+  },
+  type_of_lawyer: {
+    type: DataTypes.STRING,
+    defaultValue: null
+  },
+  case_type: {
+    type: DataTypes.STRING,
+    defaultValue: null
+  },
+ work_type: {
+    type: DataTypes.STRING,
+    defaultValue: null
+  },
+  type_account :{
+    type:DataTypes.STRING,
+    defaultValue:null
+  },
   refreshToken: {
     type: DataTypes.STRING,
     allowNull: true
