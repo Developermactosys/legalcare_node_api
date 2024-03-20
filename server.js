@@ -200,7 +200,7 @@ io.on('connection', (socket) => {
         sendMessage(data, socket);
       });
     socket.on("update_message_status", (data) => {
-    updateMessageStatus(data);
+    updateMessageStatus(data,socket);
 });
 
 });
