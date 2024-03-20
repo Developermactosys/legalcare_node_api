@@ -63,7 +63,7 @@ async function getAstroReviewList(req, res) {
             include: [{ 
                 model: User,
                 as:"User",
-                attributes: ['name','user_type','address','profile_image'] }],
+                attributes: ['id','name','user_type','address','profile_image'] }],
         });
 
         if (reviews) {

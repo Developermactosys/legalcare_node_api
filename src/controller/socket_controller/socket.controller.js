@@ -551,7 +551,10 @@ const sendMessage = async (data, socket) => {
   const updateMessageStatus = async (data) => {
     try {
         await chat.update(
-            { message_status: data.action },
+            {
+                message_status: data.action,
+                unread_msg: data.action
+            },
             { where: { id: data.id } }
         );
         // Assuming socketIO is defined elsewhere
