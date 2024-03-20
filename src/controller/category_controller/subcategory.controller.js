@@ -34,12 +34,23 @@ const createSubCategory = async (req, res) => {
 // get subCategory Api
 const getSubCategory = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const sub_category = await subcategory.findAll({
 include:[{
   model: category,
   as: "category",
-}]
-    });
+}],
+order: [["id", "DESC"]],
+limit: limit,
+offset: offset,
+});
+
+    const totalCount = await subcategory.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+
 
     if (!sub_category) {
       return res.status(204).json({
@@ -52,7 +63,10 @@ include:[{
       status: true,
       code: 200,
       message: "subcategory get successfully",
+      count:totalCount,
       data: sub_category,
+      currentPage: page,
+      totalPages: totalPages,
     });
   } catch (error) {
     return res.status(500).json({

@@ -35,12 +35,23 @@ const createCategory = async (req, res) => {
 // Get Category Api
 const getCategory = async (req, res) => {
   try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const category = await Category.findAll({
-      include:[{
-        model: subcategory,
-        as: "subcategory",
-      }]
+      // include:[{
+      //   model: subcategory,
+      //   as: "subcategory",
+      // }],
+      order: [["id", "DESC"]],
+      limit: limit,
+      offset: offset,
     });
+
+    const totalCount = await Category.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+
 
     if (!category) {
       return res.status(404).json({
@@ -51,7 +62,10 @@ const getCategory = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Categories retrieved successfully",
+      count:totalCount,
       data: category,
+      currentPage: page,
+      totalPages: totalPages,
     });
   } catch (error) {
     return res.status(500).json({
