@@ -558,6 +558,9 @@ const sendMessage = async (data, socket) => {
             },
             { where: { id: data.id } }
         );
+        
+        console.log(data)
+
         // Assuming socketIO is defined elsewhere
         socketIO.emit("update_message_data", data);
 
