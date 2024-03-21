@@ -558,10 +558,14 @@ const sendMessage = async (data, socket) => {
             },
             {
                 where: {
-                    [Sequelize.Op.and]: [
+                    [Sequelize.Op.or]: [
                       { 
                         from_user_id: data.from_user_id,
                         to_user_id: data.to_user_id
+                      },
+                      { 
+                        from_user_id: data.to_user_id,
+                        to_user_id: data.from_user_id
                       },
                    ]
                   },
