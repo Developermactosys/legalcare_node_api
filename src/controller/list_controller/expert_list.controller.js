@@ -74,7 +74,7 @@ exports.expert_list = async (req, res) => {
         totalPages,
       });
     } else {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: `Data not found for user_type ${user_type}`,
       });
