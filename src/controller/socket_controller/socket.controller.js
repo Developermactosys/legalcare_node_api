@@ -556,7 +556,17 @@ const sendMessage = async (data, socket) => {
                 message_status: data.message_status,
                 unread_msg: data.unread_msg
             },
-            { where: { id: data.id } }
+            {
+                where: {
+                    [Sequelize.Op.and]: [
+                      { 
+                        from_user_id: data.from_user_id,
+                        to_user_id: data.to_user_id
+                      },
+                   ]
+                  },
+            }
+            // { where: { id: data.id } }
         );
       
         console.log("User == ",user)
