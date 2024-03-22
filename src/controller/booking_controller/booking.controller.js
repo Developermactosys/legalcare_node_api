@@ -120,7 +120,7 @@ exports.get_booking_by_status = async (req, res) => {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
 
-    if (status === "pending") {
+    // if (status === "pending") {
       const pending_booking = await Booking_details.findAll({
         where : {
           [Sequelize.Op.or]: [
@@ -160,92 +160,92 @@ exports.get_booking_by_status = async (req, res) => {
         message: "pending bookings",
         data: pending_booking,
       });
-    }
+    // }
 
-    if (status === "reject") {
-      const rejected_booking = await Booking_details.findAll({
-        where : {
-          [Sequelize.Op.or]: [
-            { 
-              status: status,
-               UserId: user_id,
-            },
-            { 
-              status: status,
-               expert_id: user_id,
-            }
-        ]
-        },
-        include: [
-          {
-            model: User,
-            as: "User",
-            where: { id: Sequelize.col('booking_detail.UserId') }
-          },
-          {
-            model: service,
-            as: "service",
-            include: [
-              {
-                model: User,
-                as: "User",
-                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-              }
-            ]
-          }
-        ],
-        order: [['createdAt', 'DESC']],
-      });
+    // if (status === "reject") {
+    //   const rejected_booking = await Booking_details.findAll({
+    //     where : {
+    //       [Sequelize.Op.or]: [
+    //         { 
+    //           status: status,
+    //            UserId: user_id,
+    //         },
+    //         { 
+    //           status: status,
+    //            expert_id: user_id,
+    //         }
+    //     ]
+    //     },
+    //     include: [
+    //       {
+    //         model: User,
+    //         as: "User",
+    //         where: { id: Sequelize.col('booking_detail.UserId') }
+    //       },
+    //       {
+    //         model: service,
+    //         as: "service",
+    //         include: [
+    //           {
+    //             model: User,
+    //             as: "User",
+    //             where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+    //           }
+    //         ]
+    //       }
+    //     ],
+    //     order: [['createdAt', 'DESC']],
+    //   });
 
-      return res.status(200).json({
-        status: true,
-        message: "rejected bookings",
-        data: rejected_booking,
-      });
-    }
+    //   return res.status(200).json({
+    //     status: true,
+    //     message: "rejected bookings",
+    //     data: rejected_booking,
+    //   });
+    // }
 
-    if (status === "approved") {
-      const approved_booking = await Booking_details.findAll({
-        where : {
-          [Sequelize.Op.or]: [
-            { 
-              status: status,
-               UserId: user_id,
-            },
-            { 
-              status: status,
-               expert_id: user_id,
-            }
-        ]
-        },
-        include: [
-          {
-            model: User,
-            as: "User",
-            where: { id: Sequelize.col('booking_detail.UserId') }
-          },
-          {
-            model: service,
-            as: "service",
-            include: [
-              {
-                model: User,
-                as: "User",
-                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-              }
-            ]
-          }
-        ],
-        order: [['createdAt', 'DESC']],
+    // if (status === "approved") {
+    //   const approved_booking = await Booking_details.findAll({
+    //     where : {
+    //       [Sequelize.Op.or]: [
+    //         { 
+    //           status: status,
+    //            UserId: user_id,
+    //         },
+    //         { 
+    //           status: status,
+    //            expert_id: user_id,
+    //         }
+    //     ]
+    //     },
+    //     include: [
+    //       {
+    //         model: User,
+    //         as: "User",
+    //         where: { id: Sequelize.col('booking_detail.UserId') }
+    //       },
+    //       {
+    //         model: service,
+    //         as: "service",
+    //         include: [
+    //           {
+    //             model: User,
+    //             as: "User",
+    //             where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+    //           }
+    //         ]
+    //       }
+    //     ],
+    //     order: [['createdAt', 'DESC']],
 
-      });
+    //   });
 
-      return res.status(200).json({
-        status: true,
-        message: "approved bookings",
-        data: approved_booking,
-      });
-    }
+    //   return res.status(200).json({
+    //     status: true,
+    //     message: "approved bookings",
+    //     data: approved_booking,
+    //   });
+    // }
 
   } catch (error) {
     console.error(error);
