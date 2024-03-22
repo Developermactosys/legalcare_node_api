@@ -1,7 +1,7 @@
 // controllers/userController.js
 const  db  = require('../../../config/db.config');
 const User = db.User;
-const follower = db.follower;
+const follower = db.follower_count;
 
 
 exports.addFollowUsers = async (req, res) => {

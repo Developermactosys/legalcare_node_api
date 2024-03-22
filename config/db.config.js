@@ -53,7 +53,7 @@ db.expert_review = require("../src/models/review_model/review.model")(sequelize,
 db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
-db.follower = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
+db.follower_count = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -289,11 +289,11 @@ db.category.belongsTo(db.User, {
     as: "User",
 })
 // user and follower assosite
-db.User.hasMany(db.follower, {
+db.User.hasMany(db.follower_count, {
     forienKey: "UserId",
-    as: "follower",
+    as: "follower_count",
 })
-db.follower.belongsTo(db.User, {
+db.follower_count.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
 })
