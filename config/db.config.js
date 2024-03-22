@@ -53,7 +53,7 @@ db.expert_review = require("../src/models/review_model/review.model")(sequelize,
 db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
-db.follower = require("../src/models/followers_model/follower.models")(sequelize, DataTypes);
+db.follower = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
