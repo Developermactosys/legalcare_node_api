@@ -65,6 +65,7 @@ exports.Add_Booking = async (req, res) => {
     add_booking.GST = GST;
     add_booking.UserId = user_id;
     add_booking.expert_id = find_service.UserId;
+    add_booking.in_progress_time = add_booking.createdAt;
 
     await add_booking.save();
     
@@ -502,14 +503,14 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status ,booking_id, discounted_amount } = req.body;
+    const { status ,booking_id, discounted_amount, time } = req.body;
 
   
     if (!booking_id) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
     
-    console.log(status, discounted_amount)
+    // console.log(status, discounted_amount)
 
 const discounted_price = parseFloat(discounted_amount);
 const find_booking = await Booking_details.findByPk(booking_id)
@@ -526,6 +527,22 @@ const find_booking = await Booking_details.findByPk(booking_id)
         },
       }
     );
+if(status=="approved"){
+  find_booking.accepted_time = time
+  await find_booking.save()
+}
+if(status=="reject"){
+  find_booking.rejected_time = time
+  await find_booking.save()
+}
+if(status=="paid"){
+  find_booking.paid_time = time
+  await find_booking.save()
+}
+if(status=="completed"){
+  find_booking.completed_time = time
+  await find_booking.save()
+}
 
     if(discounted_price){
       find_booking.discounted_amount = discounted_price;
@@ -600,7 +617,7 @@ exports.update_Booking_by_payment_status = async (req, res) => {
     if (!payment_status) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
-
+ 
     const update_payment_status = await Booking_details.update( 
        
       {
@@ -622,6 +639,8 @@ exports.update_Booking_by_payment_status = async (req, res) => {
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
 
+    find_booking.paid_time =find_booking.updatedAt;
+    await find_booking.save();
   
     //console.log(expert)
     const user_name= user.name;

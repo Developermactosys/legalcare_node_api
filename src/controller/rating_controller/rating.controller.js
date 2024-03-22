@@ -5,7 +5,7 @@ const review = db.expert_review
 
 // API for add rating
 const addRatingBar = async (req, res) => {
-  const { UserId ,rating } = req.query;
+  const { UserId, rating } = req.query;
   try {
     const userData = await User.findByPk(UserId);
     if (!userData) {
@@ -15,8 +15,8 @@ const addRatingBar = async (req, res) => {
       });
     } else {
       const createRating = await Rating.create({
-        rating : rating,
-        UserId : UserId
+        rating: rating,
+        UserId: UserId
       });
       if (createRating) {
         return res.status(200).json({
@@ -112,7 +112,7 @@ const getAllRatings = async (req, res) => {
     if (getDetail.count > 0) {
       let totalRating = 0;
       const ratingsCount = { '3': 0, '4': 0, '5': 0 }; // Initialize ratings count for each star
-      
+
       // Processing each rating and counting reviews
       getDetail.rows.forEach(row => {
         const { rating } = row;
@@ -129,9 +129,9 @@ const getAllRatings = async (req, res) => {
         status: true,
         message: "Show all ratings and reviews",
         data: getDetail.rows, // The detailed rows data
-  "3 star rating": ratingsCount['3'] || 0,
-  "4 star rating": ratingsCount['4'] || 0,
-  "5 star rating": ratingsCount['5'] || 0, // Summary of ratings
+        "3 star rating": ratingsCount['3'] || 0,
+        "4 star rating": ratingsCount['4'] || 0,
+        "5 star rating": ratingsCount['5'] || 0, // Summary of ratings
         totalRating, // Sum of all ratings
         totalReviews: getDetail.count // Total number of reviews processed
       });

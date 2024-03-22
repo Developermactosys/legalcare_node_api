@@ -43,7 +43,32 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: "unpaid"
   },
-      deleted_At: {
+  accepted_time: {
+    type: DataTypes.STRING,
+    allowNull: true,
+    defaultValue: null
+},
+in_progress_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+completed_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+paid_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+rejected_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+  deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,
         defaultValue: null
