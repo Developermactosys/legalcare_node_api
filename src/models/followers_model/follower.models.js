@@ -7,6 +7,7 @@ module.exports = (sequelize, DataTypes) => {
             autoIncrement: true,
             allowNull: false
         },
+        
         expert_id: {
             type: DataTypes.INTEGER,
         },
