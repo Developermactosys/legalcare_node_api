@@ -288,7 +288,14 @@ db.category.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
 })
-
-
+// user and follower assosite
+db.User.hasMany(db.follower, {
+    forienKey: "UserId",
+    as: "follower",
+})
+db.follower.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+})
 
 module.exports = db;
