@@ -46,7 +46,7 @@ const fcm = new FCM(serverKey);
 
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId, discounted_amount, GST, user_id } = req.body;
+    const { serviceId, discounted_amount, GST, user_id ,time} = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -65,7 +65,7 @@ exports.Add_Booking = async (req, res) => {
     add_booking.GST = GST;
     add_booking.UserId = user_id;
     add_booking.expert_id = find_service.UserId;
-    add_booking.in_progress_time = add_booking.createdAt;
+    add_booking.in_progress_time = time;
 
     await add_booking.save();
     
@@ -611,7 +611,7 @@ if(status=="completed"){
 
 exports.update_Booking_by_payment_status = async (req, res) => {
   try {
-    const { payment_status ,booking_id } = req.body;
+    const { payment_status ,booking_id ,time} = req.body;
 
   
     if (!payment_status) {
@@ -639,7 +639,7 @@ exports.update_Booking_by_payment_status = async (req, res) => {
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
 
-    find_booking.paid_time =find_booking.updatedAt;
+    find_booking.paid_time =time;
     await find_booking.save();
   
     //console.log(expert)
