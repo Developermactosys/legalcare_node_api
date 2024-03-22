@@ -289,29 +289,6 @@ db.category.belongsTo(db.User, {
     as: "User",
 })
 
-// //User and category one to many relationship
-// db.User.hasMany(db.category, {
-//     forienKey: "UserId",
-//     as: "category",
-// })
-// db.category.belongsTo(db.User, {
-//     forienKey: "UserId",
-//     as: "User",
-// })
-
-
-// // Define the many-to-many relationship between User and Service
-// db.User.belongsToMany(db.service, {
-//     through: "user_service",
-//     model:'user_services', // This should be the name of the intermediate table
-//      as: "service", // Use a plural name for the alias
-//   });
-  
-//   db.service.belongsToMany(db.User, {
-//     through: "user_service",
-//     model:'user_services', // This should match the same intermediate table name
-//      as: "User", // Use a plural name for the alias
-//   });
 
 
 module.exports = db;
