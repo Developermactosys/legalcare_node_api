@@ -12,11 +12,24 @@ module.exports = (sequelize, DataTypes) => {
         },
         rating: {
             type: DataTypes.INTEGER,
+            validate: {
+                isInt: {
+                    msg: "Rating must be an integer", // Custom error message
+                },
+                min: {
+                    args: [0],
+                    msg: "Rating must be at least 0", // Custom error message
+                },
+                max: {
+                    args: [5],
+                    msg: "Rating must be no more than 5", // Custom error message
+                },
+            }
         },
         review: {
             type: DataTypes.TEXT,
         },
-        rply: {
+        reply: {
             type: DataTypes.STRING(11),
         },
         review_date: {

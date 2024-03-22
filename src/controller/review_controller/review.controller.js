@@ -5,7 +5,7 @@ const  AstroReview = db.expert_review;
 
 async function postAstroReview(req, res) {
     try {
-        const { expert_id, user_id, rating, message } = req.body;
+        const { expert_id, user_id, rating, message, reply } = req.body;
 
         // Validate input
         if (!expert_id || !user_id || !rating) {
@@ -30,6 +30,7 @@ async function postAstroReview(req, res) {
             UserId:user_id,
             review: message,
             rating,
+            reply
         });
 
         if (result) {
@@ -45,10 +46,9 @@ async function postAstroReview(req, res) {
             });
         }
     } catch (error) {
-        console.error(error);
         res.status(500).json({
             status: false,
-            message: "Internal Server Error",
+            message: error.message,
         });
     }
 }
