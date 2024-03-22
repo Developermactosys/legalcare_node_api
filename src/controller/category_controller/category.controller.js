@@ -2,6 +2,8 @@
 const db = require("../../../config/db.config");
 const Category = db.category;
 const subcategory = db.subcategory;
+const User = db.User;
+const {Sequelize,Op,contains,QueryTypes,sequelize } = require("sequelize");
 
 // API for create category
 const createCategory = async (req, res) => {
@@ -32,85 +34,112 @@ const createCategory = async (req, res) => {
   }
 };
 
-// Get Category Api
+
+// API for get all Categories
 const getCategory = async (req, res) => {
   try {
-    const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
-    const offset = (page - 1) * limit;
-
-    const category = await Category.findAll({
-      // include:[{
-      //   model: subcategory,
-      //   as: "subcategory",
-      // }],
-      order: [["id", "DESC"]],
-      limit: limit,
-      offset: offset,
-    });
-
-    const totalCount = await Category.count({});
-    const totalPages = Math.ceil(totalCount / limit);
-
-
-    if (!category) {
+    // Find all categories
+    const categories = await Category.findAll();
+    // If no categories are found, return 404
+    if (!categories || categories.length === 0) {
       return res.status(404).json({
-        status: false,
-        message: "Category not found",
+        success: false,
+        message: "No categories found",
       });
     }
+    // Initialize array to store category-user pairs
+    const data = [];
+    // Loop through each category
+    for (const category of categories) {
+      // Find users for the current category
+      const users = await User.findAll({
+        where: {
+          [Sequelize.Op.and]: [
+            Sequelize.literal(`JSON_CONTAINS(category_of_expert, '${category.id}')`),
+            Sequelize.where(
+              Sequelize.fn('JSON_TYPE', Sequelize.col('category_of_expert')),
+              'ARRAY'
+            )
+          ]
+        }
+      });
+      // Push category and associated users to the data array
+      data.push({
+        category: category,
+        users: users,
+      });
+    }
+
     return res.status(200).json({
-      status: true,
-      message: "Categories retrieved successfully",
-      count:totalCount,
-      data: category,
-      currentPage: page,
-      totalPages: totalPages,
+      success: true,
+      message: "Categories with associated users retrieved successfully",
+      data: data,
     });
   } catch (error) {
+    // Return 500 status code if an error occurs
     return res.status(500).json({
-      status: false,
+      success: false,
       message: error.message,
     });
   }
 };
 
-// get category by id
+
+
+// API for get Category By Id
 const getCategoryById = async (req, res) => {
   if (!req.params.id) {
     return res.json({
       success: false,
-      message: "category is Not provide",
+      message: "Category ID is not provided",
     });
   }
   try {
+    // Find the category by its ID
     const category = await Category.findOne({
       where: {
         id: req.params.id,
-      }, 
-      include:[{
-        model: subcategory,
-        as: "subcategory",
-      }]
+      }
     });
+
+    // If category is not found, return 404
     if (!category) {
       return res.status(404).json({
         success: false,
         message: "Category not found",
       });
     }
+
+    // Find users whose expertise category includes the target category ID
+    const users = await User.findAll({
+      where: {
+        [Sequelize.Op.and]: [
+          Sequelize.literal(`JSON_CONTAINS(category_of_expert, '${category.id}')`),
+          Sequelize.where(
+            Sequelize.fn('JSON_TYPE', Sequelize.col('category_of_expert')),
+            'ARRAY'
+          )
+        ]
+      }
+    });
+
     return res.status(200).json({
       success: true,
-      message: "Categories retrieved successfully",
-      data: category,
+      message: "Users with the specified category retrieved successfully",
+      data: {
+        category: category,
+        users: users,
+      },
     });
   } catch (error) {
+    // Return 500 status code if an error occurs
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
 };
+
 
 // updateCategory Api
 const updateCategory = async (req, res) => {

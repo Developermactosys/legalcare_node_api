@@ -1,12 +1,27 @@
 // controllers/userController.js
 const  db  = require('../../../config/db.config');
 const User = db.User;
+const follower = db.follower;
+
 
 exports.addFollowUsers = async (req, res) => {
-  const { provider_id } = req.body;
+  const { expert_id, user_id } = req.body;
   try {
-    const user = await User.findByPk(provider_id);
+    // Find the expert by ID
+    const expert = await User.findByPk(expert_id);
 
+    // If expert is not found, return error
+    if (!expert) {
+      return res.json({
+        status: false,
+        message: 'Expert not found',
+      });
+    }
+
+    // Find the user by ID
+    const user = await User.findByPk(user_id);
+
+    // If user is not found, return error
     if (!user) {
       return res.json({
         status: false,
@@ -14,16 +29,54 @@ exports.addFollowUsers = async (req, res) => {
       });
     }
 
-    const newCount = user.follow_count + 1;
-    await user.update({ follow_count: newCount });
-
-    return res.json({
-      status: true,
-      message: 'Count updated',
-      new_count: newCount,
+    // Check if the user is already following the expert
+    const isFollowing = await follower.findOne({
+      where: {
+        user_id: user_id,
+        expert_id: expert_id,
+      }
     });
+
+    // If the user is already following the expert, unfollow
+    if (isFollowing) {
+      // Decrement the follow count for the expert
+      const newCount = expert.follow_count - 1;
+      await expert.update({ follow_count: newCount });
+
+      // Delete the follower entry
+      await follower.destroy({
+        where: {
+          user_id: user_id,
+          expert_id: expert_id,
+        }
+      });
+
+      return res.json({
+        status: true,
+        message: 'Expert unfollowed',
+        expert_follower_count: newCount,
+        isFollowing: false,
+      });
+    } else {
+      // Increment the follow count for the expert
+      const newCount = expert.follow_count + 1;
+      await expert.update({ follow_count: newCount });
+
+      // Create a new follower entry
+      await follower.create({
+        user_id: user_id,
+        expert_id: expert_id,
+      });
+
+      return res.json({
+        status: true,
+        message: 'Expert followed',
+        expert_follower_count: newCount,
+        isFollowing: true,
+      });
+    }
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: 'Internal Server Error' });
   }
-};
+}

@@ -8,6 +8,7 @@ const {Sequelize,Op,like } = require("sequelize")
 exports.expert_list = async (req, res) => {
   
   try {
+  
   const {user_type, type_account, work_type, location,language, experience,category_of_lawyer,
     type_of_lawyer,case_type, } = req.query;
   

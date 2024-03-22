@@ -4,18 +4,32 @@ const sequelize = new Sequelize('sqlite::memory:');
 module.exports = (sequelize, DataTypes) => {
 const User = sequelize.define('User', {
   id: { type: DataTypes.BIGINT, primaryKey: true, autoIncrement: true },
-  user_type: DataTypes.STRING,
+  user_type:{
+     type:DataTypes.STRING,
+     allowNull:false
+  },
   name: DataTypes.STRING,
   address: DataTypes.STRING,
-  email_id: DataTypes.STRING,
-  phone_no: DataTypes.BIGINT,
+  email_id: {
+    type:DataTypes.STRING,
+    allowNull:false
+ },
+  phone_no:{
+    type: DataTypes.BIGINT,
+    allowNull:false
+  },
   dob: DataTypes.DATEONLY,
   birth_time: DataTypes.STRING,
   birth_place: DataTypes.STRING,
   otp_verified_at: DataTypes.DATE,
-  password: DataTypes.STRING,
+  password:{
+    type:DataTypes.STRING,
+    allowNull:false
+ },
   remember_token: DataTypes.STRING,
-  user_expertise: DataTypes.TEXT,
+  user_expertise:{
+    type:DataTypes.JSON,
+    },
   user_experience: DataTypes.TEXT,
   user_language: DataTypes.STRING,
   user_rating: DataTypes.FLOAT,
@@ -59,6 +73,9 @@ const User = sequelize.define('User', {
   follow_count: {
     type: DataTypes.INTEGER,
     defaultValue: 0
+  },
+  category_of_expert: {
+    type: DataTypes.JSON,
   },
   category_of_lawyer: {
     type: DataTypes.STRING,

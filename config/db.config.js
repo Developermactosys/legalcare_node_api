@@ -37,7 +37,7 @@ db.waiting_join_list = require("../src/models/list_model/waitingList.model")(seq
 db.admin_query = require("../src/models/query_model/admin_query.model")(sequelize, DataTypes);
 db.business = require("../src/models/service_model/business.model")(sequelize, DataTypes);
 db.service = require("../src/models/service_model/service.model")(sequelize, DataTypes);
-db.service_image = require("../src/models/service_model/service_image.model")(sequelize, DataTypes);
+// db.user_service = require("../src/models/service_model/user_service")(sequelize, DataTypes);
 db.static_data = require("../src/models/static_model/static_data.model")(sequelize, DataTypes);
 db.transaction_history = require("../src/models/wallet_model/trancation_histroy.model")(sequelize, DataTypes);
 db.wallet_system = require("../src/models/wallet_model/walletSystem.model")(sequelize, DataTypes);
@@ -53,6 +53,7 @@ db.expert_review = require("../src/models/review_model/review.model")(sequelize,
 db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataTypes);
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
+db.follower = require("../src/models/followers_model/follower.models")(sequelize, DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -267,8 +268,7 @@ db.document.belongsTo(db.booking_detail, {
     as : "booking_detail" 
 })
 
-  //User  and booking_detail one to many relationship
-
+//User and booking_detail one to many relationship
 db.User.hasMany(db.bank_details, {
     forienKey: "UserId",
     as: "bank_details",
@@ -277,5 +277,41 @@ db.bank_details.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
 })
+
+
+
+db.User.hasMany(db.category, {
+    forienKey: "UserId",
+    as: "category",
+})
+db.category.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+})
+
+// //User and category one to many relationship
+// db.User.hasMany(db.category, {
+//     forienKey: "UserId",
+//     as: "category",
+// })
+// db.category.belongsTo(db.User, {
+//     forienKey: "UserId",
+//     as: "User",
+// })
+
+
+// // Define the many-to-many relationship between User and Service
+// db.User.belongsToMany(db.service, {
+//     through: "user_service",
+//     model:'user_services', // This should be the name of the intermediate table
+//      as: "service", // Use a plural name for the alias
+//   });
+  
+//   db.service.belongsToMany(db.User, {
+//     through: "user_service",
+//     model:'user_services', // This should match the same intermediate table name
+//      as: "User", // Use a plural name for the alias
+//   });
+
 
 module.exports = db;
