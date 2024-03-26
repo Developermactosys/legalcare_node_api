@@ -30,7 +30,7 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.TEXT,
         },
         reply: {
-            type: DataTypes.STRING(11),
+            type: DataTypes.STRING(255),
         },
         review_date: {
             type: DataTypes.DATE,

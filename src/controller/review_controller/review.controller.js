@@ -26,11 +26,12 @@ async function postAstroReview(req, res) {
 
         // Insert review
         const result = await AstroReview.create({
-            expert_id,
+            expert_id :  expert_id,
             UserId:user_id,
             review: message,
-            rating,
-            rply : reply
+            reply : reply,
+            rating : rating,
+            
         });
 
         if (result) {
