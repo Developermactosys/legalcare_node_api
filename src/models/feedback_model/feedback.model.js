@@ -14,6 +14,7 @@ module.exports = (sequelize, DataTypes) => {
         rating: { type: DataTypes.INTEGER },
         date: { type: DataTypes.DATE },
         name: { type: DataTypes.STRING },
+        test_comment : { type: DataTypes.STRING },
         deleted_At: {
           type: DataTypes.DATE,
           allowNull: true,
