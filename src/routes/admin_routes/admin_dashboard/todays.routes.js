@@ -22,11 +22,11 @@ router.get("/get_todays_dashboard_count",aggregateCounts);
 // total 
 const { totalUser, totalExpert, count_total_chat, getTotalCall,getTotalVideo } = require('../../../controller/admin_controller/admin_dashboard/total.controller')
 
-router.get('/get_total_user', authorize(['0']), totalUser)
-router.get('/get_total_expert', authorize(['0']), totalExpert)
-router.get('/get_total_chat', authorize(['0']), count_total_chat)
-router.get('/get_total_call', authorize(['0']), getTotalCall)
-router.get("/get_total_vedio_call", authorize(['0']),getTotalVideo);
+router.get('/get_total_user',  totalUser)
+router.get('/get_total_expert',  totalExpert)
+router.get('/get_total_chat',  count_total_chat)
+router.get('/get_total_call',  getTotalCall)
+router.get("/get_total_vedio_call", getTotalVideo);
 
 
 
