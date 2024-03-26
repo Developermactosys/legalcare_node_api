@@ -9,7 +9,7 @@ async function postAstroReview(req, res) {
 
         // Validate input
         if (!expert_id || !user_id || !rating) {
-            return res.status(400).json({
+            return res.status(200).json({
                 status: false,
                 message: "Please provide expert_id, user_id, and rating",
             });
@@ -18,11 +18,13 @@ async function postAstroReview(req, res) {
         // Check if user exists
         const checkUser = await User.findByPk(user_id);
         if (!checkUser) {
-            return res.status(404).json({
+            return res.status(200).json({
                 status: false,
                 message: "User not found",
             });
         }
+
+       
 
         // Insert review
         const result = await AstroReview.create({
@@ -33,6 +35,15 @@ async function postAstroReview(req, res) {
             rating : rating,
             
         });
+
+         // check expert exists 
+         const checkExpert = await User.findByPk(expert_id);
+         const addRating = parseFloat(result.rating)
+
+         const extisting_rating =parseFloat(checkExpert.user_rating)
+         const updated_rating = extisting_rating + addRating 
+         checkExpert.user_rating = updated_rating
+         await checkExpert.save()
 
         if (result) {
             return res.json({
