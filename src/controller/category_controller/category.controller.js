@@ -42,8 +42,8 @@ const getCategory = async (req, res) => {
     const categories = await Category.findAll();
     // If no categories are found, return 404
     if (!categories || categories.length === 0) {
-      return res.status(404).json({
-        success: false,
+      return res.status(200).json({
+        status: false,
         message: "No categories found",
       });
     }
@@ -71,14 +71,14 @@ const getCategory = async (req, res) => {
     }
 
     return res.status(200).json({
-      success: true,
+      status: true,
       message: "Categories with associated users retrieved successfully",
       data: data,
     });
   } catch (error) {
     // Return 500 status code if an error occurs
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
@@ -90,7 +90,7 @@ const getCategory = async (req, res) => {
 const getCategoryById = async (req, res) => {
   if (!req.params.id) {
     return res.json({
-      success: false,
+      status: false,
       message: "Category ID is not provided",
     });
   }
@@ -104,8 +104,8 @@ const getCategoryById = async (req, res) => {
 
     // If category is not found, return 404
     if (!category) {
-      return res.status(404).json({
-        success: false,
+      return res.status(200).json({
+        status: false,
         message: "Category not found",
       });
     }
@@ -124,7 +124,7 @@ const getCategoryById = async (req, res) => {
     });
 
     return res.status(200).json({
-      success: true,
+      status: true,
       message: "Users with the specified category retrieved successfully",
       data: {
         category: category,
@@ -134,7 +134,7 @@ const getCategoryById = async (req, res) => {
   } catch (error) {
     // Return 500 status code if an error occurs
     return res.status(500).json({
-      success: false,
+      status: false,
       message: error.message,
     });
   }
