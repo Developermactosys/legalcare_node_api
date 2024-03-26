@@ -30,7 +30,7 @@ async function postAstroReview(req, res) {
             UserId:user_id,
             review: message,
             rating,
-            reply
+            rply : reply
         });
 
         if (result) {
