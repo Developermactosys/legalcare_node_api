@@ -680,3 +680,114 @@ exports.update_Booking_by_payment_status = async (req, res) => {
     return res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
+
+
+
+exports.getAllBookingdataForAll = async(req, res) => {
+
+  const { id, email, name, phone_no, createdAt } = req.query;
+      
+  let query = {
+    where: {},
+  };
+
+  if (id) {
+    query.where.id = id; // Direct match
+  }
+  if (email) {
+    query.where.email = { [Sequelize.Op.like]: `%${email}%` };
+  }
+  if (name) {
+    query.where.name = { [Sequelize.Op.like]: `%${name}%` };
+  }
+  if (phone_no) {
+    query.where.phone_no = { [Sequelize.Op.like]: `%${phone_no}%` };
+  }
+  if (createdAt) {
+    query.where.createdAt = Sequelize.where(
+      Sequelize.fn("date", Sequelize.col("createdAt")),
+      "=",
+      createdAt
+    ); // Assumes createdAt is in 'YYYY-MM-DD' format
+  }
+    try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+      const get_all_booking = await Booking_details.findAll(
+        {
+          attributes:['id','status','payment_status', 'createdAt'],
+        include: [
+          {
+            model: User,
+            as: "User",
+            
+            where: { id: Sequelize.col('booking_detail.UserId') },
+            attributes : ['id', 'name', 'phone_no', 'user_type'],
+          },
+          {
+            model: service,
+            as: "service",
+            attributes : ['id', 'serviceName','UserId'],
+            include: [
+              {
+                model: User,
+                as: "User",
+               
+                where: { id: Sequelize.col('service.UserId') },
+                attributes : ['id', 'name', 'phone_no', 'user_type'], // Here, we specify the association between the User model and the service model using the UserId from the service object
+              }
+            ]
+          }
+        ],
+       
+        order: [['createdAt', 'DESC']],
+        
+        limit: limit,
+        offset: offset,
+      })
+  
+      const totalCount = await Booking_details.count({});
+      const totalPages = Math.ceil(totalCount / limit);
+  
+      const bookingStatusForPending = await Booking_details.findAndCountAll({
+        where : {
+          status : 'pending'
+        }
+      })
+      const bookingStatusForApproved = await Booking_details.findAndCountAll({
+        where : {
+          status : 'approved'
+        }
+      })
+      const bookingStatusForReject = await Booking_details.findAndCountAll({
+        where : {
+          status : 'reject'
+        }
+      })
+          const users = await User.findAll({query,
+            attributes : ['id', 'name', 'phone_no', 'user_type'],
+          });
+          
+        
+      return res.status(200).json({
+        status: true,
+        message: "All Booking",
+        bookingStatusForPending:bookingStatusForPending.count || 0,
+        bookingStatusForApproved: bookingStatusForApproved.count || 0,
+        bookingStatusForReject:bookingStatusForReject.count || 0,
+        data: get_all_booking,
+        user: users,
+        currentPage: page,
+        totalPages: totalPages,
+      })
+  
+    } catch (error) {
+     
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
