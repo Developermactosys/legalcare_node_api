@@ -36,6 +36,8 @@ const notificationRoutes = require("./notification_routes/notification.routes")
 const caRoutes = require("./ca_routes/ca.routes")
 //payment_History 
 const payment_HistoryRoutes = require("./admin_routes/admin_dashboard/payment_history.routes")
+const expertService = require('./expert_service_routes/expert_service.routes')
+
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -45,7 +47,7 @@ router.use("/",checkRoutes);
 router.use("/",feedbackRoutes);
 router.use("/",listRoutes);
 router.use("/",queryRoutes);
- router.use("/",requestRoutes);
+router.use("/",requestRoutes);
 router.use("/",staticRoutes);
 router.use("/",userRoutes);
 router.use("/",walletRoutes);
@@ -70,4 +72,6 @@ router.use('/',notificationRoutes);
 router.use("/",caRoutes);
 //paymet_History 
 router.use("/",payment_HistoryRoutes);
+//expert service route
+router.use('/', expertService)
 module.exports = router

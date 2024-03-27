@@ -6,7 +6,7 @@ const User = db.User;
 const {Sequelize} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
-    const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees} = req.body;
+    const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees, service_cost} = req.body;
     // const { serviceName } = req.body
     try {
         const findCategory = await category.findByPk(categoryId)
@@ -28,7 +28,7 @@ const createServices = async(req, res)=>{
             service_img : filePath,
             serviceName : serviceName,
             service_type:service_type,
-            expert_fees :expert_fees,
+            service_cost : service_cost,
             UserId :expert_id
             })
             await addServices.update(req.body)

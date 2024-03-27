@@ -17,7 +17,7 @@ router.delete('/del_user_by_id/:UserId',  delUserDetails );
 router.get('/get_search_user',  searchUser);
 router.get('/total_expert_list', totalUserForCa);
 
-router.post("/forgotPassword", forgotPassword);
+router.post("/forgotPassword", forgotPassword); 
 router.get("/resetPassword/:token", resetPassword);
 
 // router.get('/get_user_and_chat/:UserId', authorize(['0']), getuserDetailsAndChat);

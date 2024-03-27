@@ -80,3 +80,57 @@ exports.addFollowUsers = async (req, res) => {
     return res.status(500).json({ error: 'Internal Server Error' });
   }
 }
+
+exports.check_is_following = async(req, res) => {
+  try{
+    const { expert_id, user_id } = req.body;
+     // Find the expert by ID
+     const expert = await User.findByPk(expert_id);
+
+     // If expert is not found, return error
+     if (!expert) {
+       return res.json({
+         status: false,
+         message: 'Expert not found',
+       });
+     }
+ 
+     // Find the user by ID
+     const user = await User.findByPk(user_id);
+ 
+     // If user is not found, return error
+     if (!user) {
+       return res.json({
+         status: false,
+         message: 'User not found',
+       });
+     }
+ 
+     // Check if the user is already following the expert
+     const isFollowing = await follower.findOne({
+       where: {
+         user_id: user_id,
+         expert_id: expert_id,
+       }
+     });
+     if(isFollowing) {
+      return res.json({
+        status: true,
+        message: 'following',
+        isFollowing: true,
+      });
+     }
+     else{
+      return res.json({
+        status: false,
+        message: 'Not following',
+        isFollowing: false,
+      });
+     }
+
+  }
+  catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: 'Internal Server Error' });
+  }
+}

@@ -54,6 +54,7 @@ db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataT
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
 db.follower_count = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
+db.expertservices = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -296,6 +297,26 @@ db.User.hasMany(db.follower_count, {
 db.follower_count.belongsTo(db.User, {
     forienKey: "UserId",
     as: "User",
+})
+
+//User has One to Many relation with expert service table
+db.User.hasMany(db.expertservices, {
+    forienKey : "UserId",
+    as : "expertservices"
+})
+db.expertservices.belongsTo(db.User, {
+    forienKey : "UserId",
+    as : "User" 
+})
+
+//Service has One to Many relation with expert service table
+db.service.hasMany(db.expertservices, {
+    forienKey : "serviceId",
+    as : "expertservices"
+})
+db.expertservices.belongsTo(db.service, {
+    forienKey : "serviceId",
+    as : "service" 
 })
 
 module.exports = db;
