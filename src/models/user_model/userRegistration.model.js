@@ -60,7 +60,12 @@ const User = sequelize.define('User', {
   wait_time: DataTypes.INTEGER,
   kundli_id: DataTypes.INTEGER,
   user_status: DataTypes.STRING,
-  status: DataTypes.BOOLEAN,
+  status: {
+    type: DataTypes.ENUM,
+    values: [ "verified" , "rejected", "suspended" ],
+    allowNull: false,
+    defaultValue: "verified"
+  },
   is_delete: DataTypes.BOOLEAN,
   free_redeem: DataTypes.INTEGER,
   free_time: DataTypes.INTEGER,

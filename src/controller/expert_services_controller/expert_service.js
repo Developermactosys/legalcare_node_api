@@ -41,24 +41,38 @@ exports.addExpertService = async(req, res) =>{
 // API for get all expert service
 exports.getAllExpertService = async(req, res) => {
     try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const offset = (page - 1) * limit
         const getAllData = await expert_service.findAll({
             include:[{
                 model: service,
-                attributes: ['id', 'serviceName']
+                as: "service",
+                attributes: ['id', 'serviceName','service_img']
             },
-        {model: User,
-        attributes:['id', 'name']
-        }]
+            {
+            model: User,
+            as: "User",
+            attributes:['id', 'name', 'profile_image']
+        }],
+        order: [["id", "DESC"]],
+        limit: limit,
+        offset: offset,
         })
+        const totalCount = await expert_service.count({});
+        const totalPages = Math.ceil(totalCount / limit);
         if(getAllData){
             return res.status(200).json({
                 status : true,
                 message: "Get all expert service",
-                data : getAllData
+                data : getAllData,
+                total_Expert_Services: totalCount,
+                currentPage: page,
+                totalPages:totalPages,
             })
         }
         else{
-            return res.status(400).json({
+            return res.status(200).json({
                 status : false,
                 message : "expert sevices not found "
             })
@@ -79,21 +93,24 @@ exports.getAllExpertServiceById = async(req, res) => {
         const getAllData = await expert_service.findByPk(id, {
             include:[{
                 model: service,
-                attributes: ['id', 'serviceName']
+                as: "service",
+                attributes: ['id', 'serviceName','service_img']
             },
-        {model: User,
-        attributes:['id', 'name']
+            {
+            model: User,
+            as: "User",
+            attributes:['id', 'name', 'profile_image']
         }]
         })
         if(getAllData){
             return res.status(200).json({
                 status : true,
-                message: "Get all expert service",
+                message: "Get expert service",
                 data : getAllData
             })
         }
         else{
-            return res.status(400).json({
+            return res.status(200).json({
                 status : false,
                 message : "expert sevices not found "
             })
@@ -119,12 +136,12 @@ exports.updateExpertServiceById = async(req, res) => {
                 )
             return res.status(200).json({
                 status : true,
-                message: "Get all expert service",
+                message: "Expert service updated successfully",
                 data : updateData
             })
         }
         else{
-            return res.status(400).json({
+            return res.status(200).json({
                 status : false,
                 message : "expert sevices not found "
             })
@@ -148,8 +165,7 @@ exports.delExpertServiceById = async(req, res) => {
                 const updateData = await getAllData.destroy()
             return res.status(200).json({
                 status : true,
-                message: "Get all expert service",
-                data : updateData
+                message: "Expert service has been deleted successfully",
             })
         }
         else{
