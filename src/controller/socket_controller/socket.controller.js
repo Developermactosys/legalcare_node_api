@@ -288,12 +288,12 @@ async function handleForceDisconnect(socket, data) {
         data.comment = 'Done';
         console.log('data axios sending', data);
 
-        // Make the HTTP request using axios
-        const response = await axios.post('http://134.209.229.112/astrology_new/api/deduct_amount', { data: data }, {
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
-        });
+        // // Make the HTTP request using axios
+        // const response = await axios.post('http://134.209.229.112/astrology_new/api/deduct_amount', { data: data }, {
+        //     headers: { 'Content-Type': 'application/x-www-form-urlencoded' }
+        // });
 
-        console.log('axios response', response.data);
+        // console.log('axios response', response.data);
         var resp = { id: data.astroid, status: 'Online', is_busy: 0 };
         socket.emit("user_status", resp); // Emit to the socket instance if meant for the current connection
         socket.emit("end_chat_web", data); // Adjust according to your needs

@@ -880,3 +880,99 @@ exports.getAllBookingdataForAll = async(req, res) => {
       });
     }
   }
+
+
+//for searching 
+
+exports.getAll_bookingsBySearch = async (req, res) => {
+  const { id, email_id, name, phone_no, date } = req.query;
+
+  let query = {
+    where: {},
+    include: [
+      {
+        model: User,
+        as: "User",
+        attributes: ["id", "name", "user_type", "phone_no"],
+      },
+      {
+        model: service,
+        as: "service",
+        attributes: ["id", "serviceName"],
+        include: [
+          {
+            model: User,
+            as: "User",
+            attributes: ["id", "name", "user_type", "phone_no"],
+          },
+        ],
+      },
+    ],
+    attributes: ["id", "expert_id", "status", "payment_status", "createdAt"],
+    order: [["createdAt", "DESC"]],
+  };
+
+  if (id) {
+    query.where.id = id; // Direct match
+  }
+  if (email_id) {
+    query.include[0].where = {
+      ...query.include[0].where,
+      email_id: { [Sequelize.Op.like]: `%${email_id}%` },
+    };
+  }
+  if (name) {
+    query.include[0].where = {
+      ...query.include[0].where,
+      name: { [Sequelize.Op.like]: `%${name}%` },
+    };
+  }
+  if (phone_no) {
+    query.include[0].where = {
+      ...query.include[0].where,
+      phone_no: { [Sequelize.Op.like]: `%${phone_no}%` },
+    };
+  }
+  if (date) {
+    query.where.createdAt = Sequelize.where(
+      Sequelize.fn("date", Sequelize.col("booking_detail.createdAt")), // Specify booking_detail table
+      "=",
+      date
+    ); // Assumes createdAt is in 'YYYY-MM-DD' format
+  }
+
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
+    const bookings = await Booking_details.findAll({
+      ...query,
+      limit,
+      offset,
+    });
+
+    const totalCount = await Booking_details.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+    if (bookings.length > 0) {
+      return res.status(200).json({
+        status: true,
+        message: "Bookings found",
+        data: bookings,
+        currentPage: page,
+        totalPages: totalPages,
+      });
+    } else {
+      return res.status(404).json({
+        status: false,
+        message: "No bookings found with the provided criteria",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
