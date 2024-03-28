@@ -7,7 +7,9 @@ const wallet_system = db.wallet_system;
 const chat = db.chat;
 const call=db.call_details;
 const video = db.video;
-const document =db.document;
+const document = db.document;
+const bank_details = db.bank_details;
+
 
 // API for count total user
 exports.totalUser = async (req, res) => {
@@ -155,7 +157,7 @@ exports.totalUser = async (req, res) => {
   // Count Total user
   exports.totalUserForCa = async (req, res) => {
     try {
-      const userTypes = ["2", "3","4"];
+      const userTypes = ["1","2", "3","4"];
   
       // Create a promise array to fetch counts for both user types concurrently
       const countsPromises = userTypes.map((type) =>
