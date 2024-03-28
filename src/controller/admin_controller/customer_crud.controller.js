@@ -156,6 +156,7 @@ exports.totalUser = async (req, res) => {
   exports.totalUserForCa = async (req, res) => {
     try {
       const userTypes = ["2", "3","4"];
+      
   
       // Create a promise array to fetch counts for both user types concurrently
       const countsPromises = userTypes.map((type) =>
