@@ -44,6 +44,75 @@ const serverKey = process.env.SERVER_KEY_HERE;
 const fcm = new FCM(serverKey);
 
 
+// exports.Add_Booking = async (req, res) => {
+//   try {
+//     const { serviceId, discounted_amount, GST, user_id ,time} = req.body;
+
+//     const isEmptykey = Object.keys(req.body).some((key) => {
+//       const value = req.body[key];
+//       return value === "" || value === null || value === undefined;
+//     });
+//     if (isEmptykey) {
+//       return res.status(400).json({ error: "please do not give empty fields" });
+//     }
+//     const add_booking = await Booking_details.create(req.body);
+
+//     const find_service = await service.findByPk(serviceId)
+//     const service_name = find_service.serviceName
+
+//     add_booking.serviceId = serviceId;
+//     add_booking.discounted_amount = discounted_amount;
+//     add_booking.GST = GST;
+//     add_booking.UserId = user_id;
+//     add_booking.expert_id = find_service.UserId;
+//     add_booking.in_progress_time = time;
+
+//     await add_booking.save();
+    
+//     const expert_id = find_service.UserId
+
+//     const user = await User.findByPk(user_id)
+//     const user_name =  user.name
+//     const expert = await User.findByPk(expert_id) 
+//     const expert_name = expert.name
+   
+//     var message = {
+//       to: expert.device_id, // Assuming the user model has a device_id field
+//       notification: {
+//         title: `Booking Confirmation`,
+//         body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.id}.`,
+//       },
+      
+//     }
+  
+//     await Notification.create({
+//       message: message.notification.body,
+//       type: " Booking ",
+//       UserId : expert.id
+//     });
+
+//     fcm.send(message, function(err, response) {
+//       if (err) {
+//         console.error("Error:", err.message);
+//         return res.status(400).json({ success: false, message: "Failed to send notification" });
+//       } else {
+//         console.log("Successfully sent with response: ", response);
+//         return res.status(200).json({
+//           status: true,
+//           message: "Booked successfully and notification sent",
+//           data: add_booking,
+//         });
+//       }
+//     });
+// } catch (error) {
+//   console.error(error);
+//   return res.status(500).json({ error: "Internal Server Error" });
+// }
+// };
+
+// Function to generate booking ID
+
+
 exports.Add_Booking = async (req, res) => {
   try {
     const { serviceId, discounted_amount, GST, user_id ,time} = req.body;
@@ -56,10 +125,30 @@ exports.Add_Booking = async (req, res) => {
       return res.status(400).json({ error: "please do not give empty fields" });
     }
     const add_booking = await Booking_details.create(req.body);
+    function generateBookingID() {
+      // Get the current date
+      const currentDate = new Date();
+      
+      // Extract year, month, and day components
+      const year = currentDate.getFullYear();
+      const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Adding leading zero if necessary
+      const day = currentDate.getDate().toString().padStart(2, '0'); // Adding leading zero if necessary
+      
+      // Get the sequential number (you can replace this with your own logic to generate sequential numbers)
+      const sequentialNumber = add_booking.id; // You need to implement this function
+      
+      // Format the booking ID
+      const bookingID = `LL${day}${month}${year}${sequentialNumber}`;
+      
+      return bookingID;
+    }
 
+    const bookingID = generateBookingID()
     const find_service = await service.findByPk(serviceId)
     const service_name = find_service.serviceName
 
+    
+    add_booking.booking_id = bookingID
     add_booking.serviceId = serviceId;
     add_booking.discounted_amount = discounted_amount;
     add_booking.GST = GST;
@@ -80,7 +169,7 @@ exports.Add_Booking = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.id}.`,
+        body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.booking_id}.`,
       },
       
     }

@@ -28,7 +28,7 @@ const User = sequelize.define('User', {
  },
   remember_token: DataTypes.STRING,
   user_expertise:{
-    type:DataTypes.JSON,
+    type:DataTypes.STRING,
     },
   user_experience: DataTypes.TEXT,
   user_language: DataTypes.STRING,
@@ -56,7 +56,7 @@ const User = sequelize.define('User', {
   is_busy: DataTypes.BOOLEAN,
   chat_active: DataTypes.BOOLEAN,
   call_active: DataTypes.BOOLEAN,
-  recommend: DataTypes.BOOLEAN,
+  recommend: DataTypes.STRING,
   wait_time: DataTypes.INTEGER,
   kundli_id: DataTypes.INTEGER,
   user_status: DataTypes.STRING,
@@ -65,7 +65,7 @@ const User = sequelize.define('User', {
     values: [ "verified" , "rejected", "suspended" ],
     allowNull: false,
     defaultValue: "verified"
-  },
+  }, 
   is_delete: DataTypes.BOOLEAN,
   free_redeem: DataTypes.INTEGER,
   free_time: DataTypes.INTEGER,

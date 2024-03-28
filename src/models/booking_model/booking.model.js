@@ -68,6 +68,9 @@ rejected_time: {
   allowNull: true,
   defaultValue: null
 },
+booking_id: {
+  type: DataTypes.STRING,
+},
   deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,
