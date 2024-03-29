@@ -27,7 +27,17 @@ const fileStorage = multer.diskStorage({
     uploadPath = path.join(__dirname, "../../src/uploads/documents");
   } else if (file.fieldname === "document") {
     uploadPath = path.join(__dirname, "../../src/uploads/documents");
-  }else {
+  }
+  else if (file.fieldname === "pan_doc") {
+    uploadPath = path.join(__dirname, "../../src/uploads/documents");
+  }
+  else if (file.fieldname === "aadhar_doc") {
+    uploadPath = path.join(__dirname, "../../src/uploads/documents");
+  }
+  else if (file.fieldname === "passbook_img") {
+    uploadPath = path.join(__dirname, "../../src/uploads/documents");
+  }
+  else {
       console.log(`multer problem ${file.fieldname}`);
       return cb(new Error("Invalid fieldname"));
     }
