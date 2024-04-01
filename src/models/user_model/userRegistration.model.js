@@ -39,7 +39,10 @@ const User = sequelize.define('User', {
   profile_image: DataTypes.STRING,
   image_url: DataTypes.STRING, // Ensure this is calculated or managed appropriately
   otp: DataTypes.STRING,
-  otp_verify: DataTypes.BOOLEAN,
+  otp_verify:{
+    type: DataTypes.BOOLEAN,
+    defaultValue: 0,
+  },
   amount: DataTypes.FLOAT,
   per_minute: DataTypes.FLOAT,
   blood_group: DataTypes.STRING,

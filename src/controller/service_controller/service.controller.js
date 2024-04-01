@@ -65,7 +65,7 @@ const getALlService = async(req, res) =>{
             {
                 model:User,
                 as:"User",
-                attributes:['id','user_type']
+                attributes:['id','user_type','name','profile_image']
             }
         ],
         order: [["id", "DESC"]],
@@ -104,7 +104,13 @@ const getServiceById = async(req, res) => {
     const { serviceId } = req.query;
     try {
         const getServices = await services.findByPk(serviceId, {
-            include:[{
+            include:[
+                {
+                    model: User,
+                    as: "User",
+                    attributes:['id','user_type','name','profile_image']
+                },
+                {
                 model: category,
                 as: "category",
               },
@@ -150,6 +156,8 @@ const getServiceBy_expertId = async(req, res) => {
             {
                 model: User,
                 as: "User",
+                attributes:['id','user_type','name','profile_image']
+
             },
             {
                 model: category,
@@ -201,7 +209,13 @@ const getAllserviceBy_expert_id = async(req, res) => {
         const getServices = await services.findAll({where :{
             UserId:expert_id,
         },
-        include:[{
+        include:[
+            {
+                model: User,
+                as: "User",
+                attributes:['id','user_type','name','profile_image']
+            },
+            {
             model: category,
             as: "category",
           },
@@ -237,6 +251,7 @@ const getAllserviceBy_expert_id = async(req, res) => {
         })
     } 
 }
+
 
 const updateService = async (req, res) => {
     const {
@@ -336,5 +351,5 @@ module.exports = {
     deleteService,
     getServiceBy_expertId,
     getAllserviceBy_expert_id,
-    updateService
+    updateService,
 }

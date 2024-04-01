@@ -60,6 +60,7 @@ exports.login = async (req, res) => {
         status: true,
         message:
           "Your OTP has not been verified yet. We have sent you a new OTP.",
+          otp_verify : user.otp_verify
       });
     } else {
       const access_token = tokenProcess.generateAccessToken(user);
