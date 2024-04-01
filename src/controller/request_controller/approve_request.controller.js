@@ -67,14 +67,14 @@ exports.approveRequest = async (req, res) => {
               };
         
               var message = {
-                to: receiver.device_id,
+                to: sender.device_id,// receiver.device_id,
                 collapse_key: "green",
                 
                 notification: {
-                  title: `Your request has been accepted by ${sender.name}`,
-                      body: `Your request has been accepted by ${sender.name}`,
+                  title: `Your request has been accepted by ${receiver.name}`, // sender.name
+                      body: `Your request has been accepted by ${receiver.name}`, // sender.name
                       priority: "high",
-                      image: `${sender_profile_image}${sender.profile_image}`,
+                      image: `${sender_profile_image}${receiver.profile_image}`,
         
                 },
                 data: {
@@ -85,13 +85,13 @@ exports.approveRequest = async (req, res) => {
                   type: "customer",
                   notification_type: "approved",
                   time: Date.now(),
-                  title: `Chat request approved by ${sender.name}`,
+                  title: `Chat request approved by ${receiver.name}`,// sender.name
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                  image: `${sender_profile_image}${sender.profile_image}`,
+                  image: `${sender_profile_image}${receiver.profile_image}`,
                   sound:
                     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                 },
-                to: receiver.device_id,
+                to: sender.device_id //receiver.device_id,
               };
 
               await Notification.create({
@@ -169,14 +169,14 @@ exports.approveRequest = async (req, res) => {
                 };
           
                 var message = {
-                  to: receiver.device_id,
+                  to: sender.device_id,//receiver.device_id,
                   collapse_key: "green",
                   
                   notification: {
-                    title: `Your request has been accepted by ${sender.name}`,
-                        body: `Your request has been accepted by ${sender.name}`,
+                    title: `Your request has been accepted by ${receiver.name}`, // sender.name
+                        body: `Your request has been accepted by ${receiver.name}`,
                         priority: "high",
-                        image: `${sender_profile_image}${sender.profile_image}`,
+                        image: `${sender_profile_image}${receiver.profile_image}`,
                   },
                   data: {
                     sender_id: sender_id,
@@ -186,13 +186,13 @@ exports.approveRequest = async (req, res) => {
                     type: "customer",
                     notification_type: "video_approved",
                     time: Date.now(),
-                    title: `Video request approved by ${sender.name}`,
+                    title: `Video request approved by ${receiver.name}`,//sender.name
                     icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                    image: `${sender_profile_image}${sender.profile_image}`,
+                    image: `${sender_profile_image}${receiver.profile_image}`,
                     sound:
                       "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                   },
-                  to: receiver.device_id,
+                  to: sender.device_id //receiver.device_id,
                 };
                 await Notification.create({
                   message: message.notification.body,
@@ -269,14 +269,14 @@ exports.approveRequest = async (req, res) => {
               };
         
               var message = {
-                to: receiver.device_id,
+                to: sender.device_id,//receiver.device_id,
                 collapse_key: "green",
                 
                 notification: {
-                  title: `Your request has been accepted by ${sender.name}`,
-                      body: `Your request has been accepted by ${sender.name}`,
+                  title: `Your request has been accepted by ${receiver.name}`,// sender.name
+                      body: `Your request has been accepted by ${receiver.name}`,
                       priority: "high",
-                      image: `${sender_profile_image}${sender.profile_image}`,
+                      image: `${sender_profile_image}${receiver.profile_image}`,
                 },
                 data: {
                   sender_id: sender_id,
@@ -286,13 +286,13 @@ exports.approveRequest = async (req, res) => {
                   type: "customer",
                   notification_type: "audio_approved",
                   time: Date.now(),
-                  title: `Audio request approved by ${sender.name}`,
+                  title: `Audio request approved by ${receiver.name}`, // sender.name
                   icon: "https://collabdoor.com/public/front_img/Logo-removebg-preview%201.png",
-                  image: `${sender_profile_image}${sender.profile_image}`,
+                  image: `${sender_profile_image}${receiver.profile_image}`,
                   sound:
                     "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
                 },
-                to: receiver.device_id,
+                to: sender.device_id//receiver.device_id,
               };
               
               console.log(message)

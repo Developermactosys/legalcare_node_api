@@ -38,19 +38,19 @@ exports.cancelRequest = async (req, res) => {
     };
 
     var message = {
-      to: receiver.device_id,
+      to: sender.device_id,//receiver.device_id,
       collapse_key: "green",
 
       notification: {
-        title: `Your request has been cancelled from ${sender.name}`,
+        title: `Your request has been cancelled from ${receiver.name}`,
         // body: `Your request has been cancelled ${sender.name}`,
         priority: "high",
-        image: `${sender_profile_image}${sender.profile_image}`,
+        image: `${sender_profile_image}${receiver.profile_image}`,
       },
       data: {
         id: "",
         user_name: sender.name,
-        user_image: `${sender_profile_image}${sender.profile_image}`,
+        user_image: `${sender_profile_image}${receiver.profile_image}`,
         type: "customer",
         notification_type: "cancle",
         time: Date.now(),
@@ -60,7 +60,7 @@ exports.cancelRequest = async (req, res) => {
         sound:
           "http://commondatastorage.googleapis.com/codeskulptor-demos/DDR_assets/Sevish_-__nbsp_.mp3",
       },
-      to: receiver.device_id,
+      to:sender.device_id //receiver.device_id,
     };
 
     await Notification.create({
@@ -68,6 +68,8 @@ exports.cancelRequest = async (req, res) => {
       type: message.data.notification_type,
       UserId :sender.id
     });
+
+// console.log(title);
 
     fcm.send(message, function (err, response) {
       // console.log("1", message);

@@ -299,6 +299,8 @@ db.follower_count.belongsTo(db.User, {
     as: "User",
 })
 
+// <----------Assosiations of expertservices ----------->
+
 //User has One to Many relation with expert service table
 db.User.hasMany(db.expertservices, {
     forienKey : "UserId",
@@ -318,5 +320,35 @@ db.expertservices.belongsTo(db.service, {
     forienKey : "serviceId",
     as : "service" 
 })
+
+// //category has One to Many relation with expert service table
+// db.category.hasMany(db.expertservices, {
+//     forienKey : "categoryId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.category, {
+//     forienKey : "categoryId",
+//     as : "category" 
+// })
+
+// //subcategory has One to Many relation with expert service table
+// db.subcategory.hasMany(db.expertservices, {
+//     forienKey : "subcategoryId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.subcategory, {
+//     forienKey : "subcategoryId",
+//     as : "subcategory" 
+// })
+
+// //booking has One to Many relation with expert service table
+// db.expertservices.hasMany(db.booking_detail,{
+//     forienKey : "expertserviceId",
+//     as : "booking_detail" 
+// })
+// db.booking_detail.belongsTo(db.expertservices,{
+//     forienKey : "expertserviceId",
+//     as : "expertservices" 
+// })
 
 module.exports = db;
