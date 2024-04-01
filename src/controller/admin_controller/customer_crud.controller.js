@@ -221,34 +221,116 @@ exports.totalUser = async (req, res) => {
     }
   };
 
-  // exports.getuserDetailsAndChat = async (req, res) => {
-  //   const { UserId } = req.params;
-  //   try {
-  //     const userDetails = await User.findByPk(UserId, {
-  //       include: {
-  //         model: chat,
-  //         as: 'chat',
-  //       },
-  //     });
-  //     if (userDetails) {
-  //       return res.status(200).json({
-  //         success: true,
-  //         message: "Get user details",
-  //         data: userDetails,
-  //       });
-  //     } else {
-  //       return res.status(400).json({
-  //         success: false,
-  //         message: "user Id not found ",
-  //       });
-  //     }
-  //   } catch (error) {
-  //     return res.status(500).json({
-  //       success: false,
-  //       message: error.message,
-  //     });
-  //   }
-  // };
-  
+
+  // For final api for customer CRUD 
+exports.getAllCallDetailById = async(req, res) =>{
+  try {
+    const { id } = req.params;
+    const findUser = await User.findByPk(id)
+    if(findUser){
+      const getCall = await call.findAll({
+        where : {
+          UserId: id
+        }
+      })
+      if(getCall){
+        return res.status(200).json({
+          status : true,
+          message : "Show call detail",
+        })
+      }else{
+        return res.status(400).json({
+          status : false,
+          message : "call not found"
+        })
+      }
+    }else{
+      return res.status(404).json({
+        status : false,
+        message : "user not found "
+      })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status : false,
+      message : error.message
+    })
+  }
+}
+
+// API for get all video call Details by id
+exports.getAllVideoCallDetailById = async(req, res) =>{
+  try {
+    const { id } = req.params;
+    const findUser = await User.findByPk(id)
+    if(findUser){
+      const getCall = await video.findAll({
+        where : {
+          UserId: id
+        }
+      })
+      if(getCall){
+        return res.status(200).json({
+          status : true,
+          message : "Show video detail",
+        })
+      }else{
+        return res.status(400).json({
+          status : false,
+          message : "Video call not found"
+        })
+      }
+    }else{
+      return res.status(404).json({
+        status : false,
+        message : "user not found "
+      })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status : false,
+      message : error.message
+    })
+  }
+}
+
+
+// API for get all document details by id
+exports.getAllDocumentDetailById = async(req, res) =>{
+  try {
+    const { id } = req.params;
+    const findUser = await User.findByPk(id)
+    if(findUser){
+      const getCall = await document.findAll({
+        where : {
+          UserId: id
+        }
+      })
+      if(getCall){
+        return res.status(200).json({
+          status : true,
+          message : "Show document detail",
+        })
+      }else{
+        return res.status(400).json({
+          status : false,
+          message : "document not found"
+        })
+      }
+    }else{
+      return res.status(404).json({
+        status : false,
+        message : "user not found "
+      })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status : false,
+      message : error.message
+    })
+  }
+}
+
+
   
   
