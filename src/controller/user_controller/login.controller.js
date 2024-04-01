@@ -43,7 +43,7 @@ exports.login = async (req, res) => {
       });
     }
 
-    if (user.otp_verify === 0 || user.otp_verify === null) {
+    if (user.otp_verify == 0 || user.otp_verify == null) {
       const otp = Math.floor(100000 + Math.random() * 900000); // 6 digits OTP
       await User.update(
         { otp, device_id: device_token, login_from: "app" },
