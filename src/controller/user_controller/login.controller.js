@@ -56,7 +56,7 @@ exports.login = async (req, res) => {
       //   body: `Your verification OTP is ${otp}`,
       // });
 
-      return res.status(204).json({
+      return res.status(200).json({
         status: true,
         message:
           "Your OTP has not been verified yet. We have sent you a new OTP.",
