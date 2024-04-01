@@ -236,7 +236,8 @@ exports.getAllCallDetailById = async(req, res) =>{
       if(getCall){
         return res.status(200).json({
           status : true,
-          message : "Show call detail",
+          message : "Showing Call detail's ",
+          data: getCall
         })
       }else{
         return res.status(400).json({
@@ -272,7 +273,8 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
       if(getCall){
         return res.status(200).json({
           status : true,
-          message : "Show video detail",
+          message : "Showing Video Call detail's",
+          data :getCall
         })
       }else{
         return res.status(400).json({
@@ -309,7 +311,8 @@ exports.getAllDocumentDetailById = async(req, res) =>{
       if(getCall){
         return res.status(200).json({
           status : true,
-          message : "Show document detail",
+          message : "Showing document's ",
+          data:getCall
         })
       }else{
         return res.status(400).json({
