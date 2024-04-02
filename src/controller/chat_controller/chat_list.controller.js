@@ -170,9 +170,9 @@ exports.getUserList_by_user_id = async (req, res) => {
   }
 
   let sql = `SELECT 
-  User.id,
-  User.profile_image,
-  User.name,
+  Users.id,
+  Users.profile_image,
+  Users.name,
   chats.from_user_id,
   chats.to_user_id,
   chats.chat_message,
@@ -181,9 +181,9 @@ exports.getUserList_by_user_id = async (req, res) => {
 FROM 
   chats 
 RIGHT JOIN 
-  User 
+  Users 
 ON 
-  (chats.from_user_id = User.id OR chats.to_user_id = User.id )
+  (chats.from_user_id = Users.id OR chats.to_user_id = Users.id )
 WHERE 
   chats.to_user_id = ${user_id}
 GROUP BY chats.from_user_id 
