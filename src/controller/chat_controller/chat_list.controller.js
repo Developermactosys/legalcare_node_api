@@ -199,7 +199,7 @@ WHERE
       //  result.unread_count /= 2; // Divide unread_count by 2
        result.unread_count = Math.floor(result.unread_count);
       });
-
+console.log(results);
       return res.send({
         status: true,
         message: "Get Data Successfully",
