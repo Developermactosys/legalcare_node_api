@@ -186,23 +186,17 @@ ON
   (chats.from_user_id = Users.id OR chats.to_user_id = Users.id )
 WHERE 
   chats.to_user_id = ${user_id}
-  GROUP BY 
-  Users.id,
-  Users.profile_image,
-  Users.name,
-  chats.from_user_id,
-  chats.to_user_id,
-  chats.chat_message,
-  last_message_date
-ORDER BY 
-  last_message_date DESC;`
+  GROUP BY chats.from_user_id 
+  ORDER BY 
+    chats.message_date DESC, 
+    chats.message_time DESC;`
 
   try {
     const results = await User.sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT });
 
     if (results.length > 0) {
       results.forEach(result => {
-       // result.unread_count /= 2; // Divide unread_count by 2
+      //  result.unread_count /= 2; // Divide unread_count by 2
        result.unread_count = Math.floor(result.unread_count);
       });
 
