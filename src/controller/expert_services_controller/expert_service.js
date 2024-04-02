@@ -1,21 +1,24 @@
 const db = require('../../../config/db.config')
-const User = db.User
-const expert_service = db.expertservices
-const service = db.service
+const User = db.User;
+const expert_service = db.expertservices;
+const service = db.service;
+const category = db.category;
+const subcategory = db.subcategory;
 
 // API for create expert_services
 exports.addExpertService = async(req, res) =>{
-    const { status, service_type, expert_fees, GST , user_id, serviceId } = req.body;
+    const { status, service_type, expert_fees, GST , user_id, service_id ,category_id ,subcategory_id} = req.body;
     
     try {
-        if(!user_id && !serviceId){
-            return res.status(404).json({
+        if(!user_id && !service_id){
+            return res.status(200).json({
                 status : false,
-                message : "user_id and serviceId not found "
+                message : "user_id and service_id not found "
             })
         }
         const createExpert = await expert_service.create({
-            GST,  expert_fees, UserId : user_id, serviceId : serviceId
+            GST,  expert_fees, UserId : user_id, serviceId : service_id , categoryId:category_id ,
+            subcategoryId:subcategory_id
         })
         if(createExpert){
             return res.status(200).json({
@@ -170,6 +173,161 @@ exports.delExpertServiceById = async(req, res) => {
         }
         else{
             return res.status(400).json({
+                status : false,
+                message : "expert sevices not found "
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+
+// API for get expert service by category_id
+exports.get_expertServiceBy_category_id = async(req, res) => {
+    const { category_id } = req.params;
+    try {
+        const getAllData = await expert_service.findAll({
+             where: { categoryId: category_id },
+            include:[{
+                model: service,
+                as: "service",
+                attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
+            },
+            {
+            model: User,
+            as: "User",
+            attributes:['id', 'name', 'profile_image']
+        }]
+     })
+        if(getAllData){
+            return res.status(200).json({
+                status : true,
+                message: "Get expert service",
+                data : getAllData
+            })
+        }
+        else{
+            return res.status(200).json({
+                status : false,
+                message : "expert sevices not found "
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+// API for get expert service by subcategory_id
+exports.get_expertServiceBy_subcategory_id = async(req, res) => {
+    const { subcategory_id } = req.params;
+    try {
+        const getAllData = await expert_service.findAll({
+             where: { subcategoryId: subcategory_id },
+            include:[{
+                model: service,
+                as: "service",
+                attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
+            },
+            {
+            model: User,
+            as: "User",
+            attributes:['id', 'name', 'profile_image']
+        }]
+     })
+        if(getAllData){
+            return res.status(200).json({
+                status : true,
+                message: "Get expert service",
+                data : getAllData
+            })
+        }
+        else{
+            return res.status(200).json({
+                status : false,
+                message : "expert sevices not found "
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+// API for get expert service by service_id
+exports.get_expertServiceBy_service_id = async(req, res) => {
+    const { service_id } = req.params;
+    try {
+        const getAllData = await expert_service.findAll({
+             where: { serviceId: service_id },
+            include:[{
+                model: service,
+                as: "service",
+                attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
+            },
+            {
+            model: User,
+            as: "User",
+            attributes:['id', 'name', 'profile_image']
+        }]
+     })
+        if(getAllData){
+            return res.status(200).json({
+                status : true,
+                message: "Get expert service",
+                data : getAllData
+            })
+        }
+        else{
+            return res.status(200).json({
+                status : false,
+                message : "expert sevices not found "
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+// API for get expert service by expert_id
+exports.get_expertServiceBy_expert_id = async(req, res) => {
+    const { expert_id } = req.params;
+    try {
+        const getAllData = await expert_service.findAll({
+             where: { UserId: expert_id },
+            include:[
+                {
+                    model: User,
+                    as: "User",
+                    attributes:['id', 'name', 'profile_image']
+                },
+                {
+                model: service,
+                as: "service",
+                attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
+            }
+         ]
+     })
+        if(getAllData){
+            return res.status(200).json({
+                status : true,
+                message: "Get expert service",
+                data : getAllData
+            })
+        }
+        else{
+            return res.status(200).json({
                 status : false,
                 message : "expert sevices not found "
             })
