@@ -153,7 +153,7 @@ exports.totalUser = async (req, res) => {
       });
     }
   };
- 
+  
   // Count Total user
   exports.totalUserForCa = async (req, res) => {
     try {
@@ -228,7 +228,7 @@ exports.getAllCallDetailById = async(req, res) =>{
     const { id } = req.params;
     const findUser = await User.findByPk(id)
     if(findUser){
-      const getCall = await call.findAll({
+      const getCall = await call.findAndCountAll({
         where : {
           UserId: id
         }
@@ -265,7 +265,7 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
     const { id } = req.params;
     const findUser = await User.findByPk(id)
     if(findUser){
-      const getCall = await video.findAll({
+      const getCall = await video.findAndCountAll({
         where : {
           UserId: id
         }
