@@ -186,10 +186,16 @@ ON
   (chats.from_user_id = Users.id OR chats.to_user_id = Users.id )
 WHERE 
   chats.to_user_id = ${user_id}
-GROUP BY chats.from_user_id 
+  GROUP BY 
+  Users.id,
+  Users.profile_image,
+  Users.name,
+  chats.from_user_id,
+  chats.to_user_id,
+  chats.chat_message,
+  last_message_date
 ORDER BY 
-  chats.message_date DESC, 
-  chats.message_time DESC;`
+  last_message_date DESC;`
 
   try {
     const results = await User.sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT });
