@@ -29,7 +29,7 @@ exports.logoutUpdate = async (req, res) => {
 
     // Update user status and device_id
     const result = await User.update(
-      { device_id: "", user_status: 'Offline' },
+      {  user_status: 'Offline' },
       { where: { id: user_id } }
     );
 
