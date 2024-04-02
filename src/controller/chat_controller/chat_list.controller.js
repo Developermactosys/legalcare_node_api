@@ -170,20 +170,20 @@ exports.getUserList_by_user_id = async (req, res) => {
   }
 
   let sql = `SELECT 
-  Users.id,
-  Users.profile_image,
-  Users.name,
-  chats.from_user_id,
-  chats.to_user_id,
-  chats.chat_message,
+  User.id,
+  User.profile_image,
+  User.name,
+  chat.from_user_id,
+  chat.to_user_id,
+  chat.chat_message,
   CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
   COUNT(CASE WHEN chats.to_user_id= ${user_id} AND chats.unread_msg  = 0 THEN 1 END) AS unread_count
 FROM 
   chats 
 RIGHT JOIN 
-  Users 
+  User 
 ON 
-  (chats.from_user_id = Users.id OR chats.to_user_id = Users.id )
+  (chats.from_user_id = User.id OR chats.to_user_id = User.id )
 WHERE 
   chats.to_user_id = ${user_id}
   GROUP BY chats.from_user_id 
