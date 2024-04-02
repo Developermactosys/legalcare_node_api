@@ -202,7 +202,8 @@ ORDER BY
 
     if (results.length > 0) {
       results.forEach(result => {
-        result.unread_count /= 2; // Divide unread_count by 2
+       // result.unread_count /= 2; // Divide unread_count by 2
+       result.unread_count = Math.floor(result.unread_count);
       });
 
       return res.send({
