@@ -172,22 +172,23 @@ exports.getUserList_by_user_id = async (req, res) => {
   let sql = `SELECT 
   Users.id,
   Users.profile_image,
-    CASE 
-    WHEN chats.from_user_id = ${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.to_user_id)
-    WHEN chats.to_user_id =${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.from_user_id)
-END AS name,
+  CASE 
+      WHEN chats.from_user_id = ${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.to_user_id)
+      WHEN chats.to_user_id = ${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.from_user_id)
+  END AS name,
   chats.from_user_id,
   chats.to_user_id,
   (SELECT chat_message FROM chats WHERE (from_user_id = Users.id OR to_user_id = Users.id) ORDER BY message_date DESC, message_time DESC LIMIT 1) AS last_message,
-  CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
-  COUNT(CASE WHEN chats.to_user_id =${user_id} AND chats.unread_msg = 0 THEN 1 END) AS unread_count
+  CONCAT(chats.message_date, " ", chats.message_time) AS last_message_date,
+  COUNT(CASE WHEN chats.to_user_id = ${user_id} AND chats.unread_msg = 0 THEN 1 END) AS unread_count
 FROM 
   chats 
 RIGHT JOIN 
   Users ON (chats.from_user_id = Users.id OR chats.to_user_id = Users.id)
 WHERE 
   (chats.from_user_id = ${user_id} OR chats.to_user_id = ${user_id})
-
+GROUP BY 
+  chats.from_user_id 
 ORDER BY 
   chats.message_date DESC, 
   chats.message_time DESC;`
