@@ -378,6 +378,122 @@ exports.count_chat_connections = async (req, res) => {
   }
 }
 
+// exports.aggregateCounts = async (req, res) => {
+
+//   try {
+//     const page = Number(req.query.page) || 1;
+//     const limit = Number(req.query.limit) || 10;
+//     const offset = (page - 1) * limit;
+//     const startOfToday = new Date();
+//     startOfToday.setHours(0, 0, 0, 0);
+//     const endOfToday = new Date();
+//     endOfToday.setHours(23, 59, 59, 999);
+
+//     const todaysUserCount = await User.findAndCountAll({
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday,
+//           [Sequelize.Op.lte]: endOfToday
+//         },
+//         user_type: "1"
+//       },
+//       // order: [['id', 'DESC']]
+//       limit: limit,
+//       offset: offset,
+//     });
+
+//     const todaysExpertCount = await User.findAndCountAll({
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday,
+//           [Sequelize.Op.lte]: endOfToday
+//         },
+//         user_type: { [Sequelize.Op.in]: ["2", "3"] }
+//       },
+//       // order: [['id', 'DESC']]
+//     });
+
+//     const todaysChatCount = await chat.findAndCountAll({
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday
+//         }
+//       },
+//       attributes: [
+//         [Sequelize.fn('COUNT', Sequelize.col('id')), 'chat_count']
+//       ],
+//       // group: ['from_user_id', 'to_user_id']
+//     });
+
+//     const todaysCallCount = await call.findAndCountAll({
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday
+//         }
+//       },
+//       attributes: [
+//         [Sequelize.fn('COUNT', Sequelize.col('id')), 'call_count']
+//       ],
+//       // group: ['from_number', 'to_number']
+//     });
+
+//     const todaysVideoCallCount = await video.findAndCountAll({
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday
+//         }
+//       },
+//       attributes: [
+//         [Sequelize.fn('COUNT', Sequelize.col('id')), 'video_call_count']
+//       ],
+//       // group: ['UserId', 'expert_id']
+//     });
+
+
+//     const todaysBookingCount = await booking.findAndCountAll({
+//       attributes:['id','status','createdAt'],
+//      include:[{
+//       model:User,
+//       as:"User",
+//       attributes:['user_type','name'],
+//      }
+//     ],
+//       where: {
+//         createdAt: {
+//           [Sequelize.Op.gte]: startOfToday,
+//           [Sequelize.Op.lte]: endOfToday
+//         }
+//       }
+//     });
+//     const totalCount = await booking.count({});
+//     const totalPages = Math.ceil(totalCount / limit);
+    
+//     return res.status(200).json({
+//       status: true,
+//       message: "Data retrieved successfully",
+//       counts: {
+//         todaysUserCount: todaysUserCount.count || 0,
+//         allCustomerData: todaysUserCount,
+//         todaysExpertCount: todaysExpertCount.count || 0,
+//         todaysChatCount: todaysChatCount.count || 0,
+//         todaysCallCount: todaysCallCount.count || 0,
+//         todaysVideoCallCount: todaysVideoCallCount.count || 0,
+//         todaysBookingCount: todaysBookingCount.count || 0,
+//         todayBookingData : todaysBookingCount,
+//         currentPage: page,
+//         totalPages: totalPages,
+//       }
+//     });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return res.status(500).json({
+//       status: false,
+//       message: "Internal Server Error",
+//       error: error.message
+//     });
+//   }
+// };
+
 exports.aggregateCounts = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
@@ -400,6 +516,43 @@ exports.aggregateCounts = async (req, res) => {
       limit: limit,
       offset: offset,
     });
+
+    // API for total user
+    const user_type = "1";
+    const total_user = await User.findAndCountAll({
+        where : {
+            user_type : user_type
+        }
+    })
+
+// API for total experts
+const user_type_for_Experts = ['2','3','4']
+const total_expert = await User.findAndCountAll({
+  where : {
+      user_type : user_type_for_Experts
+  }
+})
+
+// API for total chats
+const results = await chat.findAll({
+  attributes: ['from_user_id', 'to_user_id'],
+  group: ['from_user_id', 'to_user_id']
+});
+let uniqueChats
+if (results.length > 0) {
+  uniqueChats = new Set();
+  
+  results.forEach(row => {
+      const { from_user_id, to_user_id } = row;
+      // Create a string or another structure that uniquely identifies the chat pair
+      // Here, we ensure the lower ID always comes first to avoid duplicates like (1,2) and (2,1)
+      const chatPair = [from_user_id, to_user_id].sort().join(':');
+      uniqueChats.add(chatPair);
+  });
+}
+
+const getTotal = await call.findAndCountAll()
+const getTotalVideo = await video.findAndCountAll()
 
     const todaysExpertCount = await User.findAndCountAll({
       where: {
@@ -450,13 +603,6 @@ exports.aggregateCounts = async (req, res) => {
 
 
     const todaysBookingCount = await booking.findAndCountAll({
-      attributes:['id','status','createdAt'],
-     include:[{
-      model:User,
-      as:"User",
-      attributes:['user_type','name'],
-     }
-    ],
       where: {
         createdAt: {
           [Sequelize.Op.gte]: startOfToday,
@@ -479,6 +625,11 @@ exports.aggregateCounts = async (req, res) => {
         todaysVideoCallCount: todaysVideoCallCount.count || 0,
         todaysBookingCount: todaysBookingCount.count || 0,
         todayBookingData : todaysBookingCount,
+        total_userCount: total_user.count || 0,
+        total_expert_count: total_expert.count || 0,
+        total_uniqueChats_count: uniqueChats.size || 0,
+        get_total_call_count: getTotal.count || 0,
+        getTotalVideo_count: getTotalVideo.count || 0,
         currentPage: page,
         totalPages: totalPages,
       }
