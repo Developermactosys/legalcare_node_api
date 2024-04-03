@@ -273,7 +273,8 @@ const updateService = async (req, res) => {
       expert_fees,
       service_cost,
       status,
-      description
+      description,
+      type_of_service
     } = req.body;
     let id = req.params.id;
     try {
@@ -287,19 +288,20 @@ const updateService = async (req, res) => {
     //       })
     //   }
   
-      const filePath = req.file
-        ? `service_img/${req.file.filename}`
-        : "/src/uploads/service_img/default.png";
+    //   const filePath = req.file
+    //     ? `service_img/${req.file.filename}`
+    //     : "/src/uploads/service_img/default.png";
       const updateData = await services.update({
         categoryId: categoryId,
         subcategoryId: subCategoryId,
-        service_img: filePath,
+        // service_img: filePath,
         serviceName: serviceName,
         service_type: service_type,
         expert_fees: expert_fees,
         service_cost:service_cost,
         status:status,
         description:description,
+        type_of_service:type_of_service,
         UserId: expert_id,
 
     },{
@@ -307,6 +309,17 @@ const updateService = async (req, res) => {
           id : id
       }
     });
+
+    const find_service = await services.findByPk(id);
+
+    if (req.file) {
+      const filePath = req.file
+        ? `service_img/${req.file.filename}`
+        : "/src/uploads/service_img/default.png";
+      find_service.service_img = filePath;
+      await find_service.save();
+    }
+
       if(updateData){
           return res.status(200).json({
               status : true,

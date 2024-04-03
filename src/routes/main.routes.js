@@ -37,7 +37,8 @@ const caRoutes = require("./ca_routes/ca.routes")
 //payment_History 
 const payment_HistoryRoutes = require("./admin_routes/admin_dashboard/payment_history.routes")
 const expertService = require('./expert_service_routes/expert_service.routes')
-
+//setting 
+const settingRoutes = require("./setting_routes/setting.routes");
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -74,4 +75,7 @@ router.use("/",caRoutes);
 router.use("/",payment_HistoryRoutes);
 //expert service route
 router.use('/', expertService)
+//settingRoutes
+router.use("/",settingRoutes);
+
 module.exports = router
