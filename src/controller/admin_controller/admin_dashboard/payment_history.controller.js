@@ -6,7 +6,7 @@ const transcation_histroy = db.transaction_history
 const getPaymentHistory = async(req ,res) =>{
     try {
         const findPayment = await transcation_histroy.findAll({
-            attributes:['transaction_id','payment_method','createdAt','transaction_amount','status'],
+            attributes:['id','transaction_id','payment_method','createdAt','transaction_amount','status'],
             include: [{
                 model: User,
                 attributes: ['name','user_type'], 
