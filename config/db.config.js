@@ -57,7 +57,7 @@ db.follower_count = require("../src/models/followers_model/follower.model")(sequ
 db.expertservices = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
 db.theme_setting = require("../src/models/setting_model/theme_setting.model")(sequelize, DataTypes);
 db.footer_section = require("../src/models/setting_model/footer_section.model")(sequelize, DataTypes);
-
+db.landing_user = require("../src/models/demo/demo_landing.model")(sequelize ,DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history

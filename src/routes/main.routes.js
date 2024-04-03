@@ -39,6 +39,9 @@ const payment_HistoryRoutes = require("./admin_routes/admin_dashboard/payment_hi
 const expertService = require('./expert_service_routes/expert_service.routes')
 //setting 
 const settingRoutes = require("./setting_routes/setting.routes");
+//demo
+const demo_landingRoutes = require("./demo/demo_landing.routes")
+
 
 router.use('/', Your_channel);
 router.use("/",bankRoutes);
@@ -77,5 +80,7 @@ router.use("/",payment_HistoryRoutes);
 router.use('/', expertService)
 //settingRoutes
 router.use("/",settingRoutes);
+//demo
+router.use("/",demo_landingRoutes);
 
 module.exports = router

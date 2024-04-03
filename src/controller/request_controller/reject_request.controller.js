@@ -38,7 +38,7 @@ exports.cancelRequest = async (req, res) => {
     };
 
     var message = {
-      to: receiver.device_id,//receiver.device_id,
+      to: sender.device_id,//receiver.device_id,
       collapse_key: "green",
 
       notification: {
