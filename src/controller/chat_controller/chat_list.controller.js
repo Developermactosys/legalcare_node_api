@@ -178,7 +178,7 @@ exports.getUserList_by_user_id = async (req, res) => {
 END AS name,
   chats.from_user_id,
   chats.to_user_id,
-  chats.chat_message as last_message,
+  (SELECT chat_message FROM chats WHERE (from_user_id = Users.id OR to_user_id = Users.id) ORDER BY message_date DESC, message_time DESC LIMIT 1) AS last_message,
   CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
   COUNT(CASE WHEN chats.to_user_id =${user_id} AND chats.unread_msg = 0 THEN 1 END) AS unread_count
 FROM 
