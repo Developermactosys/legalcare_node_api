@@ -185,7 +185,7 @@ RIGHT JOIN
 ON 
   (chats.from_user_id = Users.id OR chats.to_user_id = Users.id )
 WHERE 
-  chats.to_user_id = ${user_id}
+  (chats.from_user_id = ${user_id} OR chats.to_user_id = ${user_id})
   GROUP BY chats.from_user_id 
   ORDER BY 
     chats.message_date DESC, 
