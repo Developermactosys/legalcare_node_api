@@ -159,7 +159,7 @@ exports.getChatList_by_user_id = async (req, res) => {
 //   }
 // };
 
-
+// origonal
 exports.getUserList_by_user_id = async (req, res) => {
   const { user_id } = req.query;
   if (!user_id) {
@@ -175,7 +175,7 @@ exports.getUserList_by_user_id = async (req, res) => {
   Users.name,
   chats.from_user_id,
   chats.to_user_id,
-  chats.chat_message,
+  chats.chat_message as last_message,
   CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
   COUNT(CASE WHEN chats.to_user_id= ${user_id} AND chats.unread_msg  = 0 THEN 1 END) AS unread_count
 FROM 
@@ -216,3 +216,11 @@ console.log(results);
     return res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
+
+
+
+
+
+
+
+
