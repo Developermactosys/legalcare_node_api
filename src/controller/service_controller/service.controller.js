@@ -3,7 +3,7 @@ const category = db.category;
 const subCategory = db.subcategory;
 const services = db.service;
 const User = db.User;
-const {Sequelize} = require('sequelize');
+const {Sequelize,Op} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
     const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees, service_cost,type_of_service} = req.body;
@@ -53,9 +53,17 @@ const getALlService = async(req, res) =>{
         const page = Number(req.query.page) || 1;
         const limit = Number(req.query.limit) || 10;
         const offset = (page - 1) * limit;
+        const {type_of_service} = req.query;
+        let query = {
+            where: {},
+          };
+        
+          if (type_of_service) {
+            query.where.type_of_service = { [Sequelize.Op.like]: `%${type_of_service}%` };
+          }
 
-        const getServices = await services.findAll({
-            where: { type_of_service: req.query.type_of_service },
+        const getServices = await services.findAll(query,{
+            // where: { type_of_service: req.query.type_of_service },
             include:[{
                 model: category,
                 as: "category",
