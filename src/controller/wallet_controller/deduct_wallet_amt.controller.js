@@ -14,6 +14,7 @@ const deductWalletAmount = async (req, res) => {
       device_id,
       payment_status,
       expert_id,
+      user_type
     } = req.body;
 
     // Check for empty or undefined fields
@@ -108,6 +109,7 @@ const deductWalletAmount = async (req, res) => {
       transaction_id,
       device_id,
       status: 1,
+      user_type:user_type
     });
 
     return res.status(200).json({

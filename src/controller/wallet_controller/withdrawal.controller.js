@@ -7,7 +7,7 @@ const WithdrawalRequest = db.withdrawal_request;
 
 const withdrawalAmount = async (req, res) => {
   try {
-    const { user_id,  amount} = req.query;
+    const { user_id,  amount,user_type} = req.query;
 
   if(!user_id){
     return res.status(400).json({ status: false, message: "Please provide user_id" });
@@ -60,7 +60,8 @@ const withdrawalAmount = async (req, res) => {
       payment_method:"online",
       transaction_amount: requestedAmount,
       transaction_id : transactionId,
-      status: 1
+      status: 1,
+      user_type:user_type
     });
 
     return res.json({ status: true, message: "Wallet amount updated successfully", wallet_amount: newBalance });
@@ -156,7 +157,7 @@ const get_withdrawalRequest = async (req, res) => {
 
 const update_withdrawal_request_status= async (req, res) => {
   try {
-    const { withdrawal_request_id, requested_amount,expert_id ,status, transaction_id } = req.body;
+    const { withdrawal_request_id, requested_amount,expert_id ,status, transaction_id,user_type} = req.body;
 
     if (!withdrawal_request_id) {
       return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
@@ -209,7 +210,8 @@ const update_withdrawal_request_status= async (req, res) => {
        payment_method:payment_method,
        transaction_amount: requestedAmount_1,
        transaction_id : transaction_id,
-       status: 1
+       status: 1,
+       user_type:user_type
      });
  
     // Create withdrawal request

@@ -7,7 +7,10 @@ module.exports = (sequelize, DataTypes) => {
       autoIncrement: true,
       allowNull : false
     },
-     
+    user_type: {
+      type: DataTypes.INTEGER,
+      allowNull: true,
+    },
         request_amount: {
           type: DataTypes.TEXT,
           allowNull: true,

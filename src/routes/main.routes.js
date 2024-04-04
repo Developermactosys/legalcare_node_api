@@ -41,6 +41,8 @@ const expertService = require('./expert_service_routes/expert_service.routes')
 const settingRoutes = require("./setting_routes/setting.routes");
 //demo
 const demo_landingRoutes = require("./demo/demo_landing.routes")
+const earning_routes = require("./earning_routes/earning.routes")
+
 
 
 router.use('/', Your_channel);
@@ -82,5 +84,7 @@ router.use('/', expertService)
 router.use("/",settingRoutes);
 //demo
 router.use("/",demo_landingRoutes);
+router.use("/",earning_routes);
+
 
 module.exports = router

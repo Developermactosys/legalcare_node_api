@@ -20,7 +20,8 @@ const addCall = async (req, res) => {
       device_id,
       payment_status,
       transaction_id,
-      payment_method
+      payment_method,
+      user_type
     } = req.body;
 
     // Validate request data
@@ -129,7 +130,8 @@ const addCall = async (req, res) => {
       device_id,
       status: 1,
       amount_receiver_id:admin_id,
-      expert_id:expert_id
+      expert_id:expert_id,
+      user_type:user_type
     });
 
     return res.status(200).json({

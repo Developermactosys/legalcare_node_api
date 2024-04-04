@@ -1,7 +1,5 @@
 
-const { where } = require("sequelize");
 const db = require("../../../config/db.config");
-const trancation_histroyModel = require("../../models/wallet_model/trancation_histroy.model");
 
 const User = db.User;
 const WalletSystem = db.wallet_system;
@@ -12,7 +10,7 @@ const TransactionHistory = db.transaction_history;
 const addWalletAmount = async (req, res) => {
 
   try {
-    const { user_id, payment_method, wallet_amount, transaction_id, device_id, payment_status } = req.body;
+    const { user_id, payment_method, wallet_amount, transaction_id, device_id, payment_status ,user_type} = req.body;
 
     const isEmptykey = Object.keys(req.body).some(key => {
       const value = req.body[key]
@@ -44,7 +42,8 @@ const addWalletAmount = async (req, res) => {
         transaction_amount: wallet_amount,
         transaction_id,
         device_id,
-        status: 1
+        status: 1,
+        user_type:user_type
       });
 
       // Assuming InserIntoNotification is a function you've defined elsewhere for notifications
@@ -66,7 +65,8 @@ const addWalletAmount = async (req, res) => {
         payment_status,
         wallet_amount,
         transaction_id,
-        status: 1
+        status: 1,
+        user_type:user_type
       });
 
       // InserIntoNotification(user_id, `${wallet_amount} Rs Recharge Successfully`, "recharge", "Recharge Done");
