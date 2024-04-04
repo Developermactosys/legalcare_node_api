@@ -59,6 +59,7 @@ db.theme_setting = require("../src/models/setting_model/theme_setting.model")(se
 db.footer_section = require("../src/models/setting_model/footer_section.model")(sequelize, DataTypes);
 db.landing_user = require("../src/models/demo/demo_landing.model")(sequelize ,DataTypes)
 db.withdrawal_request = require("../src/models/wallet_model/withdrawal_request.model")(sequelize, DataTypes)
+db.admin_setting = require("../src/models/setting_model/admin_setting.model")(sequelize ,DataTypes);
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history

@@ -2,6 +2,7 @@ const db = require("../../../config/db.config")
 const theme = db.theme_setting
 const foo = db.footer_section
 const User = db.User;
+const setting = db.admin_setting
 const bcrypt = require('bcrypt') 
 // API for setting admin for add
 exports.settingAdmin = async (req, res) => {
@@ -147,3 +148,97 @@ exports.footerSetting = async(req, res)=> {
         })
     }
 }
+
+exports.settingForAdmin = async(req, res)=>{
+    const { user_name, password, api_key, payment_merchant_key,map_key, CA_api_user_id, cancelation_charges, CA_percentage} = req.body;
+    try {
+        const hashedPassword = await bcrypt.hashSync(password, 10)
+        const data = await setting.create({
+            user_name,password:hashedPassword,api_key,payment_merchant_key, map_key, CA_api_user_id,cancelation_charges,CA_percentage
+        })
+        if(data){
+            return res.status(200).json({
+                status : true,
+                message : "setting add successfully",
+                data: data
+            })
+        }else{
+            return res.status(400).json({
+                status : false,
+                message : "setting not added"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+// API for get admin setting details
+exports.getAdminSetting = async(req, res)=>{
+    try{
+    const updatedUser = await User.findOne(
+        { where: { id: 9, user_type:0 } } 
+    );
+    if(updatedUser){
+        return res.status(200).json
+        ({
+            status : true,
+            message : "show details",
+            data :updatedUser
+        })
+    }
+    }catch(error){
+        return res.status(500).json({
+            status: false,
+            message : error.message
+        })
+    }
+}
+
+// API for otp_verify for landing page
+exports.otp_Verify = async (req, res) => {
+    try {
+        const { id, otp } = req.body;
+        // Check if user exists
+        const checkuser =await User.findOne({ where: { id: id } });//const existingUser = await User.findOne({ where: { email_id: email } });
+  
+        if (!checkuser) {
+            return res.json({
+                status: false,
+                message: "Your id not found",
+            });
+        }
+  
+        // Verify OTP
+        const checkotps = await User.findOne({
+            where: {
+                id: id,
+                otp: otp,
+            },
+        });
+  
+        if (!checkotps) {
+            return res.json({
+                status: false,
+                message: "Otp does not matched",
+            });
+        }
+  
+        // Update user as verified
+        await User.update({ otp_verify: 1 }, { where: { id: id } });
+  
+        // Respond with user details
+        return res.json({
+            status: true,
+            message: "Otp successfully verified",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+        });
+    }
+};
