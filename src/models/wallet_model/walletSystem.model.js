@@ -45,6 +45,7 @@ const wallet_system = sequelize.define('wallet_system', {
   },
   outstanding_amount: {
     type: DataTypes.FLOAT,
+    defaultValue:0
   },
   total_amount: {
     type: DataTypes.FLOAT,
