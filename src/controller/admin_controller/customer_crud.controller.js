@@ -406,7 +406,7 @@ exports.totalCountForCustomer = async(req, res)=>{
       message : "Showing total_count for total_call ,total_video and total_chat",
       call: dataForCall.count || 0,
       video: getCall.count || 0,
-      chat_count: Object.keys(uniqueChatsCounts).length || 0,
+      chat_count: Object.keys(uniqueChatsCounts || 0).length || 0,
     })
   }catch(error){
         return res.status(500).json({
