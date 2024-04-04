@@ -3,6 +3,7 @@ const db = require("../../../config/db.config");
 const User = db.User;
 const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
+const WithdrawalRequest = db.withdrawal_request;
 
 const withdrawalAmount = async (req, res) => {
   try {
@@ -69,6 +70,89 @@ const withdrawalAmount = async (req, res) => {
   }
 };
 
+
+const withdrawal_request= async (req, res) => {
+  try {
+    const { expert_id, requested_amount } = req.body;
+
+    if (!expert_id) {
+      return res.status(200).json({ status: false, message: "Please provide expert_id" });
+    }
+
+    // Check if user exists
+    const userExists = await User.findByPk(expert_id);
+    if (!userExists) {
+      return res.status(200).json({ status: false, message: "Expert does not exist" });
+    }
+
+   
+    // Check for existing wallet system entry
+    const walletSystem = await WalletSystem.findOne({ where: { UserId: expert_id } });
+    if (!walletSystem) {
+      return res.status(200).json({ status: false, message: "Wallet does not exist" });
+    }
+
+    const walletBalance = parseFloat(walletSystem.wallet_amount);
+    const requestedAmount_1 = parseFloat(requested_amount);
+
+    // Check if requested amount exceeds wallet balance
+    if (requestedAmount_1 > walletBalance) {
+      return res.status(400).json({ status: false, message: "Insufficient wallet balance" });
+    }
+
+ 
+    // Create withdrawal request
+    await WithdrawalRequest.create({
+      request_amount: requestedAmount_1,
+      request_date: new Date(),
+      status: "pending",
+    });
+
+    return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+  } catch (error) {
+    console.error("Withdrawal Request", error);
+    return res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
+
+
+
+const get_withdrawalRequest = async (req, res) => {
+
+  try {
+    const page = parseInt(req.query.page) || 1; // Current page
+    const limit = parseInt(req.query.limit) || 10; // Number of items per page
+
+    // Calculate offset for pagination
+    const offset = (page - 1) * limit;
+
+    // Query to get paginated data
+    const data = await WithdrawalRequest.findAndCountAll({
+      limit: limit,
+      offset: offset,
+      order: [['id', 'DESC']] // You can change the order as needed
+    });
+
+    const currentPage = page;
+    const totalPages = Math.ceil(data.count / limit);
+    const totalItems = data.count;
+
+    res.json({
+      currentPage: currentPage,
+      totalPages: totalPages,
+      totalItems: totalItems,
+      data: data.rows
+    });
+  } catch (error) {
+    console.error('Error fetching data:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+}
+
+
+
 module.exports = {
-    withdrawalAmount
+    withdrawalAmount,
+    withdrawal_request,
+    get_withdrawalRequest
 };
