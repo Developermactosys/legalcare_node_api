@@ -1,4 +1,6 @@
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
+const { Op } = require('sequelize');
 
 const User = db.User;
 const WalletSystem = db.wallet_system;
@@ -109,7 +111,7 @@ const withdrawal_request= async (req, res) => {
       status: "pending",
     });
 
-    return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+    return res.json({ status: true, message: "Withdrawal request created successfully"});
   } catch (error) {
     console.error("Withdrawal Request", error);
     return res.status(500).json({ status: false, message: "Internal server error" });
@@ -121,18 +123,19 @@ const withdrawal_request= async (req, res) => {
 const get_withdrawalRequest = async (req, res) => {
 
   try {
+    const { status } = req.query;
     const page = parseInt(req.query.page) || 1; // Current page
     const limit = parseInt(req.query.limit) || 10; // Number of items per page
-
+   
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
-
-    // Query to get paginated data
+    if(status=='pending'){
     const data = await WithdrawalRequest.findAndCountAll({
-      include:[{
+      where: { status: status }, // Define the where condition without curly braces
+      include: [{
         model: User,
         as: "User",
-        attributes:['id','user_type','name','profile_image']
+        attributes: ['id', 'user_type', 'name', 'profile_image']
       }],
       limit: limit,
       offset: offset,
@@ -149,6 +152,36 @@ const get_withdrawalRequest = async (req, res) => {
       totalItems: totalItems,
       data: data.rows
     });
+  }else{
+
+    const data = await WithdrawalRequest.findAndCountAll({
+      where: {
+        status: {
+          [Op.or]: ['approved', 'reject'] // Use Op.or to match either 'approved' or 'reject'
+        }
+      },
+      include: [{
+        model: User,
+        as: "User",
+        attributes: ['id', 'user_type', 'name', 'profile_image']
+      }],
+      limit: limit,
+      offset: offset,
+      order: [['id', 'DESC']] // You can change the order as needed
+    });
+    
+    const currentPage = page;
+    const totalPages = Math.ceil(data.count / limit);
+    const totalItems = data.count;
+
+    res.json({
+      currentPage: currentPage,
+      totalPages: totalPages,
+      totalItems: totalItems,
+      data: data.rows
+    });
+  }
+
   } catch (error) {
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -157,7 +190,7 @@ const get_withdrawalRequest = async (req, res) => {
 
 const update_withdrawal_request_status= async (req, res) => {
   try {
-    const { withdrawal_request_id, requested_amount,expert_id ,status, transaction_id,user_type} = req.body;
+    const { withdrawal_request_id, requested_amount,expert_id ,status} = req.body;
 
     if (!withdrawal_request_id) {
       return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
@@ -177,6 +210,7 @@ const update_withdrawal_request_status= async (req, res) => {
     }
 
     const walletBalance = parseFloat(walletSystem.wallet_amount);
+    const outstanding_amount_balance = parseFloat(walletSystem.outstanding_amount)
     const requestedAmount_1 = parseFloat(requested_amount);
 
     // Check if requested amount exceeds wallet balance
@@ -203,23 +237,27 @@ const update_withdrawal_request_status= async (req, res) => {
      // Update wallet balance
      const newBalance = walletBalance - requestedAmount_1;
      await WalletSystem.update({ wallet_amount: newBalance}, { where: { UserId: expert_id } });
- 
+    
+     // Adding balance in the outstandingAmount
+     const outstanding_balance = outstanding_amount_balance + requestedAmount_1;
+     await WalletSystem.update({ outstanding_amount: outstanding_balance}, { where: { UserId: expert_id } });
+
+     const user_Type = parseInt(userExists.user_type)
      // Log transaction history
      await TransactionHistory.create({
        UserId: expert_id,
-       payment_method:payment_method,
+      //  payment_method:payment_method,
        transaction_amount: requestedAmount_1,
-       transaction_id : transaction_id,
+      //  transaction_id : transaction_id,
        status: 1,
-       user_type:user_type
+       user_type:user_Type
      });
  
-    // Create withdrawal request
-    await WithdrawalRequest.update({
+     await WithdrawalRequest.update(
+      { status: status },
+      { where: { id: withdrawal_request_id } }
+    );
     
-      status:status,
-    });
-
     return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
   } catch (error) {
     console.error("Withdrawal Request", error);
@@ -230,5 +268,6 @@ const update_withdrawal_request_status= async (req, res) => {
 module.exports = {
     withdrawalAmount,
     withdrawal_request,
-    get_withdrawalRequest
+    get_withdrawalRequest,
+    update_withdrawal_request_status
 };
