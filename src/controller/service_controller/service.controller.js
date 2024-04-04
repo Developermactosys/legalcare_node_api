@@ -62,8 +62,9 @@ const getALlService = async(req, res) =>{
             query.where.type_of_service = { [Sequelize.Op.like]: `%${type_of_service}%` };
           }
 
-        const getServices = await services.findAll({query,
+        const getServices = await services.findAll({
             // where: { type_of_service: req.query.type_of_service },
+            where: query.where,
             include:[{
                 model: category,
                 as: "category",
