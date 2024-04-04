@@ -5,7 +5,7 @@ const { authorize } = require("../../middleware/authorization");
 
 const {Admin_login} = require("../../controller/admin_controller/admin_login.controller");
 const {totalUser, getuserDetails
-    ,delUserDetails,searchUser,totalUserForCa,getAllCallDetailById,getAllDocumentDetailById,getAllVideoCallDetailById} = require("../../controller/admin_controller/customer_crud.controller")
+    ,delUserDetails,searchUser,totalUserForCa,getAllCallDetailById,getAllDocumentDetailById,getAllVideoCallDetailById,totalCountForCustomer} = require("../../controller/admin_controller/customer_crud.controller")
 
 const { forgotPassword , resetPassword} = require("../../controller/admin_controller/forgetPassword.controller")    
 
@@ -25,6 +25,7 @@ router.get('/get_search_user',  searchUser);
 router.get('/get_all_call_list_by_id/:id', getAllCallDetailById)
 router.get('/get_all_video_list_by_id/:id', getAllVideoCallDetailById)
 router.get('/get_all_doc_list_by_id/:id', getAllDocumentDetailById)
+router.get('/count_for_call_video_chat', totalCountForCustomer)
 
 
 module.exports = router;
