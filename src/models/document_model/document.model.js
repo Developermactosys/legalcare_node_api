@@ -5,8 +5,8 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.BIGINT,
             primaryKey: true,
             autoIncrement: true,
-            allowNull : false
-          },
+            allowNull: false
+        },
         certificate_of_membership: {
             type: DataTypes.STRING,
         },
@@ -16,7 +16,7 @@ module.exports = (sequelize, DataTypes) => {
         pan_card_image: {
             type: DataTypes.STRING,
         },
-        adhar_card_image: {
+        aadhar_card_image: {
             type: DataTypes.STRING,
         },
         passbook_image: {
@@ -28,19 +28,42 @@ module.exports = (sequelize, DataTypes) => {
         expert_id: {
             type: DataTypes.INTEGER
         },
-        receiver_id: {
-            type: DataTypes.INTEGER,
-          },
-          sender_id: {
-            type: DataTypes.INTEGER,
-          },
+        is_aadhar_card_verify: {
+            type: DataTypes.ENUM,
+        values: ["pending", "approved", "reject"],
+        defaultValue: "pending"
+        },
+        is_passbook_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_certificate_of_membership_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_certificate_of_practice_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_document_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_pan_card_image_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,
             defaultValue: null
         }
     },
-
         {
             paranoid: true,
             timestamps: true,

@@ -16,6 +16,7 @@ exports.createUser = async (req, res, next) => {
         if (isEmptyKey) {
             return res.status(200).json({ error: "Please do not leave empty fields" });
         }
+        const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
         if (password !== confirm_password) {
             return res.status(200).json({ error: "Passwords do not match" });
@@ -38,14 +39,14 @@ exports.createUser = async (req, res, next) => {
             phone_no:phone_no,
             password: hashedPassword,
             token: remember_token,
-            confirm_password: confirm_password
+            confirm_password: confirm_password,
+            otp:otp
         });
        if(newUser){
         // const info = await emailService(data);
           let yourName = 'LegalCare';
           let yourCompany = 'LegalCare';
           let yourPosition = 'Manager';
-          const otp = Math.floor(1000 + Math.random() * 9000).toString();
          
           const info= await emailService(otp, name,email, yourName, yourCompany, yourPosition);
 
@@ -64,5 +65,50 @@ exports.createUser = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ msg:error.message});
+    }
+};
+
+
+exports.otp_Verify = async (req, res) => {
+    try {
+        const { id, otp } = req.body;
+        // Check if user exists
+        const checkuser =await User.findOne({ where: { id: id } });//const existingUser = await User.findOne({ where: { email_id: email } });
+  
+        if (!checkuser) {
+            return res.json({
+                status: false,
+                message: "Your id not found",
+            });
+        }
+  
+        // Verify OTP
+        const checkotps = await User.findOne({
+            where: {
+                id: id,
+                otp: otp,
+            },
+        });
+  
+        if (!checkotps) {
+            return res.json({
+                status: false,
+                message: "Otp does not matched",
+            });
+        }
+  
+        // Update user as verified
+        await User.update({ otp_verify: 1 }, { where: { id: id } });
+  
+        // Respond with user details
+        return res.json({
+            status: true,
+            message: "Otp successfully verified",
+        });
+    } catch (error) {
+        return res.status(500).json({
+            status: false,
+            message: error.message,
+        });
     }
 };

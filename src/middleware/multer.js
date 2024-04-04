@@ -23,7 +23,11 @@ const fileStorage = multer.diskStorage({
     uploadPath = path.join(__dirname, "../../src/uploads/documents");
   } else if (file.fieldname === "pan_card_image") {
     uploadPath = path.join(__dirname, "../../src/uploads/documents");
-  } else if (file.fieldname === "passbook_image") {
+    
+  } else if (file.fieldname === "aadhar_card_image") {
+    uploadPath = path.join(__dirname, "../../src/uploads/documents");
+  }
+  else if (file.fieldname === "passbook_image") {
     uploadPath = path.join(__dirname, "../../src/uploads/documents");
   } else if (file.fieldname === "document") {
     uploadPath = path.join(__dirname, "../../src/uploads/documents");

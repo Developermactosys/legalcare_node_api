@@ -26,6 +26,12 @@ module.exports = (sequelize, DataTypes) => {
         type:DataTypes.STRING,
         allowNull:true
      },
+     otp : {
+      type:DataTypes.STRING,
+    },
+    otp_verify : {
+      type:DataTypes.STRING,
+    },
       refreshToken: {
         type: DataTypes.STRING,
         allowNull: true
