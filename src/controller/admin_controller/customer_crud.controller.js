@@ -391,7 +391,6 @@ exports.totalCountForCustomer = async(req, res)=>{
         //   chat_count: Object.keys(uniqueChatsCounts).length,
         // });
       }
-      const findUser = await User.findByPk(id)
         const getCall = await video.findAndCountAll({
           where : {
             UserId: id
