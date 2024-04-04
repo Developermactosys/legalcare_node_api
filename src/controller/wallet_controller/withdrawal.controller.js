@@ -128,6 +128,11 @@ const get_withdrawalRequest = async (req, res) => {
 
     // Query to get paginated data
     const data = await WithdrawalRequest.findAndCountAll({
+      include:[{
+        model: User,
+        as: "User",
+        attributes:['id','user_type','name','profile_image']
+      }],
       limit: limit,
       offset: offset,
       order: [['id', 'DESC']] // You can change the order as needed
@@ -149,7 +154,76 @@ const get_withdrawalRequest = async (req, res) => {
   }
 }
 
+const update_withdrawal_request_status= async (req, res) => {
+  try {
+    const { withdrawal_request_id, requested_amount,expert_id ,status, transaction_id } = req.body;
 
+    if (!withdrawal_request_id) {
+      return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
+    }
+
+    // Check if user exists
+    const userExists = await User.findByPk(expert_id);
+    if (!userExists) {
+      return res.status(200).json({ status: false, message: "Expert does not exist" });
+    }
+
+   
+    // Check for existing wallet system entry
+    const walletSystem = await WalletSystem.findOne({ where: { UserId: expert_id } });
+    if (!walletSystem) {
+      return res.status(200).json({ status: false, message: "Wallet does not exist" });
+    }
+
+    const walletBalance = parseFloat(walletSystem.wallet_amount);
+    const requestedAmount_1 = parseFloat(requested_amount);
+
+    // Check if requested amount exceeds wallet balance
+    if (requestedAmount_1 > walletBalance) {
+      return res.status(400).json({ status: false, message: "Insufficient wallet balance" });
+    }
+
+    // function generateTransactionId() {
+    //   // Generate a random string
+    //   const randomString = Math.random().toString(36).substr(2, 10).toUpperCase(); // Example: "ABC123"
+    
+    //   // Get current timestamp
+    //   const timestamp = Date.now().toString(); // Example: "1645430912345"
+    
+    //   // Combine random string and timestamp to generate transaction ID
+    //   const transactionId = `${randomString}-${timestamp}`; // Example: "ABC123-1645430912345"
+    
+    //   return transactionId;
+    // }
+    
+    // // Example usage
+    // const transactionId = generateTransactionId();
+
+     // Update wallet balance
+     const newBalance = walletBalance - requestedAmount_1;
+     await WalletSystem.update({ wallet_amount: newBalance}, { where: { UserId: expert_id } });
+ 
+     // Log transaction history
+     await TransactionHistory.create({
+       UserId: expert_id,
+       payment_method:payment_method,
+       transaction_amount: requestedAmount_1,
+       transaction_id : transaction_id,
+       status: 1
+     });
+ 
+    // Create withdrawal request
+    await WithdrawalRequest.update({
+    
+      status:status,
+    });
+
+    return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+  } catch (error) {
+    console.error("Withdrawal Request", error);
+    return res.status(500).json({ status: false, message: "Internal server error" });
+  }
+};
 
 module.exports = {
     withdrawalAmount,

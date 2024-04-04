@@ -52,7 +52,7 @@ exports.createUser = async (req, res, next) => {
         if (info) {
           return res.json({
             status: true,
-            message: "your registration successfully and link Send your E-mail",
+            message: "your registration successfully and link Sent on your E-mail",
             list : newUser
           });
         }}
