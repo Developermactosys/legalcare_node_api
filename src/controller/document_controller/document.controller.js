@@ -79,7 +79,7 @@ exports.getAllDocumentById = async(req, res)=>{
     //     message : "expert_id not found "
     //   })
     // }
-    const docData = await doc.findAll({where: {
+    const docData = await doc.findOne({where: {
       UserId : req.body.expert_id
     }})
     if(docData){
