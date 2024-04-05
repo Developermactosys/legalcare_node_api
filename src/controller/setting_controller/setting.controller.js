@@ -120,6 +120,31 @@ exports.changeTheme =async(req, res) =>{
     }
 }
 
+exports.getThemeSetting = async(req, res)=> {
+  
+    try {
+        const data = await theme.findAll()
+        if(data){
+            return res.status(200).json({
+                status : true,
+                message : "showing theme Data",
+                data : data
+            })
+        }else{
+            return res.status(200).json({
+                status : false,
+                message : "Data not found"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+// API f
+
 // API for footer setting for adming
 exports.footerSetting = async(req, res)=> {
     const { description, address, contact_no, services} = req.body;
@@ -197,6 +222,38 @@ exports.getAdminSetting = async(req, res)=>{
         })
     }
 }
+
+// API for get admin setting data
+exports.getSettingData = async(req, res)=> {
+    const { id } = req.body;
+    try {
+        const data = await setting.findOne({
+            where : {
+                id : id,
+            }
+        })
+        if(data){
+            return res.status(200).json({
+                status : true,
+                message : "showing setting Data",
+                data : data
+            })
+        }else{
+            return res.status(200).json({
+                status : true,
+                message : "Data not found"
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+// API for request demo
+
+
 
 // API for otp_verify for landing page
 exports.otp_Verify = async (req, res) => {

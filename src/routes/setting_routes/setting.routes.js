@@ -1,7 +1,7 @@
 const express = require('express')
 const router = express.Router();
 
-const { settingAdmin, changePassword, changeTheme, footerSetting,settingForAdmin,getAdminSetting,otp_Verify} = require('../../controller/setting_controller/setting.controller')
+const { settingAdmin, changePassword, changeTheme, footerSetting,settingForAdmin,getAdminSetting,otp_Verify,getSettingData,getThemeSetting} = require('../../controller/setting_controller/setting.controller')
 const { uploads} = require('../../middleware/multer')
 
 router.patch('/general_setting',uploads.none(),settingAdmin )
@@ -11,5 +11,6 @@ router.post('/add_footer_sec', uploads.none(), footerSetting)
 router.post('/admin_setting',uploads.none(), settingForAdmin)
 router.get('/get_admin_data', getAdminSetting)
 router.post('/otp_verify_landing_user',uploads.none(), otp_Verify)
-
+router.get('/get_setting_data', uploads.none(),getSettingData)
+router.get('/get_theme_data', uploads.none(),getThemeSetting)
 module.exports = router;
