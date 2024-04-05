@@ -5,7 +5,7 @@ const router = express.Router();
 
 // todays
 
-const { count_chat_connections,todayBookingData} = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
+const { count_chat_connections} = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
 
 
 // const { todaysUserCount, todaysExpertCount, count_chat_for_today, count_chat_connections,
@@ -16,7 +16,7 @@ const { count_chat_connections,todayBookingData} = require("../../../controller/
  router.get("/count_chat_connections", count_chat_connections);
 // router.get("/todays_call_count", authorize(['0']),count_call_for_today)
 // router.get("/todas_vedio_call_count", authorize(['0']),count_video_call_for_today);
- router.get("/todays_booking",todayBookingData);
+//  router.get("/todays_booking",todayBookingData);
 
 // All today count on dashboard
 const {aggregateCounts  } = require("../../../controller/admin_controller/admin_dashboard/todays.controller")
