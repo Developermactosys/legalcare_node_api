@@ -43,7 +43,7 @@ module.exports = (sequelize, DataTypes) => {
         certificate_of_practice: {
             type:DataTypes.STRING
         },
-        certificate_of_practice:  {
+        certificate_of_membership:  {
             type:DataTypes.STRING
         },
         deleted_At: {

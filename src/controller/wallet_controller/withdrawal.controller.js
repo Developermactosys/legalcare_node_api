@@ -131,7 +131,7 @@ const get_withdrawalRequest = async (req, res) => {
     const offset = (page - 1) * limit;
     if(status === 'pending'){
     const data = await WithdrawalRequest.findAndCountAll({
-      where: { status: 'pending' }, // Define the where condition without curly braces
+      where: { status: status }, // Define the where condition without curly braces
       include: [{
         model: User,
         as: "User",
