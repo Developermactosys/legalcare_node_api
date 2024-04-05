@@ -378,6 +378,7 @@ exports.count_chat_connections = async (req, res) => {
   }
 }
 
+
 // exports.aggregateCounts = async (req, res) => {
 
 //   try {
@@ -401,6 +402,43 @@ exports.count_chat_connections = async (req, res) => {
 //       limit: limit,
 //       offset: offset,
 //     });
+
+//     // API for total user
+//     const user_type = "1";
+//     const total_user = await User.findAndCountAll({
+//         where : {
+//             user_type : user_type
+//         }
+//     })
+
+// // API for total experts
+// const user_type_for_Experts = ['2','3','4']
+// const total_expert = await User.findAndCountAll({
+//   where : {
+//       user_type : user_type_for_Experts
+//   }
+// })
+
+// // API for total chats
+// const results = await chat.findAll({
+//   attributes: ['from_user_id', 'to_user_id'],
+//   group: ['from_user_id', 'to_user_id']
+// });
+// let uniqueChats
+// if (results.length > 0) {
+//   uniqueChats = new Set();
+  
+//   results.forEach(row => {
+//       const { from_user_id, to_user_id } = row;
+//       // Create a string or another structure that uniquely identifies the chat pair
+//       // Here, we ensure the lower ID always comes first to avoid duplicates like (1,2) and (2,1)
+//       const chatPair = [from_user_id, to_user_id].sort().join(':');
+//       uniqueChats.add(chatPair);
+//   });
+// }
+
+// const getTotal = await call.findAndCountAll()
+// const getTotalVideo = await video.findAndCountAll()
 
 //     const todaysExpertCount = await User.findAndCountAll({
 //       where: {
@@ -451,19 +489,17 @@ exports.count_chat_connections = async (req, res) => {
 
 
 //     const todaysBookingCount = await booking.findAndCountAll({
-//       attributes:['id','status','createdAt'],
-//      include:[{
-//       model:User,
-//       as:"User",
-//       attributes:['user_type','name'],
-//      }
-//     ],
 //       where: {
 //         createdAt: {
 //           [Sequelize.Op.gte]: startOfToday,
 //           [Sequelize.Op.lte]: endOfToday
 //         }
-//       }
+//       },
+//       include: [{
+//         model: User,
+//         as: 'User' ,
+//         attributes: ['id','name','user_type','profile_image']
+//     }]
 //     });
 //     const totalCount = await booking.count({});
 //     const totalPages = Math.ceil(totalCount / limit);
@@ -480,6 +516,11 @@ exports.count_chat_connections = async (req, res) => {
 //         todaysVideoCallCount: todaysVideoCallCount.count || 0,
 //         todaysBookingCount: todaysBookingCount.count || 0,
 //         todayBookingData : todaysBookingCount,
+//         total_userCount: total_user.count || 0,
+//         total_expert_count: total_expert.count || 0,
+//         total_uniqueChats_count: uniqueChats.size || 0,
+//         get_total_call_count: getTotal.count || 0,
+//         getTotalVideo_count: getTotalVideo.count || 0,
 //         currentPage: page,
 //         totalPages: totalPages,
 //       }
@@ -493,6 +534,7 @@ exports.count_chat_connections = async (req, res) => {
 //     });
 //   }
 // };
+
 
 exports.aggregateCounts = async (req, res) => {
   try {
@@ -601,20 +643,30 @@ const getTotalVideo = await video.findAndCountAll()
       // group: ['UserId', 'expert_id']
     });
 
-
+    let expert_Id
+    let expert_data = []
     const todaysBookingCount = await booking.findAndCountAll({
-      where: {
+            where: {
         createdAt: {
           [Sequelize.Op.gte]: startOfToday,
           [Sequelize.Op.lte]: endOfToday
-        }
+        },
+        
       },
       include: [{
         model: User,
-        as: 'User' ,
-        attributes: ['id','name','user_type','profile_image']
+        attributes: ['name','user_type'], 
+        as: 'User' 
     }]
     });
+
+    for(let i =0; i<todaysBookingCount.length; i++){
+      expert_Id = todaysBookingCount[i].expert_id;
+      const  ex_data = await User.findByPk(expert_Id)
+      expert_data.push({data :todaysBookingCount[i], expert : ex_data})
+
+      // final_data.push()
+    }
     const totalCount = await booking.count({});
     const totalPages = Math.ceil(totalCount / limit);
     
@@ -629,7 +681,7 @@ const getTotalVideo = await video.findAndCountAll()
         todaysCallCount: todaysCallCount.count || 0,
         todaysVideoCallCount: todaysVideoCallCount.count || 0,
         todaysBookingCount: todaysBookingCount.count || 0,
-        todayBookingData : todaysBookingCount,
+        todayBookingData : expert_data,
         total_userCount: total_user.count || 0,
         total_expert_count: total_expert.count || 0,
         total_uniqueChats_count: uniqueChats.size || 0,

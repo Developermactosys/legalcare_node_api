@@ -2,7 +2,7 @@ const Sequelize = require("sequelize");
 const db = require("../../../config/db.config")
 const TransactionHistory = db.transaction_history;
 const User = db.User;
-
+const wallet_system = db.wallet_system;
 
 
 // exports.get_earning_by_userType = async(req, res) =>{
@@ -59,7 +59,12 @@ exports.get_earning_by_userType = async (req, res) => {
           model: User,
           as: "User",
           attributes: ['id', 'user_type', 'name', 'profile_image']
-        }
+        },
+        // {
+        //   model:wallet_system,
+        //   as:"wallet_system",
+        //   attributes:['id','wallet_amount']
+        // }
       ],
       limit: limit,
       offset: offset
