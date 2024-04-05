@@ -68,7 +68,7 @@ const deductWalletAmount = async (req, res) => {
     // Check if requested amount exceeds wallet balance
     if (requestedAmount > walletBalance) {
       return res
-        .status(400)
+        .status(200)
         .json({ status: false, message: "Insufficient wallet balance" });
     }
 

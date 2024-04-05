@@ -655,18 +655,24 @@ const getTotalVideo = await video.findAndCountAll()
       },
       include: [{
         model: User,
-        attributes: ['name','user_type'], 
-        as: 'User' 
+        as: 'User' ,
+        attributes: ['id','name','user_type'], 
     }]
     });
 
     for(let i =0; i<todaysBookingCount.length; i++){
+      console.log(todaysBookingCount.length)
       expert_Id = todaysBookingCount[i].expert_id;
       const  ex_data = await User.findByPk(expert_Id)
+      console.log(ex_data)
       expert_data.push({data :todaysBookingCount[i], expert : ex_data})
+
+    
 
       // final_data.push()
     }
+    console.log(expert_Id)
+    console.log(expert_data)
     const totalCount = await booking.count({});
     const totalPages = Math.ceil(totalCount / limit);
     
