@@ -176,14 +176,14 @@ exports.uploadDocument = async (req, res) => {
       const filePath = req.file
         ? `documents/${req.file.filename}`
         : "/src/uploads/profile_image/default.png";
-      const doc = await doc.create({
+      const docs = await doc.create({
         document: filePath,
           sender_id: sender_id,
          receiver_id : receiver_id,
         UserId: sender_id,
         bookingDetailId: booking_id,
       });
-        if (doc) {
+        if (docs) {
           
                   var message = {
                     to: receiver.device_id,
@@ -220,7 +220,7 @@ exports.uploadDocument = async (req, res) => {
                         success: true,
                         message: "document uploaded successfully",
                           did: receiver.device_id,
-                         data: doc,
+                         data: docs,
                       });
                     }
                   });
