@@ -87,19 +87,19 @@ exports.get_earning_by_userType = async (req, res) => {
     });
 
     // Calculate total earnings for admin, lawyer, and CA
-    const totalAdminEarnings = await wallet_system('transaction_amount', {
+    const totalAdminEarnings = await TransactionHistory.sum('transaction_amount', {
       where: {
         user_type: '0'
       }
     });
 
-    const totalLawyerEarnings = await wallet_system('transaction_amount', {
+    const totalLawyerEarnings = await TransactionHistory.sum('transaction_amount', {
       where: {
         user_type: '4'
       }
     });
 
-    const totalCAEarnings = await wallet_system('transaction_amount', {
+    const totalCAEarnings = await TransactionHistory.sum('transaction_amount', {
       where: {
         user_type: '2'
       }

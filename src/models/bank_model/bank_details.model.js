@@ -40,6 +40,12 @@ module.exports = (sequelize, DataTypes) => {
         passbook_img: {
             type:DataTypes.STRING
         },
+        certificate_of_practice: {
+            type:DataTypes.STRING
+        },
+        certificate_of_practice:  {
+            type:DataTypes.STRING
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,
