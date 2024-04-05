@@ -608,7 +608,12 @@ const getTotalVideo = await video.findAndCountAll()
           [Sequelize.Op.gte]: startOfToday,
           [Sequelize.Op.lte]: endOfToday
         }
-      }
+      },
+      include: [{
+        model: User,
+        as: 'User' ,
+        attributes: ['id','name','user_type','profile_image']
+    }]
     });
     const totalCount = await booking.count({});
     const totalPages = Math.ceil(totalCount / limit);
