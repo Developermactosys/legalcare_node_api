@@ -261,6 +261,15 @@ const saveBankDetails = async (req, res) => {
      ? `documents/${req.files['passbook_img'][0].filename}`
      : null;
 
+     let certificate_of_membership = req.files['certificate_of_membership'] && req.files['certificate_of_membership'][0]
+     ? `documents/${req.files['certificate_of_membership'][0].filename}`
+     : null;
+
+    let certificate_of_practice = req.files['certificate_of_practice'] && req.files['certificate_of_practice'][0]
+     ? `documents/${req.files['certificate_of_practice'][0].filename}`
+     : null;
+
+
     if (!pan_doc || !aadhar_doc || !passbook_img) {
       return res.status(400).json({
         status: false,
@@ -281,7 +290,9 @@ if(findUser){
       bank_name,
       pan_doc,
       aadhar_doc,
-      passbook_img
+      passbook_img,
+      certificate_of_membership,
+      certificate_of_practice
     });
 
     if (addBankDetails) {
@@ -367,6 +378,74 @@ const getBankDetails = async (req, res) => {
     }
   };
 
+// const updateBankDetails = async (req, res) => {
+//   const {  
+//     expert_id,
+//     pan_card_no,
+//     aadhar_no,
+//     acc_no,
+//     acc_holder_name,
+//     ifsc_code,
+//     bank_name
+//   } = req.body;
+
+//   try {
+//     let pan_doc = req.files['pan_doc'] && req.files['pan_doc'][0]
+//      ? `documents/${req.files['pan_doc'][0].filename}`
+//      : null;
+
+//     let aadhar_doc = req.files['aadhar_doc'] && req.files['aadhar_doc'][0]
+//      ? `documents/${req.files['aadhar_doc'][0].filename}`
+//      : null;
+
+//     let passbook_img = req.files['passbook_img'] && req.files['passbook_img'][0]
+//      ? `documents/${req.files['passbook_img'][0].filename}`
+//      : null;
+
+//     // Check if at least one of the fields is provided for update
+//     if (!pan_card_no && !aadhar_no && !acc_no && !acc_holder_name && !ifsc_code && !bank_name && !pan_doc && !aadhar_doc && !passbook_img) {
+//       return res.status(400).json({
+//         status: false,
+//         message: "Please provide at least one field to update."
+//       });
+//     }
+
+//     // Retrieve the bank details to update
+//     let bankDetails = await BankDetails.findOne({ where: { UserId: expert_id } });
+//     if (!bankDetails) {
+//       return res.status(404).json({
+//         status: false,
+//         message: "Bank details not found."
+//       });
+//     }
+
+//     // Update the bank details with provided fields
+//     if (pan_card_no) bankDetails.pan_card_no = pan_card_no;
+//     if (aadhar_no) bankDetails.aadhar_no = aadhar_no;
+//     if (acc_no) bankDetails.acc_no = acc_no;
+//     if (acc_holder_name) bankDetails.acc_holder_name = acc_holder_name;
+//     if (ifsc_code) bankDetails.ifsc_code = ifsc_code;
+//     if (bank_name) bankDetails.bank_name = bank_name;
+//     if (pan_doc) bankDetails.pan_doc = pan_doc;
+//     if (aadhar_doc) bankDetails.aadhar_doc = aadhar_doc;
+//     if (passbook_img) bankDetails.passbook_img = passbook_img;
+
+//     // Save the updated bank details
+//     await bankDetails.save();
+
+//     return res.status(200).json({
+//       status: true,
+//       message: "Bank details updated successfully.",
+//       data: bankDetails,
+//     });
+//   } catch (error) {
+//     return res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// };
+
 const updateBankDetails = async (req, res) => {
   const {  
     expert_id,
@@ -379,18 +458,36 @@ const updateBankDetails = async (req, res) => {
   } = req.body;
 
   try {
-    let pan_doc = req.files['pan_doc'] && req.files['pan_doc'][0]
+    let pan_doc ;
+    let aadhar_doc;
+    let passbook_img ;
+    let certificate_of_membership;
+    let certificate_of_practice;
+    if(req.files.pan_doc){
+     req.files['pan_doc'] && req.files['pan_doc'][0]
      ? `documents/${req.files['pan_doc'][0].filename}`
      : null;
-
-    let aadhar_doc = req.files['aadhar_doc'] && req.files['aadhar_doc'][0]
+    }
+    if(req.files.aadhar_doc){
+     req.files['aadhar_doc'] && req.files['aadhar_doc'][0]
      ? `documents/${req.files['aadhar_doc'][0].filename}`
      : null;
-
-    let passbook_img = req.files['passbook_img'] && req.files['passbook_img'][0]
+    }
+    if(req.files.passbook_img){
+     req.files['passbook_img'] && req.files['passbook_img'][0]
      ? `documents/${req.files['passbook_img'][0].filename}`
      : null;
-
+    }
+     if(req.files.certificate_of_membership){
+      req.files['certificate_of_membership'] && req.files['certificate_of_membership'][0]
+     ? `documents/${req.files['certificate_of_membership'][0].filename}`
+     : null;
+     }
+     if(req.files.certificate_of_practice){
+     req.files['certificate_of_practice'] && req.files['certificate_of_practice'][0]
+     ? `documents/${req.files['certificate_of_practice'][0].filename}`
+     : null;
+     }
     // Check if at least one of the fields is provided for update
     if (!pan_card_no && !aadhar_no && !acc_no && !acc_holder_name && !ifsc_code && !bank_name && !pan_doc && !aadhar_doc && !passbook_img) {
       return res.status(400).json({
@@ -407,25 +504,13 @@ const updateBankDetails = async (req, res) => {
         message: "Bank details not found."
       });
     }
+   const bankData = await bankDetails.update({certificate_of_membership, certificate_of_practice, pan_card_no, aadhar_no,bank_name,ifsc_code,acc_holder_name,acc_no, pan_doc, aadhar_doc, passbook_img})
 
-    // Update the bank details with provided fields
-    if (pan_card_no) bankDetails.pan_card_no = pan_card_no;
-    if (aadhar_no) bankDetails.aadhar_no = aadhar_no;
-    if (acc_no) bankDetails.acc_no = acc_no;
-    if (acc_holder_name) bankDetails.acc_holder_name = acc_holder_name;
-    if (ifsc_code) bankDetails.ifsc_code = ifsc_code;
-    if (bank_name) bankDetails.bank_name = bank_name;
-    if (pan_doc) bankDetails.pan_doc = pan_doc;
-    if (aadhar_doc) bankDetails.aadhar_doc = aadhar_doc;
-    if (passbook_img) bankDetails.passbook_img = passbook_img;
-
-    // Save the updated bank details
-    await bankDetails.save();
 
     return res.status(200).json({
       status: true,
       message: "Bank details updated successfully.",
-      data: bankDetails,
+      data: bankData,
     });
   } catch (error) {
     return res.status(500).json({
@@ -434,7 +519,6 @@ const updateBankDetails = async (req, res) => {
     });
   }
 };
-
 
 module.exports = {
     saveBankDetails,getBankDetails,getBankDetailsById,updateBankDetails
