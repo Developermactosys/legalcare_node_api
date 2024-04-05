@@ -40,7 +40,7 @@ const fcm = new FCM(serverKey);
 // API for get Document 
 exports.getAllDocument = async (req, res) => {
     try {
-        const doc = await doc.findAll({
+        const docs = await doc.findAll({
             include: [
                 {
                     model: User,
@@ -50,11 +50,11 @@ exports.getAllDocument = async (req, res) => {
             order: [['createdAt', 'DESC']]
         });
 
-        if (doc.length > 0) {
+        if (docs.length > 0) {
             return res.status(200).json({
                 status: true,
                 message: "Document list retrieved successfully",
-                data: doc
+                data: docs
             });
         } else {
             return res.status(400).json({
@@ -70,6 +70,37 @@ exports.getAllDocument = async (req, res) => {
     }
 };
 
+exports.getAllDocumentById = async(req, res)=>{
+  
+  try {
+    // if(!req.body.expert_id){
+    //   return res.status(404).json({
+    //     status : false,
+    //     message : "expert_id not found "
+    //   })
+    // }
+    const docData = await doc.findAll({where: {
+      UserId : req.body.expert_id
+    }})
+    if(docData){
+      return res.status(200).json({
+        status : true,
+        message : "Document get successfully",
+        data : docData
+      })
+    }else{
+      return res.status(400).json({
+        status : false,
+        message : "Document not found",
+      })
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status : false,
+      message : error.message
+    })
+  }
+}
 
 exports.get_document_by_user_id = async (req, res) => {
     try {
