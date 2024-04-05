@@ -254,65 +254,65 @@ const moment = require("moment");
 //   }
 // }
 
-// // API for get today's booking 
-// exports.todayBookingData = async (req, res) => {
-//   try {
+// API for get today's booking 
+exports.todayBookingData = async (req, res) => {
+  try {
       
-//       const startOfToday = new Date();
-//       startOfToday.setHours(0, 0, 0, 0); // Start of today
-//       const endOfToday = new Date();
-//       endOfToday.setHours(23, 59, 59, 999); // End of today
+      const startOfToday = new Date();
+      startOfToday.setHours(0, 0, 0, 0); // Start of today
+      const endOfToday = new Date();
+      endOfToday.setHours(23, 59, 59, 999); // End of today
 
-//       const countUsers = await booking.findAll({
-//           where: {
-//               createdAt: {
-//                   [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
-//                   [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
-//               },
+      const countUsers = await booking.findAll({
+          where: {
+              createdAt: {
+                  [Sequelize.Op.gte]: startOfToday, // Greater than or equal to start of today
+                  [Sequelize.Op.lte]: endOfToday, // Less than or equal to end of today
+              },
               
-//           },
-//           include: [
-//             {
-//               model: User,
-//               as: "User",
-//               where: { id: Sequelize.col('booking_detail.UserId') }
-//             },
-//             {
-//               model: service,
-//               as: "service",
-//               include: [
-//                 {
-//                   model: User,
-//                   as: "User",
-//                   where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-//                 }
-//               ]
-//             }
-//           ],
-//           order: [['id', 'DESC']]
-//       });
+          },
+          include: [
+            {
+              model: User,
+              as: "User",
+              where: { id: Sequelize.col('booking_detail.UserId') }
+            },
+            {
+              model: service,
+              as: "service",
+              include: [
+                {
+                  model: User,
+                  as: "User",
+                  where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+                }
+              ]
+            }
+          ],
+          order: [['id', 'DESC']]
+      });
      
-//       if (countUsers) {
-//           return res.status(200).json({
-//               status: true,
-//               message: "Show data successfully...",
-//               data: countUsers, // Assuming you want to return the users themselves
-//               // count: countUsers.count // The total count
-//           });
-//       } else {
-//           return res.status(400).json({
-//               status: false,
-//               message: "Data not found",
-//           });
-//       }
-//   } catch (error) {
-//       console.error("Error:", error);
-//       return res.status(500).json({
-//           status: false,
-//           message: error.message,
-//       });
-//   }
-// };
+      if (countUsers) {
+          return res.status(200).json({
+              status: true,
+              message: "Show data successfully...",
+              data: countUsers, // Assuming you want to return the users themselves
+              // count: countUsers.count // The total count
+          });
+      } else {
+          return res.status(400).json({
+              status: false,
+              message: "Data not found",
+          });
+      }
+  } catch (error) {
+      console.error("Error:", error);
+      return res.status(500).json({
+          status: false,
+          message: error.message,
+      });
+  }
+};
 
 exports.count_chat_connections = async (req, res) => {
   const id = req.query.id;
