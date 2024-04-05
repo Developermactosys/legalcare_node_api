@@ -11,6 +11,7 @@ let users = {}
 var FCM = require("fcm-node");
 const serverkey = process.env.SERVER_KEY;
 var fcm = new FCM(serverkey);
+const sender_profile_image = process.env.IMAGE;
 
 const handleUserData = async (socket, users, io) => {
     socket.on("user_data", async (data) => {
