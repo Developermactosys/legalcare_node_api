@@ -653,26 +653,41 @@ const getTotalVideo = await video.findAndCountAll()
         },
         
       },
-      include: [{
-        model: User,
-        as: 'User' ,
-        attributes: ['id','name','user_type'], 
-    }]
+      include: [
+        {
+          model: User,
+          as: "User",
+          attributes:['id','name','user_type',"profile_image"],
+          where: { id: Sequelize.col('booking_detail.UserId') }
+        },
+        {
+          model: service,
+          as: "service",
+          include: [
+            {
+              model: User,
+              as: "User",
+              attributes:['id','name','user_type',"profile_image"],
+              where: { id: Sequelize.col('service.UserId') }
+            }
+          ]
+        }
+      ],
     });
 
-    for(let i =0; i<todaysBookingCount.length; i++){
-      console.log(todaysBookingCount.length)
-      expert_Id = todaysBookingCount[i].expert_id;
-      const  ex_data = await User.findByPk(expert_Id)
-      console.log(ex_data)
-      expert_data.push({data :todaysBookingCount[i], expert : ex_data})
+    // for(let i =0; i<todaysBookingCount.length; i++){
+    //   console.log(todaysBookingCount.length)
+    //   expert_Id = todaysBookingCount[i].expert_id;
+    //   const  ex_data = await User.findByPk(expert_Id)
+    //   console.log(ex_data)
+    //   expert_data.push({data :todaysBookingCount[i], expert : ex_data})
 
     
 
-      // final_data.push()
-    }
-    console.log(expert_Id)
-    console.log(expert_data)
+    //   // final_data.push()
+    // }
+    // console.log(expert_Id)
+    // console.log(expert_data)
     const totalCount = await booking.count({});
     const totalPages = Math.ceil(totalCount / limit);
     
@@ -687,7 +702,7 @@ const getTotalVideo = await video.findAndCountAll()
         todaysCallCount: todaysCallCount.count || 0,
         todaysVideoCallCount: todaysVideoCallCount.count || 0,
         todaysBookingCount: todaysBookingCount.count || 0,
-        todayBookingData : expert_data,
+        todayBookingData : todaysBookingCount,
         total_userCount: total_user.count || 0,
         total_expert_count: total_expert.count || 0,
         total_uniqueChats_count: uniqueChats.size || 0,
