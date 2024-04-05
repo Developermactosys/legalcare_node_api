@@ -79,7 +79,8 @@ exports.otp_Verify = async (req, res) => {
     try {
         const { id, otp } = req.body;
         // Check if user exists
-        const checkuser =await User.findOne({ where: { id: id } });//const existingUser = await User.findOne({ where: { email_id: email } });
+        const checkuser =await User.findOne({ where: { id: id } });
+        //const existingUser = await User.findOne({ where: { email_id: email } });
   
         if (!checkuser) {
             return res.json({
