@@ -335,14 +335,14 @@ try {
     });
   }
 
-  if (is_aadhar_card_verify !== undefined) addDocument.is_aadhar_card_verify = is_aadhar_card_verify;
-  if (is_passbook_verify !== undefined) addDocument.is_passbook_verify = is_passbook_verify;
-  if (is_certificate_of_membership_verify !== undefined) addDocument.is_certificate_of_membership_verify = is_certificate_of_membership_verify;
-  if (is_certificate_of_practice_verify !== undefined) addDocument.is_certificate_of_practice_verify = is_certificate_of_practice_verify;
-  if (is_document_verify !== undefined) addDocument.is_document_verify = is_document_verify;
-  if (is_pan_card_image_verify !== undefined) addDocument.is_pan_card_image_verify = is_pan_card_image_verify;
+  // if (is_aadhar_card_verify !== undefined) addDocument.is_aadhar_card_verify = is_aadhar_card_verify;
+  // if (is_passbook_verify !== undefined) addDocument.is_passbook_verify = is_passbook_verify;
+  // if (is_certificate_of_membership_verify !== undefined) addDocument.is_certificate_of_membership_verify = is_certificate_of_membership_verify;
+  // if (is_certificate_of_practice_verify !== undefined) addDocument.is_certificate_of_practice_verify = is_certificate_of_practice_verify;
+  // if (is_document_verify !== undefined) addDocument.is_document_verify = is_document_verify;
+  // if (is_pan_card_image_verify !== undefined) addDocument.is_pan_card_image_verify = is_pan_card_image_verify;
 
-  await addDocument.save();
+  // await addDocument.save();
 
   return res.status(200).json({
     status: true,
