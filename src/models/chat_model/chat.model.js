@@ -43,6 +43,7 @@ module.exports = (sequelize, DataTypes) => {
       },
       unread_msg: {
         type: DataTypes.BOOLEAN,
+        defaultValue:0,
         allowNull: true,
       },
      

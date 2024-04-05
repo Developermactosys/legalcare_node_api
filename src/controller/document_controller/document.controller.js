@@ -323,10 +323,13 @@ const {
 } = req.body;
 
 try {
-  const addDocument = await doc.findOne({ where: { UserId: expert_id } });
+  // const addDocument = await doc.findOne({ where: { UserId: expert_id } });
+  const addDocument = await doc.update( {is_aadhar_card_verify, is_passbook_verify
+    ,is_certificate_of_membership_verify,is_certificate_of_practice_verify, is_document_verify, is_pan_card_image_verify} ,{ where: { UserId: expert_id } });
   
+
   if (!addDocument) {
-    return res.status(404).json({
+    return res.status(200).json({
       status: false,
       message: "Document not found."
     });
