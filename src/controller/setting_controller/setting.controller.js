@@ -123,7 +123,7 @@ exports.changeTheme =async(req, res) =>{
 exports.getThemeSetting = async(req, res)=> {
   
     try {
-        const data = await theme.findAll()
+        const data = await theme.findOne()
         if(data){
             return res.status(200).json({
                 status : true,

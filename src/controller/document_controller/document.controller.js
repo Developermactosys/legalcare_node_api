@@ -80,7 +80,7 @@ exports.getAllDocumentById = async(req, res)=>{
     //   })
     // }
     const docData = await doc.findOne({where: {
-      UserId : req.body.expert_id
+      UserId : req.query.expert_id
     }})
     if(docData){
       return res.status(200).json({

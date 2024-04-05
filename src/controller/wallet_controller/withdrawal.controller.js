@@ -188,79 +188,30 @@ const get_withdrawalRequest = async (req, res) => {
   }
 }
 
-exports.get_withdrawalRequest_by_expert_id = async (req, res) => {
+const get_withdrawalRequest_by_expert_id = async (req, res) => {
   try {
-    const { user_id } = req.query;
+    const { expert_id } = req.query;
     const page = parseInt(req.query.page) || 1;
-    const pageSize = parseInt(req.query.pageSize) || 5;
+    const pageSize = parseInt(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
-    const get_booking = await Booking_details.findAll({
-      // where: { UserId: user_id },
-      where: {
-        [Sequelize.Op.or]: [
-          { 
-              UserId: user_id, 
-          },
-          { 
-            expert_id: user_id, 
-          }
-      ]
-      },
+    const get_withdrawal_request = await WithdrawalRequest.findOne({
+      where: { UserId: expert_id },
+    
       include: [
         {
           model: User,
           as: "User",
-          where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
         },
-      
-        {
-          model: service,
-          as: "service",
-          include: [
-            {
-              model: User,
-              as: "User",
-              where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-            }
-          ]
-        }
       ],
       order: [['createdAt', 'DESC']],
       offset: offset,
       limit: pageSize,
     })
-    if(get_booking==[]){
-      const get_booking = await Booking_details.findAll({
-        where: { UserId: user_id },
-        include: [
-          {
-            model: User,
-            as: "User",
-            where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
-          },
-        
-          {
-            model: service,
-            as: "service",
-            include: [
-              {
-                model: User,
-                as: "User",
-                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-              }
-            ]
-          }
-        ],
-        order: [['createdAt', 'DESC']],
-        offset: offset,
-        limit: pageSize,
-      })
-    }
-
+  
     return res.status(200).json({
       status: true,
-      message: "All Booking",
-      data: get_booking,
+      message: "withdrawal request by expert_id is retrived ",
+      data: get_withdrawal_request,
       currentPages: page,
     })
 
@@ -355,6 +306,7 @@ const update_withdrawal_request_status= async (req, res) => {
 module.exports = {
     withdrawalAmount,
     withdrawal_request,
+    get_withdrawalRequest_by_expert_id,
     get_withdrawalRequest,
     update_withdrawal_request_status
 };
