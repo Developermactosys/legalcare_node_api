@@ -48,7 +48,7 @@ exports.getChatList_by_user_id = async (req, res) => {
 //   try {
 //     const { user_id } = req.query;
 //     if (!user_id) {
-//       return res.status(400).json({
+//       return res.status(200).json({
 //         status: false,
 //         msg: "Please provide your user_id",
 //       });
@@ -90,7 +90,7 @@ exports.getChatList_by_user_id = async (req, res) => {
 //     res.json({
 //       status: true,
 //       message: "User list retrieved successfully",
-//       userList: userList,
+//       data: userList,
 //     });
 //   } catch (error) {
 //     console.error(error);
@@ -160,69 +160,134 @@ exports.getChatList_by_user_id = async (req, res) => {
 // };
 
 // origonal
+
+
+// exports.getUserList_by_user_id = async (req, res) => {
+//   const { user_id } = req.query;
+//   if (!user_id) {
+//     return res.status(400).json({
+//       status: false,
+//       msg: "Please provide your user_id",
+//     });
+//   }
+
+//   let sql = `SELECT 
+//   Users.id,
+//   Users.profile_image,
+//   CASE 
+//       WHEN chats.from_user_id = ${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.from_user_id)
+//       WHEN chats.to_user_id =${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.to_user_id)
+//   END AS name,
+//   chats.from_user_id,
+//   chats.to_user_id,
+//   chats.chat_message as last_message,
+//   CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
+//   COUNT(CASE WHEN chats.to_user_id = ${user_id} AND chats.unread_msg = 0 THEN 1 END) AS unread_count
+// FROM 
+//   chats 
+// RIGHT JOIN 
+//   Users ON (chats.from_user_id = Users.id OR chats.to_user_id = Users.id)
+// WHERE 
+//   (chats.from_user_id = ${user_id} OR chats.to_user_id = ${user_id})
+// GROUP BY 
+//   chats.from_user_id 
+// ORDER BY 
+//   chats.message_date DESC, 
+//   chats.message_time DESC;;`
+
+//   try {
+//     const results = await User.sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT });
+
+//     if (results.length > 0) {
+//       results.forEach(result => {
+//        result.unread_count /= 2; // Divide unread_count by 2
+//       //  result.unread_count = Math.floor(result.unread_count/2);
+//       });
+// console.log(results);
+//       return res.send({
+//         status: true,
+//         message: "Get Data Successfully",
+//         data: results,
+//       });
+//     } else {
+//       return res.send({
+//         status: false,
+//         data:[]
+//       });
+//     }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ status: false, message: "Internal server error" });
+//   }
+// };
+
+
+
+
+
+
 exports.getUserList_by_user_id = async (req, res) => {
-  const { user_id } = req.query;
-  if (!user_id) {
-    return res.status(400).json({
-      status: false,
-      msg: "Please provide your user_id",
-    });
-  }
-
-  let sql = `SELECT 
-  Users.id,
-  Users.profile_image,
-  CASE 
-      WHEN chats.from_user_id = ${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.from_user_id)
-      WHEN chats.to_user_id =${user_id} THEN (SELECT name FROM Users WHERE Users.id = chats.to_user_id)
-  END AS name,
-  chats.from_user_id,
-  chats.to_user_id,
-  chats.chat_message as last_message,
-  CONCAT(chats.message_date, " ", chats.message_time) as last_message_date,
-  COUNT(CASE WHEN chats.to_user_id = ${user_id} AND chats.unread_msg = 0 THEN 1 END) AS unread_count
-FROM 
-  chats 
-RIGHT JOIN 
-  Users ON (chats.from_user_id = Users.id OR chats.to_user_id = Users.id)
-WHERE 
-  (chats.from_user_id = ${user_id} OR chats.to_user_id = ${user_id})
-GROUP BY 
-  chats.from_user_id 
-ORDER BY 
-  chats.message_date DESC, 
-  chats.message_time DESC;;`
-
+  console.log("chat");
   try {
-    const results = await User.sequelize.query(sql, { type: Sequelize.QueryTypes.SELECT });
-
-    if (results.length > 0) {
-      results.forEach(result => {
-       result.unread_count /= 2; // Divide unread_count by 2
-      //  result.unread_count = Math.floor(result.unread_count/2);
-      });
-console.log(results);
-      return res.send({
-        status: true,
-        message: "Get Data Successfully",
-        data: results,
-      });
-    } else {
-      return res.send({
+    const { user_id } = req.query;
+    if (!user_id) {
+      return res.status(200).json({
         status: false,
-        data:[]
+        msg: "Please provide your user_id",
       });
     }
+    // Find all distinct users with whom the specified user has had chats
+    const userList = await User.findAll({
+      where: {
+        [Op.or]: [
+          Sequelize.literal(
+            `id IN (SELECT DISTINCT from_user_id FROM chats WHERE to_user_id = ${user_id})`
+          ),
+          Sequelize.literal(
+            `id IN (SELECT DISTINCT to_user_id FROM chats WHERE from_user_id = ${user_id})`
+          ),
+        ],
+      },
+      attributes: [
+        "id",
+        "name",
+        "profile_image",
+        // Subquery to get the last message sent/received by each user
+        [
+          Sequelize.literal(
+            "(SELECT chat_message FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) ORDER BY message_date DESC, message_time DESC LIMIT 1)"
+          ),
+          "last_message",
+        ],
+        // Subquery to get the last message sent/received date by each user
+        [
+          Sequelize.literal(
+            '(SELECT CONCAT(message_date, " ", message_time) FROM chats WHERE (from_user_id = User.id OR to_user_id = User.id) ORDER BY message_date DESC, message_time DESC LIMIT 1)'
+          ),
+          "last_message_date",
+        ],
+        [
+          Sequelize.literal(`(
+              SELECT COUNT(to_user_id= ${user_id} AND unread_msg = 0) 
+              FROM chats 
+              WHERE to_user_id = ${user_id} AND unread_msg = 0
+            )`),
+          "unread_msg",
+        ],
+      ],
+      order: [["id", "DESC"]],
+    });
+
+
+    
+    res.json({
+      status: true,
+      message: "User list retrieved successfully",
+      data: userList,
+    });
   } catch (error) {
     console.error(error);
-    return res.status(500).json({ status: false, message: "Internal server error" });
+    res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
-
-
-
-
-
-
-
 
