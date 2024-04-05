@@ -8,6 +8,10 @@ const ChatLog = db.chat_log;
 const Sequelize = require('sequelize');
 const axios = require('axios');
 let users = {}
+var FCM = require("fcm-node");
+const serverkey = process.env.SERVER_KEY;
+var fcm = new FCM(serverkey);
+
 const handleUserData = async (socket, users, io) => {
     socket.on("user_data", async (data) => {
         try {
@@ -494,7 +498,61 @@ function getCurrent_time() {
     return formattedDate
 }
 
-// Define a function to handle sending messages
+// // Define a function to handle sending messages
+// const sendMessage = async (data, socket) => {
+//     try {
+//       // Check if the message type is text
+//       if (data.message_type === 'text') {
+//         // Fetch the connection_id of the recipient user
+//         const recipient = await User.findOne({
+//           attributes: ['connection_id'],
+//           where: { id: data.to_user_id }
+//         });
+  
+//         // Insert the message into the database
+//         const message = await chat.create({
+//             from_user_id: data.from_user_id,
+//             to_user_id: data.to_user_id,
+//             chat_message: data.message,
+//             message_status: data.message_status,
+//             unread_msg:data.unread_msg,
+//             message_type :data.message_type,
+//             message_date: getCurrentDate(),
+//             message_time: getCurrentTime()
+//         });
+//   if(data.image){
+//     message.image= data.image;
+//     await message.save();
+//   }
+//         // Emit the message data
+//         data.id = message.id;
+//         data.message_time = getCurrentTime();
+//         if (recipient && recipient.connection_id) {
+//           socket.to(recipient.connection_id).emit("message_data", data);
+
+//         //   console.log("message_data", data);
+
+//         } else {
+//           // If recipient not found or connection_id is null, emit to all sockets
+//           socket.emit("message_data", data);
+//         //   console.log("error : message_data", data);
+
+//         }
+//       } else {
+//         // Handle other message types here
+//         data.id = 0;
+//         data.message_time = getCurrentTime();
+//         socket.emit("message_data", data);
+//       }
+//     //   return socket.status(200).json({
+//     //     status : true
+//     //   })
+//     } catch (error) {
+//       console.error(error);
+//       // Handle errors here
+//     }
+//   };
+
 const sendMessage = async (data, socket) => {
     try {
       // Check if the message type is text
@@ -504,7 +562,7 @@ const sendMessage = async (data, socket) => {
           attributes: ['connection_id'],
           where: { id: data.to_user_id }
         });
-  
+          
         // Insert the message into the database
         const message = await chat.create({
             from_user_id: data.from_user_id,
@@ -516,6 +574,42 @@ const sendMessage = async (data, socket) => {
             message_date: getCurrentDate(),
             message_time: getCurrentTime()
         });
+
+          const find_receiver_id = message.to_user_id
+          console.log(find_receiver_id)
+          const find_user = await User.findByPk(find_receiver_id)
+          const find_sender = await User.findByPk(message.from_user_id)
+          const receiver_device_id = find_user.device_id
+          const sender_name = find_sender.name
+          console.log(receiver_device_id, sender_name);
+              var messages = {
+                to: receiver_device_id,
+                collapse_key: "green",
+
+                notification: {
+                  title: `${sender_name}`,
+                  body: `${message.chat_message}`,
+                  priority: "high",
+                  image: `${sender_profile_image}${find_sender.profile_image}`,
+                },
+              };
+           fcm.send(messages, function (err, response) {
+             if (err) {
+               console.log("Something Has Gone Wrong !", err);
+               return res.status(200).json({
+                 success: false,
+                 message: err.messages,
+               });
+             } else {
+               console.log("Successfully Sent With Resposne :", response);
+               var body = messages.notification.body;
+               console.log(
+                 "notification body for add order <sent to manager>",
+                 body
+               )
+             }
+           });
+          
   if(data.image){
     message.image= data.image;
     await message.save();
@@ -585,8 +679,6 @@ const sendMessage = async (data, socket) => {
     }
 };
 
-
-  
 
 module.exports = { 
     
