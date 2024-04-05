@@ -54,7 +54,13 @@ exports.createUser = async (req, res, next) => {
           return res.json({
             status: true,
             message: "your registration successfully and link Sent on your E-mail",
-            list : newUser
+            user: {
+                id: newUser.id,
+                first_name: newUser.first_name,
+                last_name: newUser.last_name, 
+                email_id: newUser.email_id,
+                phone_no: newUser.phone_no
+            }
           });
         }}
         return res.status(400).json({

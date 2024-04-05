@@ -63,6 +63,12 @@ module.exports = (sequelize, DataTypes) => {
         expert_id : {
           type: DataTypes.INTEGER,
         },
+        deduct_type : {
+          type: DataTypes.INTEGER,
+        },
+        description : {
+          type: DataTypes.INTEGER,
+        },
         deleted_At: {
           type: DataTypes.DATE,
           allowNull: true,
