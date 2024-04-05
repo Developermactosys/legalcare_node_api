@@ -188,33 +188,86 @@ const get_withdrawalRequest = async (req, res) => {
   }
 }
 
+// const get_withdrawalRequest_by_expert_id = async (req, res) => {
+//   try {
+//     const { expert_id ,status} = req.query;
+//     const page = parseInt(req.query.page) || 1;
+//     const pageSize = parseInt(req.query.pageSize) || 10;
+//     const offset = (page - 1) * pageSize;
+//     const get_withdrawal_request = await WithdrawalRequest.findOne({
+//       where: { UserId: expert_id },
+    
+//       include: [
+//         {
+//           model: User,
+//           as: "User",
+//         },
+//       ],
+//       order: [['createdAt', 'DESC']],
+//       offset: offset,
+//       limit: pageSize,
+//     })
+  
+   
+
+//     return res.status(200).json({
+//       status: true,
+//       message: "withdrawal request by expert_id is retrived ",
+//       data: get_withdrawal_request,
+//       currentPages: page,
+//     })
+
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({
+//       status: false,
+//       message: error.message,
+//     });
+//   }
+// }
+
+
 const get_withdrawalRequest_by_expert_id = async (req, res) => {
   try {
-    const { expert_id } = req.query;
+    const { expert_id, status } = req.query;
     const page = parseInt(req.query.page) || 1;
     const pageSize = parseInt(req.query.pageSize) || 10;
     const offset = (page - 1) * pageSize;
-    const get_withdrawal_request = await WithdrawalRequest.findOne({
-      where: { UserId: expert_id },
-    
-      include: [
-        {
-          model: User,
-          as: "User",
-        },
-      ],
-      order: [['createdAt', 'DESC']],
-      offset: offset,
-      limit: pageSize,
-    })
-  
-    return res.status(200).json({
-      status: true,
-      message: "withdrawal request by expert_id is retrived ",
-      data: get_withdrawal_request,
-      currentPages: page,
-    })
 
+    let whereCondition = {};
+    if (status === 'pending') {
+      whereCondition = { status: 'pending', UserId: expert_id };
+    } else {
+      whereCondition = {
+        status: {
+          [Op.or]: ['approved', 'reject']
+        },
+        UserId: expert_id
+      };
+    }
+
+    const withdrawalRequests = await WithdrawalRequest.findAndCountAll({
+      where: whereCondition,
+      include: [{
+        model: User,
+        as: "User",
+        attributes: ['id', 'user_type', 'name', 'profile_image']
+      }],
+      limit: pageSize,
+      offset: offset,
+      order: [['id', 'DESC']]
+    });
+
+    const currentPage = page;
+    const totalPages = Math.ceil(withdrawalRequests.count / pageSize);
+    const totalItems = withdrawalRequests.count;
+
+    res.json({
+      currentPage: currentPage,
+      totalPages: totalPages,
+      totalItems: totalItems,
+      data: withdrawalRequests.rows
+    });
   } catch (error) {
     console.error(error);
     return res.status(500).json({
@@ -222,7 +275,7 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
       message: error.message,
     });
   }
-}
+};
 
 
 

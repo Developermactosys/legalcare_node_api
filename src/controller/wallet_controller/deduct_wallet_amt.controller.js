@@ -122,7 +122,9 @@ const deductWalletAmount = async (req, res) => {
       transaction_id,
       device_id,
       status: 1,
-      user_type:user_type
+      user_type:user_type,
+      deduct_type:deduct_type,
+      description:description
     });
 
     return res.status(200).json({
