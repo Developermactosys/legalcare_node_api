@@ -7,22 +7,108 @@ const wallet_system = db.wallet_system;
 
 
 
+// exports.get_earning_by_userType = async (req, res) => {
+//   try {
+//     const page = Number(req.query.page) || 1;
+//     const limit = Number(req.query.limit) || 10;
+//     const offset = (page - 1) * limit;
+//     const { user_type } = req.query;
+
+//     let query = {
+//       where: {},
+//     };
+
+//     if (user_type) {
+//       query.where.user_type = { [Sequelize.Op.like]: `%${user_type}%` };
+//     }
+
+//     const getEarning = await TransactionHistory.findAll({
+//       attributes: ['id', 'transaction_amount', 'user_type', 'expert_id'],
+//       where: query.where,
+//       include: [
+//         {
+//           model: User,
+//           as: "User",
+//           where: { id: Sequelize.col('transaction_history.expert_id') },
+//           attributes: ['id', 'user_type', 'name', 'profile_image']
+//         }
+//       ],
+//       order: [["id", "DESC"]],
+//       limit: limit,
+//       offset: offset,
+//     });
+
+//     const totalCount = await TransactionHistory.count({});
+//     const totalPages = Math.ceil(totalCount / limit);
+
+//     if (getEarning.length > 0) {
+//       // Group transactions by expert_id
+//       const expertsMap = new Map();
+//       getEarning.forEach(earning => {
+//         const { expert_id, User } = earning;
+//         if (!expertsMap.has(expert_id)) {
+//           expertsMap.set(expert_id, {
+//             expert_id: expert_id,
+//             expert_details: User,
+//             total_transaction_amount: 0,
+//             transactions: []
+//           });
+//         }
+//         const expertEntry = expertsMap.get(expert_id);
+//         expertEntry.total_transaction_amount += (earning.transaction_amount || 0);
+//         expertEntry.transactions.push({
+//           transaction_id: earning.id,
+//           transaction_amount: earning.transaction_amount,
+//           user_type: earning.user_type,
+//           user_name: User.name,
+//           user_profile_image: User.profile_image
+//         });
+//       });
+
+//       const experts = Array.from(expertsMap.values());
+
+//       return res.status(200).json({
+//         status: true,
+//         count: totalCount,
+//         message: "Get all earnings",
+//         experts: experts,
+//         currentPage: page,
+//         totalPages: totalPages,
+//       });
+//     } else {
+//       return res.status(404).json({
+//         status: false,
+//         message: "No earnings found",
+//       });
+//     }
+//   } catch (error) {
+//     return res.status(500).json({
+//       status: false,
+//       message: error.message || "Internal server error",
+//     });
+//   }
+// };
+
+
+
 exports.get_earning_by_userType = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
-    const {expert_type} = req.query;
+    const {user_type} = req.query;
     let query = {
         where: {},
       };
     
-      if (expert_type) {
-        query.where.expert_type = { [Sequelize.Op.like]: `%${expert_type}%` };
+      if (user_type) {
+        query.where.user_type = { [Sequelize.Op.like]: `%${user_type}%` };
       }
 
     const getEarning = await TransactionHistory.findAll({
-        // where: { type_of_service: req.query.type_of_service },
+
+        attributes:['id','transaction_amount','user_type','expert_id'],
+
         where: query.where,
         include:[
         {
@@ -35,16 +121,27 @@ exports.get_earning_by_userType = async (req, res) => {
     limit: limit,
     offset: offset,
     })
-    const totalCount = await services.count({});
+    const totalCount = await TransactionHistory.count({});
     const totalPages = Math.ceil(totalCount / limit);
 
 
     if(getEarning){
+
+      // Calculate total transaction amount
+      const totalTransactionAmount = getEarning.reduce((sum, earning) => {
+        return sum + (earning.transaction_amount || 0); // Handle null/undefined transaction_amount values
+      }, 0);
+
+         // Extract unique experts from the result set
+         const experts = Array.from(new Set(getEarning.map(earning => earning.User)));
+
         return res.status(200).json({
             status : true,
             count:totalCount,
-            message : " get all services",
+            message : " Get all Earning",
             data : getEarning,
+            experts:experts,
+            totalEarning_of_Expert:totalTransactionAmount,
             currentPage: page,
             totalPages: totalPages,
         })
@@ -63,7 +160,15 @@ exports.get_earning_by_userType = async (req, res) => {
 }
 
 
-// exports.get_earning_by_expertType = async (req, res) => {
+
+
+
+
+
+
+
+
+ // exports.get_earning_by_expertType = async (req, res) => {
 //   try {
 //     const { expert_type} = req.query;
 //     const page = parseInt(req.query.page) || 1; // Current page
