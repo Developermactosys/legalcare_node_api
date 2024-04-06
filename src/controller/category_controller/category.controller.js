@@ -228,6 +228,7 @@ const getCategoryById = async (req, res) => {
 
 
 // updateCategory Api
+
 const updateCategory = async (req, res) => {
   const { category_name, description, color, status } = req.body;
   if (!req.params.id) {
