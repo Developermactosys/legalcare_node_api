@@ -91,12 +91,18 @@ const wallet_system = db.wallet_system;
 
 
 
+
+
+
+
+
 exports.get_earning_by_userType = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const {user_type} = req.query;
+    const allData = []
     let query = {
         where: {},
       };
@@ -107,23 +113,22 @@ exports.get_earning_by_userType = async (req, res) => {
 
     const getEarning = await TransactionHistory.findAll({
 
-        attributes:['id','transaction_amount','user_type','expert_id'],
+        attributes:['id','transaction_amount','user_type','expert_id','currents_date'],
 
         where: query.where,
-        include:[
-        {
-            model:User,
-            as:"User",
-            attributes:['id','user_type','name','profile_image']
-        }
-    ],
+    //     include:[
+    //     {
+    //         model:User,
+    //         as:"User",
+    //         attributes:['id','user_type','name','profile_image']
+    //     }
+    // ],
     order: [["id", "DESC"]],
     limit: limit,
     offset: offset,
     })
     const totalCount = await TransactionHistory.count({});
     const totalPages = Math.ceil(totalCount / limit);
-
 
     if(getEarning){
 
@@ -132,15 +137,23 @@ exports.get_earning_by_userType = async (req, res) => {
         return sum + (earning.transaction_amount || 0); // Handle null/undefined transaction_amount values
       }, 0);
 
-         // Extract unique experts from the result set
-         const experts = Array.from(new Set(getEarning.map(earning => earning.User)));
+        //  // Extract unique experts from the result set
+        //  const experts = Array.from(new Set(getEarning.map(earning => earning.User)));
+       for(let i=0; i<getEarning.length; i++){
+        const find_expert = await User.findAll({
+          where : { id : getEarning[i].expert_id},
+          attributes:['id','name',"user_type","profile_image"]
+        })
+        allData.push(find_expert)
+       }  
+
 
         return res.status(200).json({
             status : true,
             count:totalCount,
-            message : " Get all Earning",
-            data : getEarning,
-            experts:experts,
+            message : " Get All Expert_earning",
+            data :{ earning :getEarning, experts :allData},
+            // experts:allData,
             totalEarning_of_Expert:totalTransactionAmount,
             currentPage: page,
             totalPages: totalPages,
@@ -148,7 +161,7 @@ exports.get_earning_by_userType = async (req, res) => {
     }else{
         return res.status(400).json({
             status : false,
-            message : "Earning not found"
+            message : "Expert_earning not found"
         })
     }
 } catch (error) {
@@ -165,9 +178,17 @@ exports.getAdminEarning = async (req, res) => {
   try {
    
     const AdminEarning = await wallet_system.findOne({
+      attributes:['id','wallet_amount','outstanding_amount','UserId'],
       where: {
-        UserId: 6,
+        UserId: 9,
       }, 
+          include:[
+        {
+            model:User,
+            as:"User",
+            attributes:['id','user_type','name','profile_image']
+        }
+    ],
     });
    
     if (!AdminEarning) {
