@@ -70,7 +70,7 @@ const emailService = async (otp, name, email, yourName,yourPosition,yourCompany)
     return new Promise((resolve, reject) => {
       
       ejs.renderFile(
-        path.join(__dirname, "../../views/lynklegal-email/new-email.ejs"),
+        path.join(__dirname, "../../views/email_templets/new-email.ejs"),
         {code:otp, name:name, email:email, yourName:yourName, yourPosition:yourPosition, yourCompany:yourCompany },
         (err, res) => {
           if (err) {

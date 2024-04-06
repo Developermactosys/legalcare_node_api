@@ -341,6 +341,68 @@ const updateService = async (req, res) => {
     }
   };
 
+// Cancle Booking 
+exports.Cancle_service_by_id = async (req, res) => {
+    try {
+      const { booking_id ,user_id } = req.params
+      const cancel_booking = await Booking_details.findByPk(booking_id)
+      if (cancel_booking) {
+  
+        const  user = await User.findByPk(cancel_booking.UserId)
+        const expert= await User.findByPk(cancel_booking.expert_id)
+    
+        const find_service = await services.findByPk(cancel_booking.serviceId)
+        const service_name = find_service.serviceName
+    
+    
+        //console.log(expert)
+        const user_name = user.name;
+   
+        var message = {
+          to: expert.device_id, // Assuming the user model has a device_id field
+          notification: {
+            title: `Booking Cancellation`,
+            body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+          }, 
+        }
+        await Notification.create({
+          message: message.notification.body,
+          type: " Booking_cancellation ",
+          UserId : expert.id
+        });
+  
+       const delete_booking = await cancel_booking.destroy(cancel_booking)
+    
+        fcm.send(message, function(err, response) {
+          if (err) {
+              console.error("Something went wrong!", err);
+              return res.status(400).json({ success: false, message: err.message });
+          } else {
+              console.log("Successfully sent with response: ", response);
+              // Proceed with your response
+              return res.status(200).json({
+                  status: true,
+                  message: "Booking is cancelled and notification sent",
+                  data: delete_booking,
+              });
+          }
+      });
+  
+      } else {
+        return res.status(400).json({
+          status: false,
+          message: "Booking Id not found or Booking not deleted"
+        })
+      }
+    } catch (error) {
+      console.error(error);
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  }
+
 
 // API for delete Services
 const deleteService = async(req, res) => {
