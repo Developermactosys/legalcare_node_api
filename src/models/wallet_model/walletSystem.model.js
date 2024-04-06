@@ -62,6 +62,15 @@ const wallet_system = sequelize.define('wallet_system', {
   device_id : {
     type: DataTypes.STRING,
   },
+  totalAdminEarnings : {
+    type: DataTypes.FLOAT,
+  },
+  totalLawyerEarnings : {
+    type: DataTypes.FLOAT,
+  },
+  totalCAEarnings : {
+    type: DataTypes.FLOAT,
+  },
   deleted_At: {
     type: DataTypes.DATE,
     allowNull: true,

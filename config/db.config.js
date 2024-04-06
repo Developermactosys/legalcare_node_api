@@ -60,6 +60,7 @@ db.footer_section = require("../src/models/setting_model/footer_section.model")(
 db.landing_user = require("../src/models/demo/demo_landing.model")(sequelize ,DataTypes)
 db.withdrawal_request = require("../src/models/wallet_model/withdrawal_request.model")(sequelize, DataTypes)
 db.admin_setting = require("../src/models/setting_model/admin_setting.model")(sequelize ,DataTypes);
+db.contact_us = require("../src/models/demo/contact_us_model")(sequelize,DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
