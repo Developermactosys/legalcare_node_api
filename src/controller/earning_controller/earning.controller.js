@@ -160,8 +160,35 @@ exports.get_earning_by_userType = async (req, res) => {
 }
 
 
-
-
+exports.getAdminEarning = async (req, res) => {
+ 
+  try {
+   
+    const AdminEarning = await wallet_system.findOne({
+      where: {
+        UserId: 6,
+      }, 
+    });
+   
+    if (!AdminEarning) {
+      return res.status(200).json({
+        status: false,
+        message: "AdminEarning not found",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      message: "AdminEarning retrieved successfully",
+      data: AdminEarning,
+      
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 
 
 
