@@ -3,7 +3,8 @@ const category = db.category;
 const subCategory = db.subcategory;
 const services = db.service;
 const User = db.User;
-const {Sequelize,Op} = require('sequelize');
+const wallet_system =db.wallet_system;
+const {Sequelize,Op, where} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
     const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees, service_cost,type_of_service} = req.body;
@@ -344,7 +345,7 @@ const updateService = async (req, res) => {
 // Cancle Booking 
 exports.Cancle_service_by_id = async (req, res) => {
     try {
-      const { booking_id ,user_id } = req.params
+      const { booking_id ,refunding_amount } = req.params
       const cancel_booking = await Booking_details.findByPk(booking_id)
       if (cancel_booking) {
   
@@ -353,6 +354,42 @@ exports.Cancle_service_by_id = async (req, res) => {
     
         const find_service = await services.findByPk(cancel_booking.serviceId)
         const service_name = find_service.serviceName
+
+        if(cancel_booking.status == 'pending'){
+        const deduction_amount = parseFloat(refunding_amount);
+         const userWallet = await wallet_system.findOne({
+            where:{
+                UserId : user.id
+            }
+       })
+
+    const walletBalance_user = parseFloat(userWallet.wallet_amount);
+       
+
+       const newBalance_of_userWalllet = walletBalance_user + (0.95*deduction_amount);
+       await userWallet.update(
+         { wallet_amount: newBalance_of_userWalllet, device_id },
+         { where: { UserId:  user.id} }
+       );
+
+
+       const admin_id = 9
+
+       const walletSystem_of_admin = await wallet_system.findOne({
+        where: { UserId: admin_id },
+      });
+
+        // Update wallet balance of admin
+    const newBalance_of_admin = walletBalance + (0.05 * deduction_amount);
+    await walletSystem_of_admin.update(
+      { wallet_amount: newBalance_of_admin, device_id },
+      { where: { UserId: admin_id } }
+    );
+   
+        }
+
+
+        
     
     
         //console.log(expert)
@@ -361,13 +398,13 @@ exports.Cancle_service_by_id = async (req, res) => {
         var message = {
           to: expert.device_id, // Assuming the user model has a device_id field
           notification: {
-            title: `Booking Cancellation`,
-            body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+            title: `Service Cancellation`,
+            body: ` ${service_name} is cancelled by ${user_name}.`,
           }, 
         }
         await Notification.create({
           message: message.notification.body,
-          type: " Booking_cancellation ",
+          type: " Service_cancellation ",
           UserId : expert.id
         });
   
