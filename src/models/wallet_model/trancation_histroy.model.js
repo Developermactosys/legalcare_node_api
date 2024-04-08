@@ -64,10 +64,10 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
         },
         deduct_type : {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
         },
         description : {
-          type: DataTypes.INTEGER,
+          type: DataTypes.STRING,
         },
         deleted_At: {
           type: DataTypes.DATE,

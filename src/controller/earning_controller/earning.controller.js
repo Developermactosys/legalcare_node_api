@@ -180,7 +180,7 @@ exports.getAdminEarning = async (req, res) => {
     const AdminEarning = await wallet_system.findOne({
       attributes:['id','wallet_amount','outstanding_amount','UserId'],
       where: {
-        UserId: 9,
+        UserId: 6,
       }, 
           include:[
         {
@@ -190,7 +190,24 @@ exports.getAdminEarning = async (req, res) => {
         }
     ],
     });
+
+
+     // Calculate sum of all earnings (transaction_amount) for video calls
+     const sum_of_video_callearning = await TransactionHistory.sum('transaction_amount', {
+      where: {
+        deduct_type: "video_call",
+        UserId: 6
+      }
+    });
    
+ // Calculate sum of all earnings (transaction_amount) for Audio calls
+ const sum_of_audio_callearning = await TransactionHistory.sum('transaction_amount', {
+  where: {
+    deduct_type: "audio_call",
+    UserId: 6
+  }
+});
+    
     if (!AdminEarning) {
       return res.status(200).json({
         status: false,
@@ -201,6 +218,8 @@ exports.getAdminEarning = async (req, res) => {
       status: true,
       message: "AdminEarning retrieved successfully",
       data: AdminEarning,
+      admin_total_video_call_earning : sum_of_video_callearning,
+      admin_total_audio_call_earning : sum_of_audio_callearning
       
     });
   } catch (error) {

@@ -10,20 +10,20 @@ const TransactionHistory = db.transaction_history;
 const addWalletAmount = async (req, res) => {
 
   try {
-    const { user_id, payment_method, wallet_amount, transaction_id, device_id, payment_status ,user_type} = req.body;
+    const { user_id, payment_method, wallet_amount, transaction_id, device_id, payment_status ,user_type,deduct_type} = req.body;
 
     const isEmptykey = Object.keys(req.body).some(key => {
       const value = req.body[key]
       return value === '' || value === null || value === undefined;
     })
     if (isEmptykey) {
-      return res.status(400).json({ error: "please do not give empty or undefined or null fileds" })
+      return res.status(200).json({ error: "please do not give empty or undefined or null fileds" })
     }
 
     // Check if user exists
     const userExists = await User.findByPk(user_id);
     if (!userExists) {
-      return res.status(404).json({ status: false, message: "User does not exist" });
+      return res.status(200).json({ status: false, message: "User does not exist" });
     }
 
     // Check for existing wallet system entry
@@ -43,7 +43,8 @@ const addWalletAmount = async (req, res) => {
         transaction_id,
         device_id,
         status: 1,
-        user_type:user_type
+        user_type:user_type,
+        deduct_type : deduct_type
       });
 
       // Assuming InserIntoNotification is a function you've defined elsewhere for notifications
@@ -66,7 +67,8 @@ const addWalletAmount = async (req, res) => {
         wallet_amount,
         transaction_id,
         status: 1,
-        user_type:user_type
+        user_type:user_type,
+        deduct_type :deduct_type
       });
 
       // InserIntoNotification(user_id, `${wallet_amount} Rs Recharge Successfully`, "recharge", "Recharge Done");

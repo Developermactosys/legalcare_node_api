@@ -12,13 +12,13 @@ const withdrawalAmount = async (req, res) => {
     const { user_id,  amount,user_type} = req.query;
 
   if(!user_id){
-    return res.status(400).json({ status: false, message: "Please provide user_id" });
+    return res.status(200).json({ status: false, message: "Please provide user_id" });
   }
 
     // Check if user exists
     const userExists = await User.findByPk(user_id);
     if (!userExists) {
-      return res.status(404).json({ status: false, message: "User does not exist" });
+      return res.status(200).json({ status: false, message: "User does not exist" });
     }
     function generateTransactionId() {
       // Generate a random string
@@ -41,7 +41,7 @@ const withdrawalAmount = async (req, res) => {
     // Check for existing wallet system entry
     const walletSystem = await WalletSystem.findOne({ where: { UserId: user_id } });
     if (!walletSystem) {
-      return res.status(404).json({ status: false, message: "Wallet does not exist" });
+      return res.status(200).json({ status: false, message: "Wallet does not exist" });
     }
 
     const walletBalance = parseFloat(walletSystem.wallet_amount);
@@ -49,7 +49,7 @@ const withdrawalAmount = async (req, res) => {
 
     // Check if requested amount exceeds wallet balance
     if (requestedAmount > walletBalance) {
-      return res.status(400).json({ status: false, message: "Insufficient wallet balance" });
+      return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
     }
 
     // Update wallet balance
@@ -74,7 +74,7 @@ const withdrawalAmount = async (req, res) => {
 };
 
 
-const withdrawal_request= async (req, res) => {
+const create_withdrawal_request= async (req, res) => {
   try {
     const { expert_id, requested_amount } = req.body;
 
@@ -100,7 +100,7 @@ const withdrawal_request= async (req, res) => {
 
     // Check if requested amount exceeds wallet balance
     if (requestedAmount_1 > walletBalance) {
-      return res.status(400).json({ status: false, message: "Insufficient wallet balance" });
+      return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
     }
 
  
@@ -306,24 +306,10 @@ const update_withdrawal_request_status= async (req, res) => {
 
     // Check if requested amount exceeds wallet balance
     if (requestedAmount_1 > walletBalance) {
-      return res.status(400).json({ status: false, message: "Insufficient wallet balance" });
+      return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
     }
 
-    // function generateTransactionId() {
-    //   // Generate a random string
-    //   const randomString = Math.random().toString(36).substr(2, 10).toUpperCase(); // Example: "ABC123"
-    
-    //   // Get current timestamp
-    //   const timestamp = Date.now().toString(); // Example: "1645430912345"
-    
-    //   // Combine random string and timestamp to generate transaction ID
-    //   const transactionId = `${randomString}-${timestamp}`; // Example: "ABC123-1645430912345"
-    
-    //   return transactionId;
-    // }
-    
-    // // Example usage
-    // const transactionId = generateTransactionId();
+    if(status == "approved") {
 
      // Update wallet balance
      const newBalance = walletBalance - requestedAmount_1;
@@ -343,11 +329,22 @@ const update_withdrawal_request_status= async (req, res) => {
        status: 1,
        user_type:user_Type
      });
- 
+
      await WithdrawalRequest.update(
-      { status: status },
+      {
+         status: status,
+          approve_date:Date.now(),
+          approve_amount :requestedAmount_1
+       },
       { where: { id: withdrawal_request_id } }
     );
+
+    }else{
+     await WithdrawalRequest.update(
+      { status: status , approve_date:Date.now() },
+      { where: { id: withdrawal_request_id } }
+    );
+  }
     
     return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
   } catch (error) {
@@ -370,7 +367,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
           }
       });
       if(!pendingWithdrawals){
-        return res.status(200).json({
+        return res.status(400).json({
           status : false,
           message : "pending amount not found"
         })
@@ -388,7 +385,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
         }
     });
     if(!withdrawnAmounts){
-      return res.status(200).json({
+      return res.status(400).json({
         status : false,
         message : "pending amount not found"
       })
@@ -408,7 +405,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
   });
 
   if(!withdrawableAmounts){
-    return res.status(200).json({
+    return res.status(400).json({
       status : false,
       message : "pending amount not found"
     })
@@ -418,6 +415,20 @@ const getPendingWithdrawalAmount = async (req, res) => {
   withdrawableAmounts.forEach(withdrawal => {
       totalAmount_2 += withdrawal.request_amount;
   });
+
+    const user = await User.findByPk(UserId);
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    const walletAmount = await WalletSystem.sum('wallet_amount', { where: { UserId : UserId } });
+    
+  if(!walletAmount){
+    return res.status(400).json({
+      status : false,
+      message : "wallet amount not found"
+    })
+  }
       return res.status(200).json({
           status: true,
           message: "Total  withdrawal amount list",
@@ -425,7 +436,8 @@ const getPendingWithdrawalAmount = async (req, res) => {
               userId: UserId,
               totalAmountForPending: totalAmount || 0,
               totalAmountForApproved:totalAmount_1 || 0,
-              totalAmountReject:totalAmount_2 || 0
+              totalAmountReject:totalAmount_2 || 0,
+              totalAmount : walletAmount || 0
 
           }
       });
@@ -439,7 +451,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
 
 module.exports = {
     withdrawalAmount,
-    withdrawal_request,
+    create_withdrawal_request,
     get_withdrawalRequest_by_expert_id,
     get_withdrawalRequest,
     update_withdrawal_request_status,
