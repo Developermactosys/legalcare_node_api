@@ -105,18 +105,12 @@ const editBanner = async (req, res) => {
         message: "live event id not found",
       });
     }
-    const filePath = req.file
-      ? `banner_image/${req.file.filename}`
-      : "/src/uploads/banner_image/";
-
-    if (req.file) {
+ 
       const ImgUpdate = await LiveEvent.update(
         {
           event_name:event_name,
           event_status:event_status,
           event_date:event_date,
-          banner_image: filePath,
-          
         },
         {
           where: {
@@ -124,11 +118,18 @@ const editBanner = async (req, res) => {
           },
         },
       );
-      return res.status(200).json({
-        status: true,
-        message: "banner update successfully",
-      });
+    if (req.file) {
+      const filePath = req.file
+      ? `banner_image/${req.file.filename}`
+      : "/src/uploads/banner_image/";
+      check.banner_image = filePath
+      await check.save()
     } 
+
+    return res.status(200).json({
+      status: true,
+      message: "banner update successfully",
+    });
   } catch (error) {
     console.error(error);
    return res.status(500).json({ status:false, error: "Internal Server Error" });
