@@ -347,7 +347,7 @@ const addCall = async (req, res) => {
       status: true,
       message: "Data stored successfully",
       data: result,
-      allTransaction :allTransaction
+      All_AudioCall_Transaction :allTransaction
     });
   } catch (error) {
     console.error("Error:", error);

@@ -3,10 +3,145 @@ const {Sequelize,Op} = require("sequelize");
 const  sequelize  = require("sequelize");
 const video_call_details = db.video
 const WalletSystem = db.wallet_system
+const TransactionHistory = db.transaction_history
 const User = db.User;
 
 
-// API for add video call
+// // API for add video call
+// exports.add_video_call = async (req, res) => {
+//   try {
+//     const {
+//       user_id,
+//       expert_id,
+//       name,
+//       start_time,
+//       end_time,
+//       duration,
+//       current_used_bal,
+//     } = req.body;
+
+//     // Validate request data
+//     if (
+//       !expert_id ||
+//       !name ||
+//       !user_id ||
+//       !start_time ||
+//       !current_used_bal ||
+//       !end_time ||
+//       !duration
+//     ) {
+//       return res.status(200).json({
+//         status: false,
+//         message:
+//           "Please provide name, expert_id,duration, user_id, start_time, and end_time.",
+//       });
+//     }
+//     // Fetch expert's per minute rate
+//     const expert = await User.findOne({
+//       where: {
+//         id: expert_id,
+//         user_type: {
+//           [Op.in]: ["2", "3" , "4"],
+//         },
+//       },
+//     });
+
+//     if (!expert) {
+//       return res.status(200).json({
+//         status: false,
+//         message: "Expert not found or not of the required type.",
+//       });
+//     }
+
+//     const admin_id = 9;
+//     // Check for existing wallet system entry
+//     const walletSystem = await WalletSystem.findOne({
+//       where: { UserId: user_id },
+//     });
+//     const walletSystem_of_expert = await WalletSystem.findOne({
+//       where: { UserId: expert_id },
+//     });
+//     const walletSystem_of_admin = await WalletSystem.findOne({
+//       where: { UserId: admin_id },
+//     });
+//     if (!walletSystem) {
+//       return res
+//         .status(404)
+//         .json({ status: false, message: "Wallet does not exist" });
+//     }
+//     // if (!walletSystem_of_expert) {
+//     //   return res
+//     //     .status(404)
+//     //     .json({ status: false, message: "Expert_Wallet does not exist" });
+//     // }
+//     if (!walletSystem_of_admin) {
+//       return res
+//         .status(404)
+//         .json({ status: false, message: "Admin_Wallet does not exist" });
+//     }
+
+//     const walletBalance = parseFloat(walletSystem.wallet_amount);
+//     const walletBalance_of_admin = parseFloat(
+//       walletSystem_of_admin.wallet_amount
+//     );
+//     const requestedAmount = parseFloat(current_used_bal);
+
+//     // Check if requested amount exceeds wallet balance
+//     if (requestedAmount > walletBalance) {
+//       return res
+//         .status(400)
+//         .json({ status: false, message: "Insufficient wallet balance" });
+//     }
+
+//     // Update wallet balance of customer
+//     const newBalance = walletBalance - requestedAmount;
+//     await WalletSystem.update(
+//       { wallet_amount: newBalance, },
+//       { where: { UserId: user_id } }
+//     );
+
+//     // Update wallet balance of admin
+//     const newBalance_of_admin = walletBalance_of_admin + requestedAmount;
+//     await walletSystem_of_admin.update(
+//       { wallet_amount: newBalance_of_admin },
+//       { where: { UserId: admin_id } }
+//     );
+
+//     // const expert_per_minute_rate = expert.per_minute;
+
+//     // // Calculate the duration in minutes (assuming duration is in minutes)
+//     // const start = new Date(start_time);
+//     // const end = new Date(end_time);
+//     // const callDuration = Math.round((end - start) / (1000 * 60)); // Duration in minutes
+
+//     // // Calculate the amount based on the duration and expert's rate
+//     // const amountDeducted = callDuration * expert_per_minute_rate;
+
+//     // Update the call record with duration and deducted amount
+//     const result = await video_call_details.create({
+//       UserId: user_id,
+//       expert_id: expert_id,
+//       senderName: name,
+//       video_call_duration: duration,
+//       current_used_bal: current_used_bal, // You might need to adjust this based on your actual logic
+//       start_time: start_time,
+//       end_time: end_time,
+//     });
+
+//     return res.status(200).json({
+//       status: true,
+//       msg: "video Data stored successfully",
+//       data: result,
+//     });
+//   } catch (error) {
+//     console.error("Error:", error);
+//     return res.status(500).json({
+//       status: false,
+//       message: "Internal server error.",
+//     });
+//   }
+// };
+
 exports.add_video_call = async (req, res) => {
   try {
     const {
@@ -17,129 +152,152 @@ exports.add_video_call = async (req, res) => {
       end_time,
       duration,
       current_used_bal,
+      device_id,
+      payment_status,
+      transaction_id,
+      payment_method,
+      user_type
     } = req.body;
 
     // Validate request data
-    if (
-      !expert_id ||
-      !name ||
-      !user_id ||
-      !start_time ||
-      !current_used_bal ||
-      !end_time ||
-      !duration
-    ) {
-      return res.status(400).json({
+    if (!expert_id || !name || !user_id || !start_time || !current_used_bal || !end_time || !duration) {
+      return res.status(200).json({
         status: false,
-        message:
-          "Please provide name, expert_id,duration, user_id, start_time, and end_time.",
+        message: "Please provide name, expert_id, duration, user_id, start_time, and end_time."
       });
     }
+
     // Fetch expert's per minute rate
     const expert = await User.findOne({
       where: {
         id: expert_id,
         user_type: {
-          [Op.in]: ["2", "3"],
-        },
-      },
+          [Op.in]: ["2", "3", "4"]
+        }
+      }
     });
 
     if (!expert) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
-        message: "Expert not found or not of the required type.",
+        message: "Expert not found or not of the required type."
       });
     }
 
-    const admin_id = 9;
-    // Check for existing wallet system entry
+    const admin_id = 6;
+
+    // Check for existing wallet system entries
     const walletSystem = await WalletSystem.findOne({
-      where: { UserId: user_id },
+      where: { UserId: user_id }
     });
-    // const walletSystem_of_expert = await WalletSystem.findOne({
-    //   where: { UserId: expert_id },
-    // });
+    const walletSystem_of_expert = await WalletSystem.findOne({
+      where: { UserId: expert_id }
+    });
     const walletSystem_of_admin = await WalletSystem.findOne({
-      where: { UserId: admin_id },
+      where: { UserId: admin_id }
     });
+
     if (!walletSystem) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Wallet does not exist" });
+      return res.status(200).json({ status: false, message: "Wallet does not exist" });
     }
-    // if (!walletSystem_of_expert) {
-    //   return res
-    //     .status(404)
-    //     .json({ status: false, message: "Expert_Wallet does not exist" });
-    // }
+    if (!walletSystem_of_expert) {
+      return res.status(200).json({ status: false, message: "Expert's wallet does not exist" });
+    }
     if (!walletSystem_of_admin) {
-      return res
-        .status(404)
-        .json({ status: false, message: "Admin_Wallet does not exist" });
+      return res.status(200).json({ status: false, message: "Admin's wallet does not exist" });
     }
 
-    const walletBalance = parseFloat(walletSystem.wallet_amount);
-    const walletBalance_of_admin = parseFloat(
-      walletSystem_of_admin.wallet_amount
-    );
+    // Deduction amount
     const requestedAmount = parseFloat(current_used_bal);
 
-    // Check if requested amount exceeds wallet balance
-    if (requestedAmount > walletBalance) {
-      return res
-        .status(400)
-        .json({ status: false, message: "Insufficient wallet balance" });
+    // Check if requested amount exceeds user's wallet balance
+    if (requestedAmount > parseFloat(walletSystem.wallet_amount)) {
+      return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
     }
 
-    // Update wallet balance of customer
-    const newBalance = walletBalance - requestedAmount;
-    await WalletSystem.update(
-      { wallet_amount: newBalance, },
-      { where: { UserId: user_id } }
-    );
+    // Update user's wallet balance
+    const newBalance = parseFloat(walletSystem.wallet_amount) - requestedAmount;
+    await walletSystem.update({ wallet_amount: newBalance });
 
-    // Update wallet balance of admin
-    const newBalance_of_admin = walletBalance_of_admin + requestedAmount;
-    await walletSystem_of_admin.update(
-      { wallet_amount: newBalance_of_admin },
-      { where: { UserId: admin_id } }
-    );
+    // Calculate and update expert's wallet balance
+    const expert_amount = parseFloat(0.9 * requestedAmount);
+    const newBalance_of_expert = parseFloat(walletSystem_of_expert.wallet_amount) + expert_amount;
+    await walletSystem_of_expert.update({ wallet_amount: newBalance_of_expert });
 
-    // const expert_per_minute_rate = expert.per_minute;
+    // Calculate and update admin's wallet balance
+    const admin_amount = parseFloat(0.1 * requestedAmount);
+    const newBalance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount) + admin_amount;
+    await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
 
-    // // Calculate the duration in minutes (assuming duration is in minutes)
-    // const start = new Date(start_time);
-    // const end = new Date(end_time);
-    // const callDuration = Math.round((end - start) / (1000 * 60)); // Duration in minutes
-
-    // // Calculate the amount based on the duration and expert's rate
-    // const amountDeducted = callDuration * expert_per_minute_rate;
-
-    // Update the call record with duration and deducted amount
+    // Create call record
     const result = await video_call_details.create({
       UserId: user_id,
       expert_id: expert_id,
       senderName: name,
-      video_call_duration: duration,
-      current_used_bal: current_used_bal, // You might need to adjust this based on your actual logic
+      call_duration: duration,
+      current_used_bal: requestedAmount,
       start_time: start_time,
-      end_time: end_time,
+      end_time: end_time
     });
+
+    // Create transaction histories
+   const allTransaction = await TransactionHistory.bulkCreate([
+      {
+        UserId: user_id,
+        payment_method,
+        payment_status,
+        transaction_amount: requestedAmount,
+        transaction_id,
+        device_id,
+        status: 1,
+        amount_receiver_id: admin_id,
+        expert_id: expert_id,
+        user_type: 1,
+        deduct_type: "video_call"
+      },
+      {
+        UserId: expert_id,
+        payment_method,
+        payment_status,
+        transaction_amount: expert_amount,
+        transaction_id,
+        device_id,
+        status: 1,
+        amount_receiver_id: expert_id,
+        expert_id: expert_id,
+        user_type: 2,
+        deduct_type: "video_call"
+      },
+      {
+        UserId: admin_id,
+        payment_method,
+        payment_status,
+        transaction_amount: admin_amount,
+        transaction_id,
+        device_id,
+        status: 1,
+        amount_receiver_id: admin_id,
+        expert_id: expert_id,
+        user_type: 0,
+        deduct_type: "video_call"
+      }
+    ]);
 
     return res.status(200).json({
       status: true,
-      msg: "video Data stored successfully",
+      message: "Data stored successfully",
       data: result,
+      All_videoCall_Transaction :allTransaction
     });
   } catch (error) {
     console.error("Error:", error);
     return res.status(500).json({
       status: false,
-      message: "Internal server error.",
+      message: "Internal server error."
     });
   }
 };
+
 // API for view video details
 exports.view_video_details=  async (req, res) => {
     try {

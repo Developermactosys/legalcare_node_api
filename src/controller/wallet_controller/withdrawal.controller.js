@@ -356,10 +356,92 @@ const update_withdrawal_request_status= async (req, res) => {
   }
 };
 
+// API for Withdrawable Amount for user
+
+const getPendingWithdrawalAmount = async (req, res) => {
+  const { UserId } = req.query;
+
+  try {
+      // Find all pending withdrawal requests for the given user
+      const pendingWithdrawals = await WithdrawalRequest.findAll({
+          where: {
+              UserId: UserId,
+              status: 'pending' // Assuming 'pending' is the status for pending withdrawals
+          }
+      });
+      if(!pendingWithdrawals){
+        return res.status(200).json({
+          status : false,
+          message : "pending amount not found"
+        })
+      }
+      // Calculate total pending withdrawal amount
+      let totalAmount = 0;
+      pendingWithdrawals.forEach(withdrawal => {
+          totalAmount += withdrawal.request_amount;
+      });
+
+      const withdrawnAmounts = await WithdrawalRequest.findAll({
+        where: {
+            UserId: UserId,
+            status: 'approved' // Assuming 'completed' is the status for completed withdrawals
+        }
+    });
+    if(!withdrawnAmounts){
+      return res.status(200).json({
+        status : false,
+        message : "pending amount not found"
+      })
+    }
+
+    // Calculate total withdrawn amount
+    let totalAmount_1 = 0;
+    withdrawnAmounts.forEach(withdrawal => {
+        totalAmount_1 += withdrawal.request_amount;
+    });
+
+    const withdrawableAmounts = await WithdrawalRequest.findAll({
+      where: {
+          UserId: UserId,
+          status: 'reject' // Assuming 'completed' is the status for completed withdrawals
+      }
+  });
+
+  if(!withdrawableAmounts){
+    return res.status(200).json({
+      status : false,
+      message : "pending amount not found"
+    })
+  }
+  // Calculate total withdrawn amount
+  let totalAmount_2 = 0;
+  withdrawableAmounts.forEach(withdrawal => {
+      totalAmount_2 += withdrawal.request_amount;
+  });
+      return res.status(200).json({
+          status: true,
+          message: "Total  withdrawal amount list",
+          data: {
+              userId: UserId,
+              totalAmountForPending: totalAmount || 0,
+              totalAmountForApproved:totalAmount_1 || 0,
+              totalAmountReject:totalAmount_2 || 0
+
+          }
+      });
+  } catch (error) {
+      return res.status(500).json({
+          status: false,
+          message: error.message
+      });
+  }
+}
+
 module.exports = {
     withdrawalAmount,
     withdrawal_request,
     get_withdrawalRequest_by_expert_id,
     get_withdrawalRequest,
-    update_withdrawal_request_status
+    update_withdrawal_request_status,
+    getPendingWithdrawalAmount
 };
