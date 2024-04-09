@@ -339,15 +339,19 @@ const update_withdrawal_request_status= async (req, res) => {
        },
       { where: { id: withdrawal_request_id } }
     );
+    return res.status(200).json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+
 
     }else{
      await WithdrawalRequest.update(
       { status: status , approve_date:Date.now() },
       { where: { id: withdrawal_request_id } }
     );
+    return res.status(200).json({ status: false, message: "Withdrawal request rejected"});
+
   }
     
-    return res.json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+   
   } catch (error) {
     console.error("Withdrawal Request", error);
     return res.status(500).json({ status: false, message: "Internal server error" });
