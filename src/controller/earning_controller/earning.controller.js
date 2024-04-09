@@ -180,7 +180,7 @@ exports.getAdminEarning = async (req, res) => {
     const AdminEarning = await wallet_system.findOne({
       attributes:['id','wallet_amount','outstanding_amount','UserId'],
       where: {
-        UserId: 6,
+        UserId: 9,
       }, 
           include:[
         {
@@ -196,7 +196,7 @@ exports.getAdminEarning = async (req, res) => {
      const sum_of_video_callearning = await TransactionHistory.sum('transaction_amount', {
       where: {
         deduct_type: "video_call",
-        UserId: 6
+        UserId: 9
       }
     });
    
@@ -204,7 +204,7 @@ exports.getAdminEarning = async (req, res) => {
  const sum_of_audio_callearning = await TransactionHistory.sum('transaction_amount', {
   where: {
     deduct_type: "audio_call",
-    UserId: 6
+    UserId: 9
   }
 });
     
