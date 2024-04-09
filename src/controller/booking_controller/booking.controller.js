@@ -1,5 +1,5 @@
 // const { where } = require("sequelize");
-const { Sequelize } = require("sequelize");
+const { Sequelize, where } = require("sequelize");
 const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
@@ -345,6 +345,53 @@ exports.get_booking_by_status = async (req, res) => {
     });
   }
 };
+
+exports.getBooking_by_status_only = async (req, res) => {
+  try {
+    const { status } = req.query;
+
+    if (!status) {
+      return res.status(200).json({ error: "Please provide a valid status parameter" });
+    }
+
+    const pending_bookings = await Booking_details.findAll({
+      where: { status: status },
+      include: [
+        {
+          model: User,
+          as: "User",
+          where: { id: Sequelize.col('booking_detail.UserId') }
+        },
+        {
+          model: service, // Assuming `Service` is the correct model name
+          as: "service",
+          include: [
+            {
+              model: User,
+              as: "User",
+              where: { id: Sequelize.col('service.UserId') }
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: "Pending bookings fetched successfully",
+      data: pending_bookings,
+    });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: "Internal server error",
+    });
+  }
+};
+
 
 // get all Bookings 
 // exports.getAll_bookings = async (req, res) => {
