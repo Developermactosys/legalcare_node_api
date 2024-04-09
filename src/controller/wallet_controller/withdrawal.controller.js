@@ -108,6 +108,7 @@ const create_withdrawal_request= async (req, res) => {
     await WithdrawalRequest.create({
       request_amount: requestedAmount_1,
       request_date: new Date(),
+      UserId :expert_id,
       status: "pending",
     });
 
@@ -367,7 +368,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
           }
       });
       if(!pendingWithdrawals){
-        return res.status(400).json({
+        return res.status(200).json({
           status : false,
           message : "pending amount not found"
         })
@@ -385,7 +386,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
         }
     });
     if(!withdrawnAmounts){
-      return res.status(400).json({
+      return res.status(200).json({
         status : false,
         message : "pending amount not found"
       })
@@ -394,7 +395,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
     // Calculate total withdrawn amount
     let totalAmount_1 = 0;
     withdrawnAmounts.forEach(withdrawal => {
-        totalAmount_1 += withdrawal.request_amount;
+        totalAmount_1 += withdrawal.approve_amount;
     });
 
     const withdrawableAmounts = await WithdrawalRequest.findAll({
@@ -405,7 +406,7 @@ const getPendingWithdrawalAmount = async (req, res) => {
   });
 
   if(!withdrawableAmounts){
-    return res.status(400).json({
+    return res.status(200).json({
       status : false,
       message : "pending amount not found"
     })
@@ -418,13 +419,13 @@ const getPendingWithdrawalAmount = async (req, res) => {
 
     const user = await User.findByPk(UserId);
     if (!user) {
-      return res.status(404).json({ status: false, message: "User not found" });
+      return res.status(200).json({ status: false, message: "User not found" });
     }
 
     const walletAmount = await WalletSystem.sum('wallet_amount', { where: { UserId : UserId } });
     
   if(!walletAmount){
-    return res.status(400).json({
+    return res.status(200).json({
       status : false,
       message : "wallet amount not found"
     })
