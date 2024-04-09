@@ -310,49 +310,98 @@ if(findUser){
 };
 
 
-// API for update status 
-exports.updateStatusForDoc = async (req, res) => {
-const {  
-  expert_id,
-  is_aadhar_card_verify,
-  is_passbook_verify,
-  is_certificate_of_membership_verify,
-  is_certificate_of_practice_verify,
-  is_document_verify,
-  is_pan_card_image_verify
-} = req.body;
+// // API for update status 
+// exports.updateStatusForDoc = async (req, res) => {
+// const {  
+//   expert_id,
+//   is_aadhar_card_verify,
+//   is_passbook_verify,
+//   is_certificate_of_membership_verify,
+//   is_certificate_of_practice_verify,
+//   is_document_verify,
+//   is_pan_card_image_verify
+// } = req.body;
 
-try {
-  // const addDocument = await doc.findOne({ where: { UserId: expert_id } });
-  const addDocument = await doc.update( {is_aadhar_card_verify, is_passbook_verify
-    ,is_certificate_of_membership_verify,is_certificate_of_practice_verify, is_document_verify, is_pan_card_image_verify} ,{ where: { UserId: expert_id } });
+// try {
+//   // const addDocument = await doc.findOne({ where: { UserId: expert_id } });
+//   const addDocument = await doc.update( {is_aadhar_card_verify, is_passbook_verify
+//     ,is_certificate_of_membership_verify,is_certificate_of_practice_verify, is_document_verify, is_pan_card_image_verify} ,{ where: { UserId: expert_id } });
   
 
-  if (!addDocument) {
+//   if (!addDocument) {
+//     return res.status(200).json({
+//       status: false,
+//       message: "Document not found."
+//     });
+//   }
+
+//   // if (is_aadhar_card_verify !== undefined) addDocument.is_aadhar_card_verify = is_aadhar_card_verify;
+//   // if (is_passbook_verify !== undefined) addDocument.is_passbook_verify = is_passbook_verify;
+//   // if (is_certificate_of_membership_verify !== undefined) addDocument.is_certificate_of_membership_verify = is_certificate_of_membership_verify;
+//   // if (is_certificate_of_practice_verify !== undefined) addDocument.is_certificate_of_practice_verify = is_certificate_of_practice_verify;
+//   // if (is_document_verify !== undefined) addDocument.is_document_verify = is_document_verify;
+//   // if (is_pan_card_image_verify !== undefined) addDocument.is_pan_card_image_verify = is_pan_card_image_verify;
+
+//   // await addDocument.save();
+
+//   return res.status(200).json({
+//     status: true,
+//     message: "Document updated successfully",
+//     data: addDocument
+//   });
+// } catch (error) {
+//   return res.status(500).json({
+//     status: false,
+//     message: error.message
+//   });
+// }
+// };
+
+exports.updateStatusForDoc = async (req, res) => {
+  const {  
+    expert_id,
+    is_aadhar_card_verify,
+    is_passbook_verify,
+    is_certificate_of_membership_verify,
+    is_certificate_of_practice_verify,
+    is_document_verify,
+    is_pan_card_image_verify
+  } = req.body;
+
+  try {
+    const addDocument = await doc.update( {is_aadhar_card_verify, is_passbook_verify
+      ,is_certificate_of_membership_verify,is_certificate_of_practice_verify, is_document_verify, is_pan_card_image_verify} ,{ where: { UserId: expert_id } });
+     
+    if (!addDocument) {
+      return res.status(404).json({
+        status: false,
+        message: "Document not found."
+      });
+    }
+    const findDoc = await doc.findOne({
+      where : {
+        UserId: expert_id     
+       }
+    })
+   
+    if(findDoc){
+    if(findDoc.is_aadhar_card_verify == 'approved' && findDoc.is_certificate_of_membership_verify == 'approved'
+    && findDoc.is_passbook_verify == 'approved' && findDoc.is_certificate_of_practice_verify == 'approved' &&
+    findDoc.is_pan_card_image_verify == 'approved'){
+      await User.update({
+        is_verify: true
+      }, {where : {id : expert_id}})
+    }
+    }
     return res.status(200).json({
+      status: true,
+      message: "Document updated successfully",
+      data: addDocument
+    });
+  } catch (error) {
+    return res.status(500).json({
       status: false,
-      message: "Document not found."
+      message: error.message
     });
   }
-
-  // if (is_aadhar_card_verify !== undefined) addDocument.is_aadhar_card_verify = is_aadhar_card_verify;
-  // if (is_passbook_verify !== undefined) addDocument.is_passbook_verify = is_passbook_verify;
-  // if (is_certificate_of_membership_verify !== undefined) addDocument.is_certificate_of_membership_verify = is_certificate_of_membership_verify;
-  // if (is_certificate_of_practice_verify !== undefined) addDocument.is_certificate_of_practice_verify = is_certificate_of_practice_verify;
-  // if (is_document_verify !== undefined) addDocument.is_document_verify = is_document_verify;
-  // if (is_pan_card_image_verify !== undefined) addDocument.is_pan_card_image_verify = is_pan_card_image_verify;
-
-  // await addDocument.save();
-
-  return res.status(200).json({
-    status: true,
-    message: "Document updated successfully",
-    data: addDocument
-  });
-} catch (error) {
-  return res.status(500).json({
-    status: false,
-    message: error.message
-  });
-}
 };
