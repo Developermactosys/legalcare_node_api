@@ -122,14 +122,14 @@ const getServiceById = async(req, res) => {
                     // as: "User",
                     // attributes:['id','user_type','name','profile_image']
                 },
-                {
-                model: category,
-                as: "category",
-              },
-            {
-                model:subCategory,
-                as:"subcategory",
-            }
+            //     {
+            //     model: category,
+            //     as: "category",
+            //   },
+            // {
+            //     model:subCategory,
+            //     as:"subcategory",
+            // }
         ]
         })
         if(getServices){
