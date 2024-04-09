@@ -236,7 +236,7 @@ exports.get_booking_by_status = async (req, res) => {
             include: [
               {
                 model: User,
-                // as: "User",
+                as: "User",
                 where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
               }
             ]
@@ -407,7 +407,7 @@ exports.getAll_bookings = async (req, res) => {
           include: [
             {
               model: User,
-              // as: "User",
+              as: "User",
               attributes: ['id','name', 'user_type', 'phone_no'],
               where: { id: Sequelize.col('service.UserId') } 
             }
@@ -473,7 +473,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
           include: [
             {
               model: User,
-              // as: "User",
+              as: "User",
               where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
             }
           ]
@@ -499,7 +499,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
             include: [
               {
                 model: User,
-                // as: "User",
+                as: "User",
                 where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
               }
             ]
@@ -822,7 +822,7 @@ exports.getAllBookingdataForAll = async(req, res) => {
             include: [
               {
                 model: User,
-                // as: "User",
+                as: "User",
                
                 where: { id: Sequelize.col('service.UserId') },
                 attributes : ['id', 'name', 'phone_no', 'user_type'], // Here, we specify the association between the User model and the service model using the UserId from the service object
@@ -902,7 +902,7 @@ exports.getAll_bookingsBySearch = async (req, res) => {
         include: [
           {
             model: User,
-            // as: "User",
+            as: "User",
             attributes: ["id", "name", "user_type", "phone_no"],
           },
         ],

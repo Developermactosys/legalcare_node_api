@@ -76,8 +76,8 @@ const getALlService = async(req, res) =>{
             },
             {
                 model:User,
-                // as:"User",
-                // attributes:['id','user_type','name','profile_image']
+                as:"User",
+                attributes:['id','user_type','name','profile_image']
             }
         ],
         order: [["id", "DESC"]],
@@ -119,18 +119,17 @@ const getServiceById = async(req, res) => {
             include:[
                 {
                     model: User,
-                    // as: "User",
-                    // attributes:['id','user_type','name','profile_image']
+                    as: "User",
+                    attributes:['id','user_type','name','profile_image']
                 },
-            //     {
-            //     model: category,
-            //     as: "category",
-            //   },
-            // {
-            //     model:subCategory,
-            //     as:"subcategory",
-            // }
-        ]
+                {
+                model: category,
+                as: "category",
+              },
+            {
+                model:subCategory,
+                as:"subcategory",
+            }]
         })
         if(getServices){
             return res.status(200).json({
@@ -168,8 +167,8 @@ const getServiceBy_expertId = async(req, res) => {
         include: [
             {
                 model: User,
-                // as: "User",
-                // attributes:['id','user_type','name','profile_image']
+                as: "User",
+                attributes:['id','user_type','name','profile_image']
 
             },
             {
@@ -225,8 +224,8 @@ const getAllserviceBy_expert_id = async(req, res) => {
         include:[
             {
                 model: User,
-                // as: "User",
-                // attributes:['id','user_type','name','profile_image']
+                as: "User",
+                attributes:['id','user_type','name','profile_image']
             },
             {
             model: category,

@@ -54,7 +54,7 @@ db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataT
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
 db.follower_count = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
-db.expert_service = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
+db.expertservices = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
 db.theme_setting = require("../src/models/setting_model/theme_setting.model")(sequelize, DataTypes);
 db.footer_section = require("../src/models/setting_model/footer_section.model")(sequelize, DataTypes);
 db.landing_user = require("../src/models/demo/demo_landing.model")(sequelize ,DataTypes)
@@ -223,24 +223,16 @@ db.User.hasMany(db.expert_review, {
     as: "User",
   });
 
-// // User and Service one to many relationship
-// db.User.hasMany(db.service, {
-//     forienKey: "UserId",
-//     as: "service",
-//   });
+// User and Service one to many relationship
+db.User.hasMany(db.service, {
+    forienKey: "UserId",
+    as: "service",
+  });
   
-//   db.service.belongsTo(db.User, {
-//     forienKey: "UserId",
-//     as: "User",
-//   });
-
-// <-------------Many to Many Through table assosiation-------------->
-                                                                  // |
-db.service.belongsToMany(db.User, { through : 'expert_service'})  // |  
-db.User.belongsToMany(db.service, { through : 'expert_service'})  // |
-                                                                  // | 
-// <-------------Many to Many Through table assosiation-------------->
-
+  db.service.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
 
 // User and Document one to many relationship
 db.User.hasMany(db.document, {
