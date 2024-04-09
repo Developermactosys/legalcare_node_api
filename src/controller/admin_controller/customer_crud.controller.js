@@ -9,6 +9,7 @@ const call=db.call_details;
 const video = db.video;
 const document = db.document;
 const bank_details = db.bank_details;
+const TransactionHistory = db.transaction_history;
 
 
 // API for count total user
@@ -401,12 +402,32 @@ exports.totalCountForCustomer = async(req, res)=>{
           UserId: id
         }
       })
+
+ // Calculate sum of all earnings (transaction_amount) for video calls
+ const sum_of_video_callearning = await TransactionHistory.sum('transaction_amount', {
+  where: {
+    deduct_type: "video_call",
+    UserId: id
+  }
+});
+
+// Calculate sum of all earnings (transaction_amount) for Audio calls
+const sum_of_audio_callearning = await TransactionHistory.sum('transaction_amount', {
+where: {
+deduct_type: "audio_call",
+UserId: id
+}
+});
+
     return res.status(200).json({
       status : true,
       message : "Showing total_count for total_call ,total_video and total_chat",
       call: dataForCall.count || 0,
       video: getCall.count || 0,
       chat_count: Object.keys(uniqueChatsCounts || 0).length || 0,
+      Expert_total_video_callearning :sum_of_video_callearning,
+      Expert_total_audio_callearning :sum_of_audio_callearning,
+
     })
   }catch(error){
         return res.status(500).json({
