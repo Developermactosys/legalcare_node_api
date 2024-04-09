@@ -1,6 +1,6 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const expertservice = sequelize.define('expert_service', {
+  const expert_service = sequelize.define('expert_service', {
     // id: {
     //   type: DataTypes.BIGINT,
     //   autoIncrement: true,
@@ -36,7 +36,7 @@ module.exports = (sequelize, DataTypes) => {
     deletedAt: 'deleted_At'
 }
 );
-  return  expertservice ;
+  return  expert_service ;
 }
 
 
