@@ -3,6 +3,7 @@ const db = require("../../../config/db.config")
 const TransactionHistory = db.transaction_history;
 const User = db.User;
 const wallet_system = db.wallet_system;
+const Booking_details = db.booking_detail
 
 
 
@@ -230,7 +231,80 @@ exports.getAdminEarning = async (req, res) => {
   }
 };
 
+exports.get_earning_by_expert_id = async (req, res) => {
+  try {
+   const { expert_id } = req.query
+    // const AdminEarning = await wallet_system.findOne({
+    //   attributes:['id','wallet_amount','outstanding_amount','UserId'],
+    //   where: {
+    //     expert_id: ,
+    //   }, 
+    //       include:[
+    //     {
+    //         model:User,
+    //         as:"User",
+    //         attributes:['id','user_type','name','profile_image']
+    //     }
+    // ],
+    // });
 
+const admin_id = 9
+     // Calculate sum of all earnings (transaction_amount) for expert
+     const sum_of_expert_earning = await TransactionHistory.sum('transaction_amount', {
+      where: {
+        deduct_type: "booking",
+        amount_receiver_id: expert_id
+      }
+    });
+   
+    // Calculate sum of all earnings (transaction_amount) for Admin
+    const sum_of_admin_earning = await TransactionHistory.sum('transaction_amount', {
+  where: {
+    deduct_type: "booking",
+    UserId: admin_id,
+    expert_id : expert_id
+
+  }
+});
+    const total_earning = parseFloat(sum_of_expert_earning + sum_of_admin_earning )
+
+    const booking_count = await Booking_details.findAndCountAll({
+      where : {
+        expert_id:expert_id,
+         payment_status:null
+      }
+    })
+
+    const expert_name = await User.findByPk(expert_id)
+
+    // if (!AdminEarning) {
+    //   return res.status(200).json({
+    //     status: false,
+    //     message: "AdminEarning not found",
+    //   });
+    // }
+
+ 
+
+    return res.status(200).json({
+      status: true,
+      message: "AdminEarning retrieved successfully",
+      data: AdminEarning,
+      provider_name:expert_name.name,
+      no_of_booking :booking_count,
+      total_earning :total_earning,
+      provider_earning : sum_of_expert_earning,
+      admin_earning : sum_of_admin_earning
+
+      
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
 
 
 
