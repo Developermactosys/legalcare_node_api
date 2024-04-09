@@ -76,6 +76,10 @@ const deductWalletAmount = async (req, res) => {
         // Assuming you might want to store additional fields like device_id, etc.
       });
     }
+    const new_walletSystem_of_expert = await WalletSystem.findOne({
+      where: { UserId: expert_id },
+    });
+
     if (!walletSystem_of_admin) {
       return res
         .status(200)
@@ -87,7 +91,7 @@ const deductWalletAmount = async (req, res) => {
 
     const wallet_balance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount);
 
-    const wallet_balance_of_expert = parseFloat(creating_wallet_of_expert.wallet_amount);
+    const wallet_balance_of_expert = parseFloat(new_walletSystem_of_expert.wallet_amount);
 
 
     const requestedAmount = parseFloat(amount);
@@ -116,7 +120,7 @@ const deductWalletAmount = async (req, res) => {
     // Updating wallet balance of expert
     const expert_amount = parseFloat(0.9 * requestedAmount);
     const newBalance_of_expert = wallet_balance_of_expert + expert_amount;
-    await creating_wallet_of_expert.update(
+    await new_walletSystem_of_expert.update(
       { wallet_amount: newBalance_of_expert, device_id },
       { where: { UserId: expert_id } }
     );
