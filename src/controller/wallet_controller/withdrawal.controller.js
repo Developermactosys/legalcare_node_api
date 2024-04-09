@@ -87,7 +87,6 @@ const create_withdrawal_request= async (req, res) => {
     if (!userExists) {
       return res.status(200).json({ status: false, message: "Expert does not exist" });
     }
-
    
     // Check for existing wallet system entry
     const walletSystem = await WalletSystem.findOne({ where: { UserId: expert_id } });
