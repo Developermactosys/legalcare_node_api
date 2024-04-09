@@ -263,7 +263,8 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
     const totalPages = Math.ceil(withdrawalRequests.count / pageSize);
     const totalItems = withdrawalRequests.count;
 
-    res.json({
+    res.status(200).json({
+      status:true,
       currentPage: currentPage,
       totalPages: totalPages,
       totalItems: totalItems,
