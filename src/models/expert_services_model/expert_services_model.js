@@ -1,12 +1,12 @@
 
 module.exports = (sequelize, DataTypes) => {
-  const expertservice = sequelize.define('expertservice', {
-    id: {
-      type: DataTypes.BIGINT,
-      autoIncrement: true,
-      primaryKey: true,
-      allowNull :false
-    },
+  const expertservice = sequelize.define('expert_service', {
+    // id: {
+    //   type: DataTypes.BIGINT,
+    //   autoIncrement: true,
+    //   primaryKey: true,
+    //   allowNull :false
+    // },
     status: {
       type: DataTypes.ENUM,
       values: ['pending', 'approved', 'reject'],

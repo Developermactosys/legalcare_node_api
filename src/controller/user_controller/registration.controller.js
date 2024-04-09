@@ -48,19 +48,25 @@ if(!user_type){
      
       // const filePath = `/src/uploads/${req.file.filename}`;
       // console.log(filePath);
-      const filePath = req.file
-      ? `profile_image/${req.file.filename}`
-      : "/src/uploads/profile_image/default.png";
-      
 
       const hashedPassword = await bcrypt.hash(password, 10);
 
       const user = await User.create(req.body);
       user.dob = userInputDate,
-      user.profile_image=filePath,
+      
       user.password= hashedPassword,
       user.user_type =  user_type
       await user.save();
+
+      if(req.file){
+        const filePath = req.file
+        ? `profile_image/${req.file.filename}`
+        : "/src/uploads/profile_image/default.png";
+        user.profile_image=filePath
+        await user.save();
+
+        }
+  
   
       return res.json({
         status: true,

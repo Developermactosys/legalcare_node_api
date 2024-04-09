@@ -21,24 +21,24 @@ const edit_user = async (req, res) => {
       const user = await User.findByPk(id);
   
       if (!user) {
-        return res.status(404).json({
+        return res.status(200).json({
           status: false,
           message: "Data does not found!!!!!!!!!!!!",
         });
       }
   
-      const imagePath = req.file
-      ? `profile_image/${req.file.filename}`
-      : "/src/uploads/profile_image/default.png";
-      
+    
 
       const updateUser =  await User.update(req.body, {
         where: { id: id },
       });
-  if(profile_image){
-    const updateProfile = await User.update({profile_image:imagePath},{where:{
-      id:req.body.id
-    }})
+  if(req.file){
+    const imagePath = req.file
+      ? `profile_image/${req.file.filename}`
+      : "/src/uploads/profile_image/default.png";
+      user.profile_image = imagePath
+      await user.save()
+      
   }
       res.json({
         status: true,
