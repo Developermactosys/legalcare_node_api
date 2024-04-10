@@ -350,12 +350,18 @@ exports.getBooking_by_status_only = async (req, res) => {
   try {
     const { status } = req.query;
 
-    if (!status) {
-      return res.status(200).json({ error: "Please provide a valid status parameter" });
-    }
+    let query = {
+      where: {},
+    };
 
+    // If `status` is provided, filter bookings by that status
+    if (status) {
+      query.where.status = { [Sequelize.Op.like]: `%${status}%` };
+    }
+    
     const pending_bookings = await Booking_details.findAll({
-      where: { status: status },
+      // where: { status: status },
+      where: query.where,
       include: [
         {
           model: User,
