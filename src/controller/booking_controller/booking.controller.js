@@ -1016,9 +1016,10 @@ exports.getAll_bookingsBySearch = async (req, res) => {
         totalPages: totalPages,
       });
     } else {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "No bookings found with the provided criteria",
+        data: []
       });
     }
   } catch (error) {
