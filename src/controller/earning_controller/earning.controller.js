@@ -142,7 +142,9 @@ exports.get_earning_by_userType = async (req, res) => {
         //  const experts = Array.from(new Set(getEarning.map(earning => earning.User)));
        for(let i=0; i<getEarning.length; i++){
         const find_expert = await User.findAll({
-          where : { id : getEarning[i].expert_id},
+          where : { id : getEarning[i].expert_id,
+          user_type:getEarning[i].user_type
+          },
           attributes:['id','name',"user_type","profile_image"]
         })
         allData.push(find_expert)

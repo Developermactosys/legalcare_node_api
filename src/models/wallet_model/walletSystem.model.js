@@ -62,6 +62,9 @@ const wallet_system = sequelize.define('wallet_system', {
   device_id : {
     type: DataTypes.STRING,
   },
+  description : {
+    type: DataTypes.STRING,
+  },
   // totalAdminEarnings : {
   //   type: DataTypes.FLOAT,
   // },

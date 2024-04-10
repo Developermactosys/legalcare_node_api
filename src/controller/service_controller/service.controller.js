@@ -442,30 +442,57 @@ exports.Cancle_service_by_id = async (req, res) => {
 
 
 // API for delete Services
-const deleteService = async(req, res) => {
-    const { serviceId } = req.params;
+const deleteService = async (req, res) => {
+    const { serviceId, expert_id } = req.params;
     try {
-        const delServices = await services.findByPk(serviceId)
-        if(delServices){
-       await delServices.destroy(delServices)
+      // Find all bookings associated with the service
+      const bookingData = await booking.findAll({
+        where: { serviceId: serviceId }
+      });
+  
+      // Check if any booking has 'pending' status
+      const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+  
+      if (hasPendingBooking) {
         return res.status(200).json({
-            status : true,
-            message : "Data delete successfully"
-        })
-    }else{
-        return res.status(400).json({
-            status : false,
-            message : "service Id not found or services not deleted"
-        })
-    }
+          status: false,
+          message: "Cannot delete service due to pending bookings"
+        });
+      }
+  
+      // Proceed with service deletion if no pending bookings
+      const findExpertId = await services.findOne({
+        where: { UserId: expert_id }
+      });
+  
+      if (findExpertId) {
+        const delServices = await services.findByPk(serviceId);
+  
+        if (delServices) {
+          await delServices.destroy(delServices);
+          return res.status(200).json({
+            status: true,
+            message: "Data deleted successfully"
+          });
+        } else {
+          return res.status(200).json({
+            status: false,
+            message: "Service not found or not deleted"
+          });
+        }
+      } else {
+        return res.status(200).json({
+          status: false,
+          message: "Expert not found or service not deleted"
+        });
+      }
     } catch (error) {
-        return res.status(500).json({
-            status : false,
-            message : error.message
-        })
+      return res.status(500).json({
+        status: false,
+        message: error.message
+      });
     }
-}
-
+  };
 
 module.exports = {
     createServices,

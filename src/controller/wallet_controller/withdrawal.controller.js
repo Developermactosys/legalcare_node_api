@@ -129,6 +129,8 @@ const get_withdrawalRequest = async (req, res) => {
    
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
+
+
     if(status === 'pending'){
     const data = await WithdrawalRequest.findAndCountAll({
       where: { status: status }, // Define the where condition without curly braces
@@ -136,12 +138,21 @@ const get_withdrawalRequest = async (req, res) => {
         model: User,
         as: "User",
         attributes: ['id', 'user_type', 'name', 'profile_image']
-      }],
+      },
+      
+    ],
       limit: limit,
       offset: offset,
       order: [['id', 'DESC']] // You can change the order as needed
     });
 
+    const userIds = data.rows.map((item) => item.UserId);
+
+    // Filter WalletSystem data based on extracted UserIds
+    const wallet_amount = await WalletSystem.findAll({
+      where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
+      attributes: ['UserId', 'wallet_amount']
+    });
     const currentPage = page;
     const totalPages = Math.ceil(data.count / limit);
     const totalItems = data.count;
@@ -150,7 +161,8 @@ const get_withdrawalRequest = async (req, res) => {
       currentPage: currentPage,
       totalPages: totalPages,
       totalItems: totalItems,
-      data: data.rows
+      data: data.rows,
+       wallet_amount:wallet_amount
     });
   }else{
 
@@ -169,7 +181,13 @@ const get_withdrawalRequest = async (req, res) => {
       offset: offset,
       order: [['id', 'DESC']] // You can change the order as needed
     });
-    
+    const userIds = data.rows.map((item) => item.UserId);
+
+    // Filter WalletSystem data based on extracted UserIds
+    const wallet_amount = await WalletSystem.findAll({
+      where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
+      attributes: ['UserId', 'wallet_amount']
+    });
     const currentPage = page;
     const totalPages = Math.ceil(data.count / limit);
     const totalItems = data.count;
@@ -178,7 +196,9 @@ const get_withdrawalRequest = async (req, res) => {
       currentPage: currentPage,
       totalPages: totalPages,
       totalItems: totalItems,
-      data: data.rows
+      data: data.rows,
+      wallet_amount: wallet_amount
+
     });
   }
 
