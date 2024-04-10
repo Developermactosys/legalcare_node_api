@@ -14,7 +14,7 @@ const deductWalletAmount = async (req, res) => {
       device_id,
       payment_status,
       expert_id,
-      user_type,
+      // user_type,
       deduct_type,
       description
     } = req.body;
@@ -31,6 +31,8 @@ const deductWalletAmount = async (req, res) => {
 
     // Check if user exists
     const userExists = await User.findByPk(user_id);
+
+
     if (!userExists) {
       return res
         .status(200)
@@ -39,6 +41,9 @@ const deductWalletAmount = async (req, res) => {
 
      // Check if expert exists
      const expertExists = await User.findByPk(expert_id);
+
+    const get_user_type = expertExists.user_type
+
      if (!expertExists) {
        return res
          .status(200)
@@ -171,7 +176,7 @@ const deductWalletAmount = async (req, res) => {
         status: 1,
         amount_receiver_id: expert_id,
         expert_id: expert_id,
-        user_type: 2,
+        user_type: get_user_type,
         deduct_type:deduct_type,
         description:description
       },

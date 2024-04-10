@@ -302,7 +302,7 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
 
 const update_withdrawal_request_status= async (req, res) => {
   try {
-    const { withdrawal_request_id, requested_amount,expert_id ,status} = req.body;
+    const { withdrawal_request_id, requested_amount,expert_id ,status, reject_description} = req.body;
 
     if (!withdrawal_request_id) {
       return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
@@ -355,7 +355,8 @@ const update_withdrawal_request_status= async (req, res) => {
       {
          status: status,
           approve_date:Date.now(),
-          approve_amount :requestedAmount_1
+          approve_amount :requestedAmount_1,
+          reject_description:reject_description
        },
       { where: { id: withdrawal_request_id } }
     );
@@ -364,7 +365,7 @@ const update_withdrawal_request_status= async (req, res) => {
 
     }else{
      await WithdrawalRequest.update(
-      { status: status , approve_date:Date.now() },
+      { status: status , approve_date:Date.now(), reject_description:reject_description },
       { where: { id: withdrawal_request_id } }
     );
     return res.status(200).json({ status: false, message: "Withdrawal request rejected"});
