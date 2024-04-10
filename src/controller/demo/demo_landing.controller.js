@@ -45,7 +45,8 @@ exports.createUser = async (req, res, next) => {
             password: hashedPassword,
             token: remember_token,
             confirm_password: confirm_password,
-            otp:otp
+            otp:otp,
+            user_type:1
         });
        if(newUser){
         // const info = await emailService(data);
