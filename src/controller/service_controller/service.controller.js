@@ -4,6 +4,7 @@ const subCategory = db.subcategory;
 const services = db.service;
 const User = db.User;
 const wallet_system =db.wallet_system;
+const booking = db.booking_detail;
 const {Sequelize,Op, where} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
