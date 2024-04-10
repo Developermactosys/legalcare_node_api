@@ -23,9 +23,12 @@ exports.createUser = async (req, res, next) => {
         }
         
         const existingUser = await User.findOne({ where: { email_id: email } });
-
-        if (existingUser) {
+        const existingUserPhone_no = await User.findOne({ where: { phone_no: phone_no } });
+        if (existingUser ) {
             return res.status(200).json({ error: "Email already exists" });
+        }
+        if(existingUserPhone_no){
+            return res.status(200).json({ error: "Mobile number already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(confirm_password, 10);
