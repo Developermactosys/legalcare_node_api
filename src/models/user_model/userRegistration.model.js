@@ -9,6 +9,10 @@ const User = sequelize.define('User', {
      allowNull:false
   },
   name: DataTypes.STRING,
+  last_name:{
+    type:DataTypes.STRING,
+    allowNull:true
+ },
   address: DataTypes.STRING,
   email_id: {
     type:DataTypes.STRING,
@@ -62,7 +66,10 @@ const User = sequelize.define('User', {
   recommend: DataTypes.STRING,
   wait_time: DataTypes.INTEGER,
   kundli_id: DataTypes.INTEGER,
-  user_status: DataTypes.STRING,
+  user_status: {
+    type:DataTypes.STRING,
+    defaultValue:"Offline"
+  },
   status: {
     type: DataTypes.ENUM,
     values: [ "verified" , "rejected", "suspended" ],

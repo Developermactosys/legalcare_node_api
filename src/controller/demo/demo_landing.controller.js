@@ -1,5 +1,6 @@
 const db = require("../../../config/db.config")
-const User = db.landing_user;
+// const User = db.landing_user;
+const User = db.User;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailService = require("../../services/emailServices")
@@ -36,7 +37,8 @@ exports.createUser = async (req, res, next) => {
         const remember_token = jwt.sign({ email_id : email },process.env.ACCESS_SECRET_KEY, { expiresIn: '7d' });
 
         const newUser = await User.create({
-            first_name: name,
+            // first_name: name,
+            name:name,
             last_name: last_name,
             email_id: email,
             phone_no:phone_no,
@@ -59,7 +61,7 @@ exports.createUser = async (req, res, next) => {
             message: "your registration successfully and link Sent on your E-mail",
             user: {
                 id: newUser.id,
-                first_name: newUser.first_name,
+                first_name: newUser.name,
                 last_name: newUser.last_name, 
                 email_id: newUser.email_id,
                 phone_no: newUser.phone_no
