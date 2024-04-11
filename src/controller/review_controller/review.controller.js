@@ -37,7 +37,7 @@ async function postAstroReview(req, res) {
         });
 
         const add_rating = await User.update({
-            user_rating:rating 
+          where: { user_rating:rating }
         })
          // check expert exists 
          const checkExpert = await User.findByPk(expert_id);

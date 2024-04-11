@@ -495,6 +495,54 @@ const deleteService = async (req, res) => {
     }
   };
 
+  const deleteServiceforAdmin = async (req, res) => {
+    const { serviceId, expert_id } = req.params;
+    try {
+      const bookingData = await booking.findAll({where:{
+          serviceId : serviceId
+      }})
+      let getUserId;
+      let getStatus;
+      bookingData.forEach(booking => {
+          getUserId = booking.UserId
+          getStatus = booking.status
+          console.log(getUserId, getStatus);
+        });
+        
+      const findExpertId = await services.findOne({
+        where: {
+          UserId: expert_id,
+        },
+      });
+      if (findExpertId) {
+        const delServices = await services.findByPk(serviceId);
+  
+        if (delServices) {
+          await delServices.destroy(delServices);
+          return res.status(200).json({
+            status: true,
+            message: "Data delete successfully",
+          });
+        }else {
+          return res.status(200).json({
+            status: false,
+            message: "service_id  not found or services not deleted",
+          });
+        }
+      } else {
+        return res.status(200).json({
+          status: false,
+          message: "expert_id not found or services not deleted",
+        });
+      }
+    } catch (error) {
+      return res.status(500).json({
+        status: false,
+        message: error.message,
+      });
+    }
+  };
+
 module.exports = {
     createServices,
     getALlService,
@@ -503,4 +551,5 @@ module.exports = {
     getServiceBy_expertId,
     getAllserviceBy_expert_id,
     updateService,
+    deleteServiceforAdmin
 }
