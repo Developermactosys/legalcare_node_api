@@ -49,6 +49,20 @@ module.exports = (sequelize, DataTypes) => {
       cancelation_charges :{
         type: DataTypes.STRING,
       },
+      admin_for_call_video_percentage :{
+        type: DataTypes.FLOAT,
+        defaultValue:5,
+      },
+      admin_per_booking :{
+        type: DataTypes.FLOAT,
+        defaultValue:5,
+      },
+      agora_token :{
+        type: DataTypes.STRING,
+      },
+      agora_merchant :{
+        type: DataTypes.STRING,
+      },
       deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,

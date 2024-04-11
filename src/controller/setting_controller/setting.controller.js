@@ -178,11 +178,12 @@ exports.footerSetting = async(req, res)=> {
 }
 
 exports.settingForAdmin = async(req, res)=>{
-    const { user_name, password, api_key, payment_merchant_key,map_key, CA_api_user_id, cancelation_charges, CA_percentage} = req.body;
+    const { user_name, password, api_key, payment_merchant_key,map_key, CA_api_user_id, agora_token,agora_merchant,admin_per_booking,admin_for_call_video_percentage,cancelation_charges, CA_percentage} = req.body;
     try {
         const hashedPassword = await bcrypt.hashSync(password, 10)
         const data = await setting.create({
-            user_name,password:hashedPassword,api_key,payment_merchant_key, map_key, CA_api_user_id,cancelation_charges,CA_percentage
+            user_name,password:hashedPassword,
+            api_key,payment_merchant_key, map_key, CA_api_user_id,cancelation_charges,CA_percentage,agora_token,agora_merchant,admin_per_booking,admin_for_call_video_percentage
         })
         if(data){
             return res.status(200).json({
