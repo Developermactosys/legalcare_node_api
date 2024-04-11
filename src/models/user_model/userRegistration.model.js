@@ -80,7 +80,14 @@ const User = sequelize.define('User', {
   free_redeem: DataTypes.INTEGER,
   free_time: DataTypes.INTEGER,
   dial_code: DataTypes.STRING,
-  is_verify: DataTypes.BOOLEAN,
+  is_verify: {
+    type:DataTypes.BOOLEAN,
+  defaultValue:false
+  },
+  is_active: {
+    type:DataTypes.BOOLEAN,
+  defaultValue:false
+  },
   login_from: DataTypes.STRING,
   customer_id: DataTypes.INTEGER,
   expert_id : DataTypes.INTEGER,
