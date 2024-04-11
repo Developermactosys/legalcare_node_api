@@ -36,9 +36,7 @@ async function postAstroReview(req, res) {
             
         });
 
-        const add_rating = await User.update({
-          where: { user_rating:rating }
-        })
+        
          // check expert exists 
          const checkExpert = await User.findByPk(expert_id);
          const addRating = parseFloat(result.rating)
@@ -47,6 +45,13 @@ async function postAstroReview(req, res) {
          const updated_rating = extisting_rating + addRating 
          checkExpert.rating = updated_rating
          await checkExpert.save()
+
+         const add_rating = await User.update({
+            user_rating:addRating 
+          },
+        {
+            where:{id:expert_id}
+        })
 
         if (result) {
             return res.json({
@@ -67,6 +72,72 @@ async function postAstroReview(req, res) {
         });
     }
 }
+
+// async function postAstroReview(req, res) {
+//     try {
+//         const { expert_id, user_id, rating, message, reply } = req.body;
+
+//         // Validate input
+//         if (!expert_id || !user_id || !rating) {
+//             return res.status(400).json({
+//                 status: false,
+//                 message: "Please provide expert_id, user_id, and rating",
+//             });
+//         }
+
+//         // Check if user exists
+//         const checkUser = await User.findByPk(user_id);
+//         if (!checkUser) {
+//             return res.status(404).json({
+//                 status: false,
+//                 message: "User not found",
+//             });
+//         }
+
+//         // Insert review
+//         const result = await AstroReview.create({
+//             expert_id: expert_id,
+//             UserId: user_id,
+//             review: message,
+//             reply: reply,
+//             rating: rating,
+//         });
+
+//         // Update user's rating
+//         const updatedUser = await User.findByPk(user_id);
+//         if (updatedUser) {
+//             // Calculate new average rating
+//             const currentRating = parseFloat(updatedUser.user_rating || 0);
+//             const reviewCount = updatedUser.review_count || 0;
+
+//             // Calculate new average rating based on existing reviews and the new rating
+//             const newRating = ((currentRating * reviewCount) + rating) / (reviewCount + 1);
+
+//             // Update user's rating and increment review count
+//             await updatedUser.update({
+//                 user_rating: newRating,
+//                 // review_count: reviewCount + 1,
+//             });
+
+//             return res.status(200).json({
+//                 status: true,
+//                 user_id: user_id,
+//                 message: "Your feedback has been submitted successfully",
+//             });
+//         } else {
+//             return res.status(404).json({
+//                 status: false,
+//                 message: "User not found",
+//             });
+//         }
+//     } catch (error) {
+//         res.status(500).json({
+//             status: false,
+//             message: error.message,
+//         });
+//     }
+// }
+
 
 async function getAstroReviewList(req, res) {
     try {

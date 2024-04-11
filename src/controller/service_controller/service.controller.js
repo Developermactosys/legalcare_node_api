@@ -495,53 +495,63 @@ const deleteService = async (req, res) => {
     }
   };
 
-  const deleteServiceforAdmin = async (req, res) => {
-    const { serviceId, expert_id } = req.params;
+  const deleteServiceforAdmin = async(req, res) => {
+    const { serviceId } = req.params;
     try {
-      const bookingData = await booking.findAll({where:{
-          serviceId : serviceId
-      }})
-      let getUserId;
-      let getStatus;
-      bookingData.forEach(booking => {
-          getUserId = booking.UserId
-          getStatus = booking.status
-          console.log(getUserId, getStatus);
-        });
-        
-      const findExpertId = await services.findOne({
-        where: {
-          UserId: expert_id,
-        },
-      });
-      if (findExpertId) {
-        const delServices = await services.findByPk(serviceId);
-  
-        if (delServices) {
-          await delServices.destroy(delServices);
-          return res.status(200).json({
-            status: true,
-            message: "Data delete successfully",
-          });
-        }else {
-          return res.status(200).json({
-            status: false,
-            message: "service_id  not found or services not deleted",
-          });
-        }
-      } else {
+        const delServices = await services.findByPk(serviceId)
+        if(delServices){
+       await delServices.destroy(delServices)
         return res.status(200).json({
-          status: false,
-          message: "expert_id not found or services not deleted",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
-        status: false,
-        message: error.message,
-      });
+            status : true,
+            message : "Data delete statusfully"
+        })
+    }else{
+        return res.status(400).json({
+            status : false,
+            message : "service Id not found or services not deleted"
+        })
     }
-  };
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
+
+const update_service_for_active = async (req, res) => {
+ 
+  const {service_id}= req.params.service_id;
+  try {
+
+  
+    const updateData = await services.update({
+      service_active : 1
+  },{
+    where : {
+        id : service_id
+    }
+  });
+
+    if(updateData){
+        return res.status(200).json({
+            status : true,
+            message : "Service updated successfully",
+            data : updateData
+        })
+    }else{
+        return req.status(200).json({
+            status : false,
+            message : "service not updated"
+        })
+    }
+  } catch (error) {
+    return res.status(500).json({
+        status :false,
+        message : error.message
+    })
+  }
+};
 
 module.exports = {
     createServices,
@@ -551,5 +561,6 @@ module.exports = {
     getServiceBy_expertId,
     getAllserviceBy_expert_id,
     updateService,
-    deleteServiceforAdmin
+    deleteServiceforAdmin,
+    update_service_for_active
 }
