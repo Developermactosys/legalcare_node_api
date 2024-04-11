@@ -14,12 +14,13 @@ exports.createUser = async (req, res, next) => {
             return value === '' || value === null || value === undefined;
         });
         let user_type;
-        if (req.body.user_type != "") {
-            user_type = req.body.user_type
+
+        if (req.body.user_type !== undefined && req.body.user_type !== "") {
+            user_type = req.body.user_type;
         } else {
             user_type = 2;
         }
-
+        
         if (isEmptyKey) {
             return res.status(200).json({ error: "Please do not leave empty fields" });
         }
