@@ -71,7 +71,7 @@ const emailService = async (otp, name, email, yourName,yourPosition,yourCompany)
       
       ejs.renderFile(
         path.join(__dirname, "../../views/email_templets/new-email.ejs"),
-        {code:otp, name:name, email:email, yourName:yourName, yourPosition:yourPosition, yourCompany:yourCompany },
+        {otp:otp, name:name, email:email, yourName:yourName, yourPosition:yourPosition, yourCompany:yourCompany },
         (err, res) => {
           if (err) {
             console.log(err);
