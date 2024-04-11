@@ -6,7 +6,7 @@ const jwt = require("jsonwebtoken");
 const emailService = require("../../services/emailServices")
 exports.createUser = async (req, res, next) => {
    
-    const { name, last_name,  email, password, confirm_password,phone_no, } = req.body;
+    const { name, last_name,  email, password, confirm_password,phone_no,user_type } = req.body;
 
     try {
         const isEmptyKey = Object.keys(req.body).some(key => {
@@ -36,6 +36,7 @@ exports.createUser = async (req, res, next) => {
 
         const remember_token = jwt.sign({ email_id : email },process.env.ACCESS_SECRET_KEY, { expiresIn: '7d' });
 
+
         const newUser = await User.create({
             // first_name: name,
             name:name,
@@ -46,7 +47,7 @@ exports.createUser = async (req, res, next) => {
             token: remember_token,
             confirm_password: confirm_password,
             otp:otp,
-            user_type:2
+            user_type:user_type
         });
        if(newUser){
         // const info = await emailService(data);

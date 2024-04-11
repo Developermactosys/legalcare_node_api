@@ -39,9 +39,9 @@ async function postAstroReview(req, res) {
         
          // check expert exists 
          const checkExpert = await User.findByPk(expert_id);
-         const addRating = parseFloat(result.rating)
+         const addRating = parseFloat(result.rating)//3
 
-         const extisting_rating =parseInt(checkExpert.rating)
+         const extisting_rating =parseFloat(checkExpert.user_rating)
          const updated_rating = extisting_rating + addRating 
          checkExpert.rating = updated_rating
          await checkExpert.save()
