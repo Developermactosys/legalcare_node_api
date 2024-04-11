@@ -240,7 +240,7 @@ const admin_id = 9
      // Calculate sum of all earnings (transaction_amount) for expert
      const sum_of_expert_earning = await TransactionHistory.sum('transaction_amount', {
       where: {
-        deduct_type: "booking",
+        deduct_type: "Booking",
         amount_receiver_id: expert_id
       }
     });
@@ -248,7 +248,7 @@ const admin_id = 9
     // Calculate sum of all earnings (transaction_amount) for Admin
     const sum_of_admin_earning = await TransactionHistory.sum('transaction_amount', {
   where: {
-    deduct_type: "booking",
+    deduct_type: "Booking",
     UserId: admin_id,
     expert_id : expert_id,
 
@@ -260,7 +260,7 @@ const admin_id = 9
     const booking_count = await Booking_details.findAndCountAll({
       where : {
         expert_id:expert_id,
-         payment_status:null
+         payment_status:"paid"
       }
     })
 
@@ -386,6 +386,8 @@ const admin_id = 9
 //     });
 //   }
 // };
+
+
 
 // exports.get_earning_by_expertType = async(req, res) =>{
 //   try {
