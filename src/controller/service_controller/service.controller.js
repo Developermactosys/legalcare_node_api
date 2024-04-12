@@ -524,9 +524,17 @@ const update_service_for_active = async (req, res) => {
   const {service_id,expert_id}= req.query;
   try {
 
-  
+    const service = await services.findByPk(service_id);
+
+    if (!service) {
+      return res.status(404).json({
+        status: false,
+        message: "Service not found"
+      });
+    }
+
     const updateData = await services.update({
-      service_active : 1
+      service_active: service.service_active === 1 ? 0 : 1
   },{
     where : {
         id : service_id
