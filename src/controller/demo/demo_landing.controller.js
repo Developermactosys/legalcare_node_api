@@ -22,21 +22,21 @@ exports.createUser = async (req, res, next) => {
         }
         
         if (isEmptyKey) {
-            return res.status(200).json({ error: "Please do not leave empty fields" });
+            return res.status(200).json({ status:false, message: "Please do not leave empty fields" });
         }
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
         if (password !== confirm_password) {
-            return res.status(200).json({ error: "Passwords do not match" });
+            return res.status(200).json({ status:false, message: "Passwords do not match" });
         }
 
         const existingUser = await User.findOne({ where: { email_id: email } });
         const existingUserPhone_no = await User.findOne({ where: { phone_no: phone_no } });
         if (existingUser) {
-            return res.status(200).json({ error: "Email already exists" });
+            return res.status(200).json({status:false, message: "Email already exists" });
         }
         if (existingUserPhone_no) {
-            return res.status(200).json({ error: "Mobile number already exists" });
+            return res.status(200).json({status:false, message: "Mobile number already exists" });
         }
 
         const hashedPassword = await bcrypt.hash(confirm_password, 10);
