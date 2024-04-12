@@ -19,6 +19,6 @@ router.delete('/delete_service_by_id/:serviceId',deleteServiceforAdmin)
 router.get("/get_service_by_expert_id",getServiceBy_expertId);
 router.get("/get_allservices_by_expert_id",getAllserviceBy_expert_id) // expert flow
 
-router.patch("/update_service_status/:service_id",update_service_for_active)
+router.patch("/update_service_status",update_service_for_active)
 
 module.exports = router
