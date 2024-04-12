@@ -524,35 +524,47 @@ const update_service_for_active = async (req, res) => {
   const {service_id,expert_id}= req.query;
   try {
 
-    const service = await services.findByPk(service_id);
+    const Service = await services.findByPk(service_id);
 
-    if (!service) {
-      return res.status(404).json({
+    if (!Service) {
+      return res.status(200).json({
         status: false,
         message: "Service not found"
       });
     }
 
-    const updateData = await services.update({
-      service_active: service.service_active === 1 ? 0 : 1
+    const find_service = Service.service_active
+
+    if(find_service == 1){
+
+    const updateData_1 = await services.update({
+      service_active: 0
   },{
     where : {
         id : service_id
     }
   });
 
-    if(updateData){
-        return res.status(200).json({
-            status : true,
-            message : "Service updated successfully",
-            data : updateData
-        })
-    }else{
-        return req.status(200).json({
-            status : false,
-            message : "service not updated"
-        })
-    }
+  return res.status(200).json({
+    status : true,
+    message : "Service is deactivated ",
+    data : updateData_1
+  })
+}else{
+  const updateData = await services.update({
+    service_active: 1
+},{
+  where : {
+      id : service_id
+  }
+});
+return res.status(200).json({
+  status : true,
+  message : "Service is activated",
+  data : updateData
+})
+}
+    
   } catch (error) {
     return res.status(500).json({
         status :false,
