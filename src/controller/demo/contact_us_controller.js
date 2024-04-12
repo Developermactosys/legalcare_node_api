@@ -13,7 +13,7 @@ exports.contactUs = async (req, res) => {
         });
 
         if (isEmptyKey) {
-            return res.status(400).json({ error: "Please do not leave empty fields" });
+            return res.status(400).json({status:false, message: "Please do not leave empty fields" });
         }
 
         
@@ -32,8 +32,8 @@ exports.contactUs = async (req, res) => {
             });
         }
         else{
-        return res.status(400).json({
-            status: true,
+        return res.status(200).json({
+            status: false,
             message: "Contact not added",
            
         });
@@ -73,7 +73,7 @@ exports.getContactUs = async (req, res) => {
             });
         }
         else{
-        return res.status(400).json({
+        return res.status(200).json({
             status: true,
             message: "Dat not found",
            
