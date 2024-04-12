@@ -583,7 +583,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
 // Cancle Booking 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id } = req.params
+    const { booking_id ,time} = req.params
     const cancel_booking = await Booking_details.findByPk(booking_id)
     if (cancel_booking) {
 
@@ -593,11 +593,21 @@ exports.Cancle_booking_by_id = async (req, res) => {
   
       const find_service = await service.findByPk(cancel_booking.serviceId)
       const service_name = find_service.serviceName
-  
-  
       //console.log(expert)
       const user_name = user.name;
- 
+
+ const find_wallet_of_user = await wallet_system.findByPk(user.id)
+ const wallet_amounts = find_wallet_of_user.wallet_amount
+const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
+if(cancel_booking.status == "pending"){
+ // Full Amount refund within one hour 
+ const newBalance_of_user = wallet_amounts + discounted_amounts;
+ await find_wallet_of_user.update(
+   { wallet_amount: newBalance_of_user },
+   { where: { UserId: user.id } }
+ );
+
+}
       var message = {
         to: expert.device_id, // Assuming the user model has a device_id field
         notification: {
@@ -616,7 +626,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       fcm.send(message, function(err, response) {
         if (err) {
             console.error("Something went wrong!", err);
-            return res.status(400).json({ success: false, message: err.message });
+            return res.status(200).json({ success: false, message: err.message });
         } else {
             console.log("Successfully sent with response: ", response);
             // Proceed with your response
@@ -629,7 +639,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     });
 
     } else {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         message: "Booking Id not found or Booking not deleted"
       })

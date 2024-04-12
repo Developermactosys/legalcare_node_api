@@ -78,14 +78,14 @@ exports.createUser = async (req, res, next) => {
                 });
             }
         }
-        return res.status(400).json({
+        return res.status(200).json({
             status: false,
             message: "User not registered",
 
         });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ msg: error.message });
+        return res.status(500).json({status : false, message: error.message });
     }
 };
 
