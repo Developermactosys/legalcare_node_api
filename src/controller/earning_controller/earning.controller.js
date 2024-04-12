@@ -405,7 +405,7 @@ exports.get_earning_List_for_admin = async (req, res) => {
       });
 
       const expert_name = find_expert[i].name;
-
+      const exp_id = find_expert[i].id
       const find_transation_for_expert = await TransactionHistory.sum('transaction_amount', {
         where: {
           UserId: find_expert[i].id,
@@ -422,6 +422,7 @@ exports.get_earning_List_for_admin = async (req, res) => {
       });
 
       allData.push({
+        id:exp_id,
         expert_total_booking: find_expert_booking_count,
         expert_name: expert_name,
         expert_total_booking_earning: find_transation_for_expert,

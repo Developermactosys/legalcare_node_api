@@ -583,7 +583,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
 // Cancle Booking 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id ,time} = req.params
+    const { booking_id ,time,expert_id} = req.query
     const cancel_booking = await Booking_details.findByPk(booking_id)
     if (cancel_booking) {
 
@@ -598,8 +598,19 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
  const find_wallet_of_user = await wallet_system.findByPk(user.id)
  const wallet_amounts = find_wallet_of_user.wallet_amount
+
 const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
-if(cancel_booking.status == "pending"){
+
+// const calculated_time = cancel_booking.in_progress_time - time
+
+
+const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
+const currentTime = new Date();
+
+const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
+
+
+if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
  // Full Amount refund within one hour 
  const newBalance_of_user = wallet_amounts + discounted_amounts;
  await find_wallet_of_user.update(
