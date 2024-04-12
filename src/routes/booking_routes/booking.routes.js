@@ -20,7 +20,7 @@ router.post('/update_booking_status',uploads.none(),update_Booking_by_status);
 
 router.post('/update_Booking_by_payment_status',uploads.none(),update_Booking_by_payment_status);
 
-router.delete('/cancel_booking/:booking_id', Cancle_booking_by_id)
+router.post('/cancel_booking', Cancle_booking_by_id)
 
 router.get('/get_all_booking_dashbroad', getAllBookingdataForAll)
 
