@@ -329,8 +329,14 @@ const update_withdrawal_request_status= async (req, res) => {
     if (requestedAmount_1 > walletBalance) {
       return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
     }
+    if(status == "is_hold"){
+      await WithdrawalRequest.update({status : status},{where:{ id: withdrawal_request_id }})
+    }
+    if(status == "verification"){
+      await WithdrawalRequest.update({status : status}, {where : {id : withdrawal_request_id}})
+    }
 
-    if(status == "approved") {
+    if(status == "approved" || status == "realised") {
 
      // Update wallet balance
      const newBalance = walletBalance - requestedAmount_1;
