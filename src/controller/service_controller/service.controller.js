@@ -521,7 +521,7 @@ const deleteService = async (req, res) => {
 
 const update_service_for_active = async (req, res) => {
  
-  const {service_id}= req.params.service_id;
+  const {service_id,expert_id}= req.query;
   try {
 
   
