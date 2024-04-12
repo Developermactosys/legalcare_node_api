@@ -1,4 +1,4 @@
-const Sequelize = require("sequelize");
+const {Sequelize} = require("sequelize");
 const db = require("../../../config/db.config")
 const TransactionHistory = db.transaction_history;
 const User = db.User;
@@ -251,8 +251,6 @@ const admin_id = 9
     deduct_type: "Booking",
     UserId: admin_id,
     expert_id : expert_id,
-
-
   }
 });
     const total_earning = parseFloat(sum_of_expert_earning + sum_of_admin_earning )
@@ -296,6 +294,163 @@ const admin_id = 9
 };
 
 
+
+// exports.get_earning_List_for_admin = async (req, res) => {
+//   try {
+//     // const page = Number(req.query.page) || 1;
+//     // const limit = Number(req.query.limit) || 10;
+//     // const offset = (page - 1) * limit;
+//     const allData = []
+   
+//     // const getEarning = await TransactionHistory.findAll({
+//     // order: [["id", "DESC"]],
+//     // limit: limit,
+//     // offset: offset,
+//     // })
+//     // const totalCount = await TransactionHistory.count({});
+//     // const totalPages = Math.ceil(totalCount / limit);
+
+    
+//     const user_type_for_Experts = ['2','3','4']
+
+// const find_expert = await User.findAll({
+//   where : { 
+//     user_type:user_type_for_Experts, 
+//     // user_type: { [Sequelize.Op.in]: ["2", "3" , "4"] },
+//     is_verify: true
+//     },
+
+// })
+//        for(let i=0; i<find_expert.length; i++){
+//         const find_expert_booking_count = await Booking_details.count({
+//           where : { expert_id : find_expert[i].id,
+//             payment_status:"paid"
+//           },
+//         })
+
+//         // const find_expert_wallet = await wallet_system.findAll({
+//         //   where : { UserId : find_expert[i].id, }
+//         // })
+//         // const  find_expert_wallet_amount = find_expert_wallet[i].wallet_amount
+
+//         const expert_name = find_expert[i].name
+      
+//         const find_transation_for_expert = await TransactionHistory.sum('transaction_amount', {
+//         where : {  
+//            UserId : find_expert[i].id,
+//            deduct_type : "Booking"
+//           } 
+//         })
+
+//         const find_transation_for_admin = await TransactionHistory.sum('transaction_amount', {
+//           where : {  
+//              UserId : 6 , 
+//              expert_id : find_expert[i].id,
+//              deduct_type : "Booking"
+//             } 
+//           })
+        
+// allData.push({expert_total_booking:find_expert_booking_count,
+//             expert_name:expert_name,
+//             // expert_wallet_amount:find_expert_wallet_amount,
+//             expert_total_booking_earning:find_transation_for_expert,
+//             admin_total_booking_earning:find_transation_for_admin}
+//           )
+//        }  
+
+//         return res.status(200).json({
+//             status : true,
+//             // count:totalCount,
+//             message : " Get All Expert_earning",
+//             data :allData,
+
+//             // // experts:allData,
+//             // totalEarning_of_Expert:totalTransactionAmount,
+//             // currentPage: page,
+//             // totalPages: totalPages,
+//         })
+//     }
+//  catch (error) {
+//     return res.status(500).json({
+//         status : false,
+//         message : error.message
+//     })
+// }
+// }
+
+exports.get_earning_List_for_admin = async (req, res) => {
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const allData = [];
+
+    const user_type_for_Experts = ['2', '3', '4'];
+
+    const find_expert = await User.findAll({
+      where: {
+        user_type: user_type_for_Experts,
+        is_verify: true
+      },
+      offset: offset,  // Apply offset for pagination
+      limit: limit     // Apply limit for pagination
+    });
+
+    for (let i = 0; i < find_expert.length; i++) {
+      const find_expert_booking_count = await Booking_details.count({
+        where: {
+          expert_id: find_expert[i].id,
+          payment_status: "paid"
+        }
+      });
+
+      const expert_name = find_expert[i].name;
+
+      const find_transation_for_expert = await TransactionHistory.sum('transaction_amount', {
+        where: {
+          UserId: find_expert[i].id,
+          deduct_type: "Booking"
+        }
+      });
+
+      const find_transation_for_admin = await TransactionHistory.sum('transaction_amount', {
+        where: {
+          UserId: 9,
+          expert_id: find_expert[i].id,
+          deduct_type: "Booking"
+        }
+      });
+
+      allData.push({
+        expert_total_booking: find_expert_booking_count,
+        expert_name: expert_name,
+        expert_total_booking_earning: find_transation_for_expert,
+        admin_total_booking_earning: find_transation_for_admin
+      });
+    }
+
+    const totalCount = await User.count({
+      where: {
+        user_type: user_type_for_Experts,
+        is_verify: true
+      }
+    });
+    const totalPages = Math.ceil(totalCount / limit);
+
+    return res.status(200).json({
+      status: true,
+      message: "Get All Expert Earnings",
+      data: allData,
+      currentPage: page,
+      totalPages: totalPages
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message
+    });
+  }
+};
 
 
 //  exports.get_earning_by_expertType = async (req, res) => {

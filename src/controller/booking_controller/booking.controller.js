@@ -183,7 +183,7 @@ exports.Add_Booking = async (req, res) => {
     fcm.send(message, function(err, response) {
       if (err) {
         console.error("Error:", err.message);
-        return res.status(400).json({ success: false, message: "Failed to send notification" });
+        return res.status(200).json({ success: false, message: "Failed to send notification" });
       } else {
         console.log("Successfully sent with response: ", response);
         return res.status(200).json({
@@ -207,7 +207,7 @@ exports.get_booking_by_status = async (req, res) => {
       return value === "" || value === null || value === undefined;
     });
     if (isEmptykey) {
-      return res.status(400).json({ error: "please do not give empty fileds" });
+      return res.status(200).json({ error: "please do not give empty fileds" });
     }
 
     // if (status === "pending") {
@@ -649,7 +649,7 @@ exports.update_Booking_by_status = async (req, res) => {
 
   
     if (!booking_id) {
-      return res.status(400).json({ error: "please do not give empty fileds" });
+      return res.status(200).json({ error: "please do not give empty fileds" });
     }
     
     // console.log(status, discounted_amount)

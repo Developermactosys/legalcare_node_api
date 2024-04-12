@@ -51,11 +51,11 @@ module.exports = (sequelize, DataTypes) => {
       },
       admin_for_call_video_percentage :{
         type: DataTypes.FLOAT,
-        defaultValue:5,
+        defaultValue:5.0,
       },
       admin_per_booking :{
         type: DataTypes.FLOAT,
-        defaultValue:5,
+        defaultValue:5.0,
       },
       agora_token :{
         type: DataTypes.STRING,
