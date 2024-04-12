@@ -584,11 +584,9 @@ exports.get_bookings_by_user_id = async (req, res) => {
 // Cancle Booking 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id ,time,expert_id} = req.query
+    const { booking_id ,time,expert_id,status} = req.query
     const cancel_booking = await Booking_details.findByPk(booking_id)
     if (cancel_booking) {
-
-
       const  user = await User.findByPk(cancel_booking.UserId)
       const expert= await User.findByPk(cancel_booking.expert_id)
   
@@ -597,8 +595,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
       //console.log(expert)
       const user_name = user.name;
 
- const find_wallet_of_user = await wallet_system.findByPk(user.id)
- const wallet_amounts = find_wallet_of_user.wallet_amount
+      const find_wallet_of_user = await wallet_system.findByPk(cancel_booking.UserId)
+      
+ const wallet_amounts =parseFloat( find_wallet_of_user.wallet_amount)
 
 const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
 
@@ -609,7 +608,6 @@ const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
 const currentTime = new Date();
 
 const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
-
 
 if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
  // Full Amount refund within one hour 
@@ -633,7 +631,10 @@ if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
         UserId : expert.id
       });
 
-     const delete_booking = await cancel_booking.destroy(cancel_booking)
+     const status_change = await Booking_details.update(
+      { status: status },
+      { where: { id: booking_id } }
+    );
   
       fcm.send(message, function(err, response) {
         if (err) {
@@ -645,7 +646,7 @@ if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
             return res.status(200).json({
                 status: true,
                 message: "Booking is cancelled and notification sent",
-                data: delete_booking,
+                data: status_change,
             });
         }
     });
