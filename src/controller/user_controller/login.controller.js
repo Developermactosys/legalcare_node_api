@@ -13,13 +13,13 @@ const bcrypt = require("bcryptjs");
 const tokenProcess = require("../../services/genrateToken");
 
 exports.login = async (req, res) => {
-  const { phone_no, password, device_token } = req.body;
+  const { phone_no, password, device_token,login_from } = req.body;
 
   // Simple validation
-  if (!phone_no || !password || !device_token) {
+  if (!phone_no || !password || !device_token || !login_from) {
     return res.json({
       status: false,
-      message: "Please provide phone number, password, and device token.",
+      message: "Please provide phone number, password, device token and login_from.",
     });
   }
 
@@ -76,7 +76,7 @@ exports.login = async (req, res) => {
           device_id: device_token,
           refreshToken :refresh_token,
           user_status: "Online",
-          login_from: "app",
+          login_from: login_from ,
         },
         { where: { phone_no } }
       );
