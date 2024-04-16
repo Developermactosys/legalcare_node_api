@@ -27,6 +27,7 @@ const registration = async (req, res) => {
       device_id,
       device_token,
       address,
+      login_from
     } = req.body;
 
     const dateFormat = "YYYY-MM-DD"; 
