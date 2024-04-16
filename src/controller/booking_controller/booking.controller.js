@@ -598,9 +598,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
 console.log(cancel_booking.UserId)
 
       const find_wallet_of_user = await wallet_system.findByPk(cancel_booking.UserId)
-      
+      console.log(find_wallet_of_user)
  const wallet_amounts =parseFloat( find_wallet_of_user.wallet_amount)
-
+console.log(find_wallet_of_user.wallet_amount)
 const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
 
 // const calculated_time = cancel_booking.in_progress_time - time
