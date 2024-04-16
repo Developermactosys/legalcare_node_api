@@ -58,7 +58,7 @@ const emailService = async (otp, name, email, yourName,yourPosition,yourCompany)
 
   try {
     const transporter = nodemailer.createTransport({
-      host: "smtp.gmail.com",
+      host: "smtp.sendgrid.net",
       port: 587,
       secure: false,
       requireTLS: true,
