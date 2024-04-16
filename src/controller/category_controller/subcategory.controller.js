@@ -3,6 +3,8 @@ const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const subcategory = db.subcategory;     
 const category = db.category;
+const service = db.service;
+
 
 const createSubCategory = async (req, res) => {
   const { categoryId , subcategoryName, description, color, status } = req.body;
@@ -42,7 +44,12 @@ const getSubCategory = async (req, res) => {
 include:[{
   model: category,
   as: "category",
-}],
+},
+{
+  model:service,
+  as:"service"
+}
+],
 order: [["id", "DESC"]],
 limit: limit,
 offset: offset,
@@ -90,7 +97,12 @@ const getSubCategoryById = async (req, res) => {
       include:[{
         model: category,
         as: "category",
-      }]
+      },
+      {
+        model:service,
+        as:"service"
+      }
+    ]
     });
     if (!sub_category) {
       return res.status(404).json({
@@ -126,6 +138,10 @@ const getSubCategoryBy_categoryId = async (req, res) => {
       include:[{
         model: category,
         as: "category",
+      },
+      {
+        model:service,
+        as:"service"
       }]
     });
     if (!sub_category) {

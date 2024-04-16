@@ -224,26 +224,30 @@ db.User.hasMany(db.expert_review, {
     as: "User",
   });
 
-// // User and Service one to many relationship
-// db.User.hasMany(db.service, {
-//     forienKey: "UserId",
-//     as: "service",
-//   });
+// User and Service one to many relationship
+db.User.hasMany(db.service, {
+    forienKey: "UserId",
+    as: "service",
+  });
   
-//   db.service.belongsTo(db.User, {
-//     forienKey: "UserId",
-//     as: "User",
-//   });
+  db.service.belongsTo(db.User, {
+    forienKey: "UserId",
+    as: "User",
+  });
 
+// db.User.belongsToMany(db.service, { 
+//     through :db.expert_service,
+//     foreignKey:"UserId",
+//     otherKey:"serviceId",
+//      as: "service"
+//      })
+//  db.service.belongsToMany(db.User, {
+//         through :db.expert_service , 
+//         foreignKey:"serviceId",
+//         otherKey:"UserId",
+//         as :"User"
+//      })
 
-db.User.belongsToMany(db.service, { 
-    through :db.expert_service,
-     as: "service"
-     })
- db.service.belongsToMany(db.User, {
-        through :db.expert_service , 
-        as :"User"
-     })
 // User and Document one to many relationship
 db.User.hasMany(db.document, {
     forienKey : "UserId",

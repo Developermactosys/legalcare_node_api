@@ -6,6 +6,7 @@ const service = db.service;
 const User = db.User;
 const wallet_system =db.wallet_system
 const Notification = db.notification;
+const expert_service = db.expert_service
 // exports.Add_Booking = async (req, res) => {
 //   try {
 //     const { serviceId, discounted_amount, GST, user_id } = req.body;
@@ -116,7 +117,7 @@ const fcm = new FCM(serverKey);
 
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId, discounted_amount, GST, user_id ,time} = req.body;
+    const { serviceId, discounted_amount, GST, user_id ,time,expert_id} = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -154,12 +155,12 @@ exports.Add_Booking = async (req, res) => {
     add_booking.discounted_amount = discounted_amount;
     add_booking.GST = GST;
     add_booking.UserId = user_id;
-    add_booking.expert_id = find_service.UserId;
+    add_booking.expert_id = expert_id;
     add_booking.in_progress_time = time;
 
     await add_booking.save();
     
-    const expert_id = find_service.UserId
+    // const expert_id = find_service.UserId// 
 
     const user = await User.findByPk(user_id)
     const user_name =  user.name
@@ -208,7 +209,7 @@ exports.get_booking_by_status = async (req, res) => {
       return value === "" || value === null || value === undefined;
     });
     if (isEmptykey) {
-      return res.status(200).json({ error: "please do not give empty fileds" });
+      return res.status(200).json({ error: "please do not give empty fields" });
     }
 
     // if (status === "pending") {
@@ -240,6 +241,11 @@ exports.get_booking_by_status = async (req, res) => {
                 as: "User",
                 where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
               }
+              // {
+              //   model:expert_service,
+              //   as:"expert_service",
+              //   where: { id: Sequelize.col('expert_service.UserId') }
+              // }
             ]
           }
         ],

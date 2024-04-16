@@ -3,6 +3,7 @@ const db = require("../../../config/db.config");
 const Category = db.category;
 const subcategory = db.subcategory;
 const User = db.User;
+const service = db.service
 const {Sequelize,Op,contains,QueryTypes,sequelize } = require("sequelize");
 
 // API for create category
@@ -44,7 +45,12 @@ const getCategory = async (req, res) => {
       include:[{
         model: subcategory,
         as: "subcategory",
-      }],
+      },
+      {
+        model:service,
+        as:"service"
+      }
+    ],
       limit: limit,
       offset: offset,
     });
@@ -91,6 +97,10 @@ const getCategoryById = async (req, res) => {
       include:[{
         model: subcategory,
         as: "subcategory",
+      },
+      {
+        model:service,
+        as:"service"
       }],
       limit: limit,
       offset: offset,

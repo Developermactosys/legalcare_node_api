@@ -5,6 +5,7 @@ const services = db.service;
 const User = db.User;
 const wallet_system =db.wallet_system;
 const booking = db.booking_detail;
+// const expert_service = db.expert_service
 const {Sequelize,Op, where} = require('sequelize');
 // API for add Services
 const createServices = async(req, res)=>{
@@ -152,7 +153,7 @@ const getServiceById = async(req, res) => {
     } 
 }
 
-
+// Origional
 // API for get service by expert_id(user side)
 const getServiceBy_expertId = async(req, res) => {
     try {
@@ -209,6 +210,9 @@ const getServiceBy_expertId = async(req, res) => {
         })
     } 
 }
+
+
+
 
 // API for get service by expert_id(user side)
 const get_expertServiceBy_category_id = async(req, res) => {
@@ -268,7 +272,6 @@ const get_expertServiceBy_category_id = async(req, res) => {
 }
 
 // API for get sevices by expert_id for expert flow(expert side)
-
 const getAllserviceBy_expert_id = async(req, res) => {
     try {
         const { expert_id } = req.query;
@@ -560,7 +563,7 @@ const deleteService = async (req, res) => {
        await delServices.destroy(delServices)
         return res.status(200).json({
             status : true,
-            message : "Data delete statusfully"
+            message : "Data delete successfully"
         })
     }else{
         return res.status(400).json({
