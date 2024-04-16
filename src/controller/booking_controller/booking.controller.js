@@ -581,6 +581,33 @@ exports.get_bookings_by_user_id = async (req, res) => {
   }
 }
 
+// Delete Booking by id
+exports.delete_booking_by_id = async (req, res) => {
+  try {
+    const { booking_id } = req.params
+    const cancel_booking = await Booking_details.findByPk(booking_id)
+    if (cancel_booking) {
+      await cancel_booking.destroy(cancel_booking)
+      return res.status(200).json({
+        status: true,
+        message: "Booking delete Successfully"
+      })
+    } else {
+      return res.status(400).json({
+        status: false,
+        message: "Booking Id not found or Booking not deleted"
+      })
+    }
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+}
+
+
 // Cancle Booking 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {

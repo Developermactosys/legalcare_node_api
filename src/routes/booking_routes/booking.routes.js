@@ -4,7 +4,7 @@ const {uploads} = require('../../middleware/multer');
 // const { authorize } = require("../../middleware/authorization")
 
 
-const { Add_Booking, getAll_bookings, get_booking_by_status, Cancle_booking_by_id , getAll_bookingsBySearch,get_bookings_by_user_id,update_Booking_by_status,update_Booking_by_payment_status, getAllBookingdataForAll,getBooking_by_status_only} = require("../../controller/booking_controller/booking.controller");
+const { Add_Booking, getAll_bookings, get_booking_by_status, Cancle_booking_by_id , getAll_bookingsBySearch,get_bookings_by_user_id,update_Booking_by_status,update_Booking_by_payment_status, getAllBookingdataForAll,getBooking_by_status_only,delete_booking_by_id} = require("../../controller/booking_controller/booking.controller");
 
 router.post('/add_booking',uploads.none(),Add_Booking); // Done
 
@@ -19,6 +19,8 @@ router.get('/get_bookings_by_user_id',get_bookings_by_user_id);
 router.post('/update_booking_status',uploads.none(),update_Booking_by_status);
 
 router.post('/update_Booking_by_payment_status',uploads.none(),update_Booking_by_payment_status);
+
+router.delete('/delete_booking_by_id/:booking_id',delete_booking_by_id)
 
 router.post('/cancel_booking', Cancle_booking_by_id)
 
