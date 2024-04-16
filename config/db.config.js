@@ -54,13 +54,14 @@ db.chat_log = require("../src/models/chat_model/chat_log.model")(sequelize,DataT
 db.document =require("../src/models/document_model/document.model")(sequelize,DataTypes)
 db.video = require("../src/models/video_model/video.model")(sequelize, DataTypes)
 db.follower_count = require("../src/models/followers_model/follower.model")(sequelize, DataTypes);
-db.expertservices = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
+// db.expertservices = require('../src/models/expert_services_model/expert_services_model')(sequelize, DataTypes)
 db.theme_setting = require("../src/models/setting_model/theme_setting.model")(sequelize, DataTypes);
 db.footer_section = require("../src/models/setting_model/footer_section.model")(sequelize, DataTypes);
 db.landing_user = require("../src/models/demo/demo_landing.model")(sequelize ,DataTypes)
 db.withdrawal_request = require("../src/models/wallet_model/withdrawal_request.model")(sequelize, DataTypes)
 db.admin_setting = require("../src/models/setting_model/admin_setting.model")(sequelize ,DataTypes);
 db.contact_us = require("../src/models/demo/contact_us_model")(sequelize,DataTypes)
+db.expert_service = require("../src/models/expert_services_model/through_expert_service.model")(sequelize,DataTypes)
 //------Associations of tables--------//
 
 //User has One to Many relation with chat_history
@@ -223,17 +224,26 @@ db.User.hasMany(db.expert_review, {
     as: "User",
   });
 
-// User and Service one to many relationship
-db.User.hasMany(db.service, {
-    forienKey: "UserId",
-    as: "service",
-  });
+// // User and Service one to many relationship
+// db.User.hasMany(db.service, {
+//     forienKey: "UserId",
+//     as: "service",
+//   });
   
-  db.service.belongsTo(db.User, {
-    forienKey: "UserId",
-    as: "User",
-  });
+//   db.service.belongsTo(db.User, {
+//     forienKey: "UserId",
+//     as: "User",
+//   });
 
+
+db.User.belongsToMany(db.service, { 
+    through :db.expert_service,
+     as: "service"
+     })
+ db.service.belongsToMany(db.User, {
+        through :db.expert_service , 
+        as :"User"
+     })
 // User and Document one to many relationship
 db.User.hasMany(db.document, {
     forienKey : "UserId",
@@ -307,45 +317,45 @@ db.follower_count.belongsTo(db.User, {
 
 // <----------Assosiations of expertservices ----------->
 
-//User has One to Many relation with expert service table
-db.User.hasMany(db.expertservices, {
-    forienKey : "UserId",
-    as : "expertservices"
-})
-db.expertservices.belongsTo(db.User, {
-    forienKey : "UserId",
-    as : "User" 
-})
+// //User has One to Many relation with expert service table
+// db.User.hasMany(db.expertservices, {
+//     forienKey : "UserId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.User, {
+//     forienKey : "UserId",
+//     as : "User" 
+// })
 
-//Service has One to Many relation with expert service table
-db.service.hasMany(db.expertservices, {
-    forienKey : "serviceId",
-    as : "expertservices"
-})
-db.expertservices.belongsTo(db.service, {
-    forienKey : "serviceId",
-    as : "service" 
-})
+// //Service has One to Many relation with expert service table
+// db.service.hasMany(db.expertservices, {
+//     forienKey : "serviceId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.service, {
+//     forienKey : "serviceId",
+//     as : "service" 
+// })
 
-//category has One to Many relation with expert service table
-db.category.hasMany(db.expertservices, {
-    forienKey : "categoryId",
-    as : "expertservices"
-})
-db.expertservices.belongsTo(db.category, {
-    forienKey : "categoryId",
-    as : "category" 
-})
+// //category has One to Many relation with expert service table
+// db.category.hasMany(db.expertservices, {
+//     forienKey : "categoryId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.category, {
+//     forienKey : "categoryId",
+//     as : "category" 
+// })
 
-//subcategory has One to Many relation with expert service table
-db.subcategory.hasMany(db.expertservices, {
-    forienKey : "subcategoryId",
-    as : "expertservices"
-})
-db.expertservices.belongsTo(db.subcategory, {
-    forienKey : "subcategoryId",
-    as : "subcategory" 
-})
+// //subcategory has One to Many relation with expert service table
+// db.subcategory.hasMany(db.expertservices, {
+//     forienKey : "subcategoryId",
+//     as : "expertservices"
+// })
+// db.expertservices.belongsTo(db.subcategory, {
+//     forienKey : "subcategoryId",
+//     as : "subcategory" 
+// })
 
 // //booking has One to Many relation with expert service table
 // db.expertservices.hasMany(db.booking_detail,{
