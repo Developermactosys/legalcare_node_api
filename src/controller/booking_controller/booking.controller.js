@@ -594,6 +594,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
       const service_name = find_service.serviceName
       //console.log(expert)
       const user_name = user.name;
+      
+console.log(cancel_booking.UserId)
 
       const find_wallet_of_user = await wallet_system.findByPk(cancel_booking.UserId)
       
