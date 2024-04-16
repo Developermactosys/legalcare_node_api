@@ -210,6 +210,63 @@ const getServiceBy_expertId = async(req, res) => {
     } 
 }
 
+// API for get service by expert_id(user side)
+const get_expertServiceBy_category_id = async(req, res) => {
+  try {
+      const { category_id  } = req.query;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 5;
+      const offset = (page - 1) * limit;
+
+      const getServices = await services.findAll({where :{
+          categoryId :category_id ,
+          // service_type :service_type,
+      },
+      include: [
+          {
+              model: User,
+              as: "User",
+              attributes:['id','user_type','name','profile_image']
+
+          },
+          {
+              model: category,
+              as: "category",
+          },
+          {
+              model: subCategory,
+              as: "subcategory",
+          }
+      ],
+       limit: limit,
+       offset: offset,
+  })
+  const totalCount = await services.count({});
+  const totalPages = Math.ceil(totalCount / limit);
+
+      if(getServices){
+          return res.status(200).json({
+              status : true,
+              // message : `Showing ${service_type} by expert_id`,
+              data : getServices,
+              totalServices: totalCount,
+              currentPage: page,
+              totalPages:totalPages,
+          })
+      }else{
+          return res.status(404).json({
+              status : false,
+              message : "expert_id is not found"
+          })
+      }
+  } catch (error) {
+      return res.status(500).json({
+          status : false,
+          message : error.message
+      })
+  } 
+}
+
 // API for get sevices by expert_id for expert flow(expert side)
 
 const getAllserviceBy_expert_id = async(req, res) => {
@@ -582,5 +639,6 @@ module.exports = {
     getAllserviceBy_expert_id,
     updateService,
     deleteServiceforAdmin,
-    update_service_for_active
+    update_service_for_active,
+    get_expertServiceBy_category_id
 }
