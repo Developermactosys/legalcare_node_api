@@ -690,7 +690,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     return res.status(200).json({ 
       status : true ,
-       message : "Payment Status Updated Successfully",
+       message : "Booking is cancelled",
        data:status_change
       })
 
