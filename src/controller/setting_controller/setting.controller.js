@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../../../config/db.config")
 const theme = db.theme_setting
 const foo = db.footer_section
@@ -181,15 +182,37 @@ exports.settingForAdmin = async(req, res)=>{
     const { user_name, password, api_key, payment_merchant_key,map_key, CA_api_user_id, agora_token,agora_merchant,admin_per_booking,admin_for_call_video_percentage,cancelation_charges, CA_percentage} = req.body;
     try {
         const hashedPassword = await bcrypt.hashSync(password, 10)
-        const data = await setting.create({
-            user_name,password:hashedPassword,
-            api_key,payment_merchant_key, map_key, CA_api_user_id,cancelation_charges,CA_percentage,agora_token,agora_merchant,admin_per_booking,admin_for_call_video_percentage
-        })
+        // const data = await setting.create({
+        //     user_name,password:hashedPassword,
+        //     api_key,payment_merchant_key, map_key, CA_api_user_id,cancelation_charges,CA_percentage,agora_token,agora_merchant,admin_per_booking,admin_for_call_video_percentage
+        // })
+
+const update_setting = await setting.update(
+   { 
+    user_name:user_name,
+    password:hashedPassword,
+    api_key:api_key,
+    payment_merchant_key:payment_merchant_key, 
+    map_key:map_key, 
+    CA_api_user_id:CA_api_user_id,
+    cancelation_charges:cancelation_charges,
+    CA_percentage:CA_percentage,
+    agora_token:agora_token,
+    agora_merchant:agora_merchant,
+    admin_per_booking:admin_per_booking,
+    admin_for_call_video_percentage:admin_for_call_video_percentage,
+},
+{
+    where : {id : 12}
+},
+
+)
+
         if(data){
             return res.status(200).json({
                 status : true,
-                message : "setting add successfully",
-                data: data
+                message : "Setting Details updated successfully",
+                data: update_setting
             })
         }else{
             return res.status(400).json({
