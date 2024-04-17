@@ -224,16 +224,16 @@ db.User.hasMany(db.expert_review, {
     as: "User",
   });
 
-// User and Service one to many relationship
-db.User.hasMany(db.service, {
-    forienKey: "UserId",
-    as: "service",
-  });
+// // User and Service one to many relationship
+// db.User.hasMany(db.service, {
+//     forienKey: "UserId",
+//     as: "service",
+//   });
   
-  db.service.belongsTo(db.User, {
-    forienKey: "UserId",
-    as: "User",
-  });
+//   db.service.belongsTo(db.User, {
+//     forienKey: "UserId",
+//     as: "User",
+//   });
 
 // db.User.belongsToMany(db.service, { 
 //     through :db.expert_service,
@@ -321,25 +321,25 @@ db.follower_count.belongsTo(db.User, {
 
 // <----------Assosiations of expertservices ----------->
 
-// //User has One to Many relation with expert service table
-// db.User.hasMany(db.expertservices, {
-//     forienKey : "UserId",
-//     as : "expertservices"
-// })
-// db.expertservices.belongsTo(db.User, {
-//     forienKey : "UserId",
-//     as : "User" 
-// })
+//User has One to Many relation with expert service table
+db.User.hasMany(db.expert_service, {
+    forienKey : "UserId",
+    as : "expert_service"
+})
+db.expert_service.belongsTo(db.User, {
+    forienKey : "UserId",
+    as : "User" 
+})
 
-// //Service has One to Many relation with expert service table
-// db.service.hasMany(db.expertservices, {
-//     forienKey : "serviceId",
-//     as : "expertservices"
-// })
-// db.expertservices.belongsTo(db.service, {
-//     forienKey : "serviceId",
-//     as : "service" 
-// })
+//Service has One to Many relation with expert service table
+db.service.hasMany(db.expert_service, {
+    forienKey : "serviceId",
+    as : "expert_service"
+})
+db.expert_service.belongsTo(db.service, {
+    forienKey : "serviceId",
+    as : "service" 
+})
 
 // //category has One to Many relation with expert service table
 // db.category.hasMany(db.expertservices, {

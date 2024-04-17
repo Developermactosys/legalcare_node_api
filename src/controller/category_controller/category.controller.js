@@ -130,7 +130,6 @@ const getCategoryById = async (req, res) => {
 };
 
 
-
 // API for get all Categories
 // const getCategory = async (req, res) => {
 //   try {

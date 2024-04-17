@@ -16,6 +16,7 @@ router.patch('/update_service/:id', uploads.single('service_img'),updateService)
 router.delete('/del_service_by_id/:serviceId/:expert_id', deleteService)
 
 router.delete('/delete_service_by_id/:serviceId',deleteServiceforAdmin)
+
 router.get("/get_service_by_expert_id",getServiceBy_expertId);
 
 router.get("/get_expert_service_by_category_id",get_expertServiceBy_category_id)

@@ -5,6 +5,7 @@ const services = db.service;
 const User = db.User;
 const wallet_system =db.wallet_system;
 const booking = db.booking_detail;
+const expert_service = db.expert_service
 // const expert_service = db.expert_service
 const {Sequelize,Op, where} = require('sequelize');
 // API for add Services
@@ -77,10 +78,16 @@ const getALlService = async(req, res) =>{
                 as:"subcategory",
             },
             {
-                model:User,
-                as:"User",
-                // attributes:['id','user_type','name','profile_image']
-            }
+              model: expert_service,
+              as: "expert_service",
+              include: [
+                  {
+                      model: User,
+                      as: "User",
+                      // attributes: ['id', 'user_type', 'name', 'profile_image'],
+                  }
+              ],
+          },
         ],
         order: [["id", "DESC"]],
         limit: limit,
@@ -113,104 +120,238 @@ const getALlService = async(req, res) =>{
     }
 }
 
-// API for get service by Id
-const getServiceById = async(req, res) => {
-    const { serviceId } = req.query;
-    try {
-        const getServices = await services.findByPk(serviceId, {
-            include:[
-                {
-                    model: User,
-                    as: "User",
-                    attributes:['id','user_type','name','profile_image']
-                },
-                {
-                model: category,
-                as: "category",
+
+// Originoal
+// // API for get service by Id
+// const getServiceById = async(req, res) => {
+//     const { serviceId } = req.query;
+//     try {
+//         const getServices = await services.findByPk(serviceId, {
+//             include:[
+//                 // {
+//                 //     model: User,
+//                 //     as: "User",
+//                 //     attributes:['id','user_type','name','profile_image']
+//                 // },
+//                 {
+//                   model: expert_service,
+//                   as: "expert_service",
+//                   include: [
+//                     {
+//                       model: User,
+//                       as: "User",
+//                       where: { id: Sequelize.col('expert_service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+//                     }]
+//                 },
+//                 {
+//                 model: category,
+//                 as: "category",
+//               },
+//             {
+//                 model:subCategory,
+//                 as:"subcategory",
+//             }]
+//         })
+//         if(getServices){
+//             return res.status(200).json({
+//                 status : true,
+//                 message : "Show service by Id",
+//                 data : getServices
+//             })
+//         }else{
+//             return res.status(404).json({
+//                 status : false,
+//                 message : "service Id is not found"
+//             })
+//         }
+//     } catch (error) {
+//         return res.status(500).json({
+//             status : false,
+//             message : error.message
+//         })
+//     } 
+// }
+
+
+
+const getServiceById = async (req, res) => {
+  const { serviceId } = req.query;
+  try {
+      const service = await services.findByPk(serviceId, {
+          include: [
+              {
+                  model: expert_service,
+                  as: "expert_service",
+                  include: [
+                      {
+                          model: User,
+                          as: "User",
+                          // attributes: ['id', 'user_type', 'name', 'profile_image'],
+                      }
+                  ],
               },
-            {
-                model:subCategory,
-                as:"subcategory",
-            }]
-        })
-        if(getServices){
-            return res.status(200).json({
-                status : true,
-                message : "Show service by Id",
-                data : getServices
-            })
-        }else{
-            return res.status(404).json({
-                status : false,
-                message : "service Id is not found"
-            })
-        }
-    } catch (error) {
-        return res.status(500).json({
-            status : false,
-            message : error.message
-        })
-    } 
-}
+              {
+                  model: category,
+                  as: "category",
+              },
+              {
+                  model: subCategory,
+                  as: "subcategory",
+              },
+          ],
+      });
+
+      if (!service) {
+          return res.status(404).json({
+              status: false,
+              message: "Service Id not found",
+          });
+      }
+
+      // Extract and format expert_service data into an array of user details
+      // const expertUsersArray = service.expert_service.map(expertService => ({
+      //     id: expertService.User.id,
+      //     user_type: expertService.User.user_type,
+      //     name: expertService.User.name,
+      //     profile_image: expertService.User.profile_image,
+      // }));
+
+      return res.status(200).json({
+          status: true,
+          message: "Service found by Id",
+          data: {
+              ...service.toJSON(), // Include other service details
+              // expert_service: expertUsersArray, // Replace expert_service with the formatted array of user details
+          },
+      });
+  } catch (error) {
+      return res.status(500).json({
+          status: false,
+          message: error.message,
+      });
+  }
+};
+
 
 // Origional
-// API for get service by expert_id(user side)
+// // API for get service by expert_id(user side)
+// const getServiceBy_expertId = async(req, res) => {
+//     try {
+//         const { expert_id ,service_type} = req.query;
+//         const page = Number(req.query.page) || 1;
+//         const limit = Number(req.query.limit) || 5;
+//         const offset = (page - 1) * limit;
+
+//         const getServices = await services.findAll({where :{
+//             UserId:expert_id,
+//             service_type :service_type,
+//         },
+//         include: [
+//             {
+//                 model: User,
+//                 as: "User",
+//                 attributes:['id','user_type','name','profile_image']
+
+//             },
+//             {
+//                 model: category,
+//                 as: "category",
+//             },
+//             {
+//                 model: subCategory,
+//                 as: "subcategory",
+//             }
+//         ],
+//          limit: limit,
+//          offset: offset,
+//     })
+//     const totalCount = await services.count({});
+//     const totalPages = Math.ceil(totalCount / limit);
+
+//         if(getServices){
+//             return res.status(200).json({
+//                 status : true,
+//                 message : `Showing ${service_type} by expert_id`,
+//                 data : getServices,
+//                 totalServices: totalCount,
+//                 currentPage: page,
+//                 totalPages:totalPages,
+//             })
+//         }else{
+//             return res.status(404).json({
+//                 status : false,
+//                 message : "expert_id is not found"
+//             })
+//         }
+//     } catch (error) {
+//         return res.status(500).json({
+//             status : false,
+//             message : error.message
+//         })
+//     } 
+// }
+
+
 const getServiceBy_expertId = async(req, res) => {
-    try {
-        const { expert_id ,service_type} = req.query;
-        const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 5;
-        const offset = (page - 1) * limit;
+  try {
+      const { expert_id ,service_type} = req.query;
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 5;
+      const offset = (page - 1) * limit;
 
-        const getServices = await services.findAll({where :{
-            UserId:expert_id,
-            service_type :service_type,
-        },
-        include: [
-            {
-                model: User,
-                as: "User",
-                attributes:['id','user_type','name','profile_image']
+      const getServices = await expert_service.findAll({where :{
+          UserId:expert_id,
+          service_type :service_type,
+      },
+      include: [
+        {
+          model: services,
+          as: "service",
+      },  
+        {
+              model: User,
+              as: "User",
+              // attributes:['id','user_type','name','profile_image']
 
-            },
-            {
-                model: category,
-                as: "category",
-            },
-            {
-                model: subCategory,
-                as: "subcategory",
-            }
-        ],
-         limit: limit,
-         offset: offset,
-    })
-    const totalCount = await services.count({});
-    const totalPages = Math.ceil(totalCount / limit);
+          },
+         
+          // {
+          //     model: category,
+          //     as: "category",
+          // },
+          // {
+          //     model: subCategory,
+          //     as: "subcategory",
+          // }
+      ],
+       limit: limit,
+       offset: offset,
+  })
+  const totalCount = await services.count({});
+  const totalPages = Math.ceil(totalCount / limit);
 
-        if(getServices){
-            return res.status(200).json({
-                status : true,
-                message : `Showing ${service_type} by expert_id`,
-                data : getServices,
-                totalServices: totalCount,
-                currentPage: page,
-                totalPages:totalPages,
-            })
-        }else{
-            return res.status(404).json({
-                status : false,
-                message : "expert_id is not found"
-            })
-        }
-    } catch (error) {
-        return res.status(500).json({
-            status : false,
-            message : error.message
-        })
-    } 
+      if(getServices){
+          return res.status(200).json({
+              status : true,
+              message : `Showing ${service_type} by expert_id`,
+              data : getServices,
+              totalServices: totalCount,
+              currentPage: page,
+              totalPages:totalPages,
+          })
+      }else{
+          return res.status(404).json({
+              status : false,
+              message : "expert_id is not found"
+          })
+      }
+  } catch (error) {
+      return res.status(500).json({
+          status : false,
+          message : error.message
+      })
+  } 
 }
-
 
 
 
@@ -279,23 +420,30 @@ const getAllserviceBy_expert_id = async(req, res) => {
         const limit = Number(req.query.limit) || 10;
         const offset = (page - 1) * limit;
 
-        const getServices = await services.findAll({where :{
+        const getServices = await expert_service.findAll({where :{
             UserId:expert_id,
         },
         include:[
+           
             {
-                model: User,
-                as: "User",
-                attributes:['id','user_type','name','profile_image']
+              model: services,
+              as: "service",
             },
             {
-            model: category,
-            as: "category",
+              model: User,
+              as: "User",
+              // attributes:['id','user_type','name','profile_image']
           },
-        {
-            model:subCategory,
-            as:"subcategory",
-        }],
+
+        //     {
+        //     model: category,
+        //     as: "category",
+        //   },
+        // {
+        //     model:subCategory,
+        //     as:"subcategory",
+        // }
+      ],
          limit: limit,
          offset: offset,
     })
@@ -312,7 +460,7 @@ const getAllserviceBy_expert_id = async(req, res) => {
                 totalPages:totalPages,
             })
         }else{
-            return res.status(404).json({
+            return res.status(200).json({
                 status : false,
                 message : "expert_id is not found"
             })
@@ -580,7 +728,6 @@ const deleteService = async (req, res) => {
 }
 
 const update_service_for_active = async (req, res) => {
- 
   const {service_id,expert_id}= req.query;
   try {
 
