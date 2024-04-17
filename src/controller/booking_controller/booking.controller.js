@@ -743,15 +743,14 @@ if(cancel_booking.status == "pending" && payment_status_of_booking== "paid" ){
  );
 }
 
-if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
-  // Full Amount refund within 24 hour 
-  const newBalance_of_user = wallet_amounts + discounted_amounts;
-  await wallet_system.update(
-    { wallet_amount: newBalance_of_user },
-    { where: { UserId: cancel_booking.UserId  } }
-  );
-  
- }
+// if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
+//   // Full Amount refund within 24 hour 
+//   const newBalance_of_user = wallet_amounts + discounted_amounts;
+//   await wallet_system.update(
+//     { wallet_amount: newBalance_of_user },
+//     { where: { UserId: cancel_booking.UserId  } }
+//   );
+//  }
  
       var message = {
         to: expert.device_id, // Assuming the user model has a device_id field
