@@ -361,15 +361,15 @@ db.expert_service.belongsTo(db.service, {
 //     as : "subcategory" 
 // })
 
-// //booking has One to Many relation with expert service table
-// db.expertservices.hasMany(db.booking_detail,{
-//     forienKey : "expertserviceId",
-//     as : "booking_detail" 
-// })
-// db.booking_detail.belongsTo(db.expertservices,{
-//     forienKey : "expertserviceId",
-//     as : "expertservices" 
-// })
+//booking has One to Many relation with expert service table
+db.expert_service.hasMany(db.booking_detail,{
+    forienKey : "expertserviceId",
+    as : "booking_detail" 
+})
+db.booking_detail.belongsTo(db.expert_service,{
+    forienKey : "expertserviceId",
+    as : "expert_service" 
+})
 
 //User has One to Many relation with withdrawal_request table
 db.User.hasMany(db.withdrawal_request, {

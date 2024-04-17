@@ -149,6 +149,9 @@ exports.Add_Booking = async (req, res) => {
     const find_service = await service.findByPk(serviceId)
     const service_name = find_service.serviceName
 
+    const find_expert_service_id = await expert_service.findOne({
+      where : { serviceId :serviceId ,UserId : expert_id}
+    })
     
     add_booking.booking_id = bookingID
     add_booking.serviceId = serviceId;
@@ -157,6 +160,8 @@ exports.Add_Booking = async (req, res) => {
     add_booking.UserId = user_id;
     add_booking.expert_id = expert_id;
     add_booking.in_progress_time = time;
+
+    add_booking.expertServiceId = find_expert_service_id.id;
 
     await add_booking.save();
     
@@ -233,19 +238,18 @@ exports.get_booking_by_status = async (req, res) => {
             where: { id: Sequelize.col('booking_detail.UserId') }
           },
           {
-            model: service,
-            as: "service",
+            model: expert_service,
+            as: "expert_service",
             include: [
               {
                 model: User,
                 as: "User",
-                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+              },
+              {
+                model: service,
+                as: "service",
+                // where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
               }
-              // {
-              //   model:expert_service,
-              //   as:"expert_service",
-              //   where: { id: Sequelize.col('expert_service.UserId') }
-              // }
             ]
           }
         ],
@@ -257,7 +261,7 @@ exports.get_booking_by_status = async (req, res) => {
         message: "pending bookings",
         data: pending_booking,
       });
-    // }
+  
 
     // if (status === "reject") {
     //   const rejected_booking = await Booking_details.findAll({
@@ -375,14 +379,28 @@ exports.getBooking_by_status_only = async (req, res) => {
           as: "User",
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
+        // {
+        //   model: service, // Assuming `Service` is the correct model name
+        //   as: "service",
+        //   include: [
+        //     {
+        //       model: User,
+        //       as: "User",
+        //       where: { id: Sequelize.col('service.UserId') }
+        //     }
+        //   ]
+        // }
         {
-          model: service, // Assuming `Service` is the correct model name
-          as: "service",
+          model: expert_service,
+          as: "expert_service",
           include: [
             {
               model: User,
               as: "User",
-              where: { id: Sequelize.col('service.UserId') }
+            },
+            {
+              model: service,
+              as: "service",
             }
           ]
         }
@@ -460,16 +478,31 @@ exports.getAll_bookings = async (req, res) => {
           attributes: ['id','name', 'user_type', 'phone_no'],
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
+        // {
+        //   model: service,
+        //   as: "service",
+        //   attributes:['serviceName','service_cost','UserId','categoryId','status'],
+        //   include: [
+        //     {
+        //       model: User,
+        //       as: "User",
+        //       attributes: ['id','name', 'user_type', 'phone_no'],
+        //       where: { id: Sequelize.col('service.UserId') } 
+        //     }
+        //   ]
+        // }
         {
-          model: service,
-          as: "service",
-          attributes:['serviceName','service_cost','UserId','categoryId','status'],
+          model: expert_service,
+          as: "expert_service",
           include: [
             {
-              model: User,
-              as: "User",
-              attributes: ['id','name', 'user_type', 'phone_no'],
-              where: { id: Sequelize.col('service.UserId') } 
+              model:User,
+              as:"User"
+            },
+            {
+              model: service,
+              as: "service",
+              // attributes:['serviceName','service_cost','UserId','categoryId','status'],
             }
           ]
         }
@@ -527,14 +560,28 @@ exports.get_bookings_by_user_id = async (req, res) => {
           where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
         },
       
+        // {
+        //   model: service,
+        //   as: "service",
+        //   include: [
+        //     {
+        //       model: User,
+        //       as: "User",
+        //       where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+        //     }
+        //   ]
+        // }
         {
-          model: service,
-          as: "service",
+          model: expert_service,
+          as: "expert_service",
           include: [
             {
               model: User,
               as: "User",
-              where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+            },
+            {
+              model: service,
+              as: "service",
             }
           ]
         }
@@ -553,14 +600,28 @@ exports.get_bookings_by_user_id = async (req, res) => {
             where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
           },
         
+          // {
+          //   model: service,
+          //   as: "service",
+          //   include: [
+          //     {
+          //       model: User,
+          //       as: "User",
+          //       where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+          //     }
+          //   ]
+          // }
           {
-            model: service,
-            as: "service",
+            model: expert_service,
+            as: "expert_service",
             include: [
               {
                 model: User,
                 as: "User",
-                where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+              },
+              {
+                model: service,
+                as: "service",
               }
             ]
           }
@@ -812,7 +873,6 @@ if(status=="completed"){
 };
 
 
-
 exports.update_Booking_by_payment_status = async (req, res) => {
   try {
     const { payment_status ,booking_id ,time} = req.body;
@@ -926,21 +986,33 @@ exports.getAllBookingdataForAll = async(req, res) => {
           {
             model: User,
             as: "User",
-            
             where: { id: Sequelize.col('booking_detail.UserId') },
             attributes : ['id', 'name', 'phone_no', 'user_type'],
           },
+          // {
+          //   model: service,
+          //   as: "service",
+          //   attributes : ['id', 'serviceName','UserId'],
+          //   include: [
+          //     {
+          //       model: User,
+          //       as: "User",
+          //       where: { id: Sequelize.col('service.UserId') },
+          //       attributes : ['id', 'name', 'phone_no', 'user_type'], // Here, we specify the association between the User model and the service model using the UserId from the service object
+          //     }
+          //   ]
+          // }
           {
-            model: service,
-            as: "service",
-            attributes : ['id', 'serviceName','UserId'],
+            model: expert_service,
+            as: "expert_service",
             include: [
               {
                 model: User,
                 as: "User",
-               
-                where: { id: Sequelize.col('service.UserId') },
-                attributes : ['id', 'name', 'phone_no', 'user_type'], // Here, we specify the association between the User model and the service model using the UserId from the service object
+              },
+              {
+                model: service,
+                as: "service",
               }
             ]
           }
@@ -1010,18 +1082,32 @@ exports.getAll_bookingsBySearch = async (req, res) => {
         as: "User",
         attributes: ["id", "name", "user_type", "phone_no"],
       },
+      // {
+      //   model: service,
+      //   as: "service",
+      //   attributes: ["id", "serviceName"],
+      //   include: [
+      //     {
+      //       model: User,
+      //       as: "User",
+      //       attributes: ["id", "name", "user_type", "phone_no"],
+      //     },
+      //   ],
+      // },
       {
-        model: service,
-        as: "service",
-        attributes: ["id", "serviceName"],
+        model: expert_service,
+        as: "expert_service",
         include: [
           {
             model: User,
             as: "User",
-            attributes: ["id", "name", "user_type", "phone_no"],
           },
-        ],
-      },
+          {
+            model: service,
+            as: "service",
+          }
+        ]
+      }
     ],
     attributes: ["id", "expert_id", "status", "payment_status", "createdAt"],
     order: [["createdAt", "DESC"]],
