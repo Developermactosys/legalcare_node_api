@@ -696,6 +696,13 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
    }
 
+   if(cancel_booking.status == "approved" && timeDifferenceMinutes > 1440){
+    return res.status(200).json({ 
+      status : true ,
+       message : "Booking can not be cancelled , Please read cancellation policy",
+      })
+   }
+
     if (cancel_booking) {
       const  user = await User.findByPk(cancel_booking.UserId)
       const expert= await User.findByPk(cancel_booking.expert_id)
@@ -741,7 +748,9 @@ if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
     { wallet_amount: newBalance_of_user },
     { where: { UserId: user.id } }
   );
+  
  }
+ 
       var message = {
         to: expert.device_id, // Assuming the user model has a device_id field
         notification: {
