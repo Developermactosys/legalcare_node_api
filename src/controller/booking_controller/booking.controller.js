@@ -696,6 +696,10 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
    }
 
+   const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
+const currentTime = new Date();
+   const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
+
    if(cancel_booking.status == "approved" && timeDifferenceMinutes > 1440){
     return res.status(200).json({ 
       status : true ,
@@ -727,12 +731,10 @@ const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
 // const calculated_time = cancel_booking.in_progress_time - time
 
 
-const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
-const currentTime = new Date();
 
-const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
 
-if(cancel_booking.status == "pending" ){
+
+if(cancel_booking.status == "pending" && payment_status_of_booking== "paid" ){
  // Full Amount refund within one hour 
  const newBalance_of_user = wallet_amounts + discounted_amounts;
  await find_wallet_of_user.update(
