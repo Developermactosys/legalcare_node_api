@@ -737,7 +737,7 @@ const discounted_amounts = parseFloat(cancel_booking.discounted_amount)
 if(cancel_booking.status == "pending" && payment_status_of_booking== "paid" ){
  // Full Amount refund within one hour 
  const newBalance_of_user = wallet_amounts + discounted_amounts;
- await find_wallet_of_user.update(
+ await wallet_system.update(
    { wallet_amount: newBalance_of_user },
    { where: { UserId: cancel_booking.UserId } }
  );
@@ -746,7 +746,7 @@ if(cancel_booking.status == "pending" && payment_status_of_booking== "paid" ){
 if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
   // Full Amount refund within 24 hour 
   const newBalance_of_user = wallet_amounts + discounted_amounts;
-  await find_wallet_of_user.update(
+  await wallet_system.update(
     { wallet_amount: newBalance_of_user },
     { where: { UserId: cancel_booking.UserId  } }
   );
