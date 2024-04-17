@@ -13,6 +13,14 @@ const createServices = async(req, res)=>{
     const { categoryId, subCategoryId,serviceName, expert_id ,service_type ,expert_fees, service_cost,type_of_service} = req.body;
     // const { serviceName } = req.body
     try {
+
+      const find_service_name = await services.findOne({
+        where:{ serviceName : serviceName}
+      })
+      if(find_service_name){
+        return res.status(200).json({status:false , message : "Service name is Already exist "})
+      }
+      
         const findCategory = await category.findByPk(categoryId)
         
         const findSubCategory = await subCategory.findByPk(subCategoryId)

@@ -9,6 +9,14 @@ const service = db.service;
 const createSubCategory = async (req, res) => {
   const { categoryId , subcategoryName, description, color, status } = req.body;
   try {
+
+    const find_subcategory_name = await subcategory.findOne({
+      where:{ subcategoryName : subcategoryName}
+    })
+    if(find_subcategory_name){
+      return res.status(200).json({status:false , message : "SubCategory name is Already exist "})
+    }
+
     const filePath = req.file
       ? `subcategory_img/${req.file.filename}`
       : "/src/uploads/subcategory_img/default.png";

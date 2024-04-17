@@ -10,6 +10,13 @@ const {Sequelize,Op,contains,QueryTypes,sequelize } = require("sequelize");
 const createCategory = async (req, res) => {
   const { id, category_name, description, color, status } = req.body;
   try {
+
+const find_category_name = await Category.findOne({
+  where:{ category_name : category_name}
+})
+if(find_category_name){
+  return res.status(200).json({status:false , message : "Category name is Already exist "})
+}
     const filePath = req.file
       ? `category_img/${req.file.filename}`
       : "/src/uploads/category_img/default.png";

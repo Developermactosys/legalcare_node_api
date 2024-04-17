@@ -716,8 +716,16 @@ if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
    { wallet_amount: newBalance_of_user },
    { where: { UserId: user.id } }
  );
-
 }
+
+if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
+  // Full Amount refund within 24 hour 
+  const newBalance_of_user = wallet_amounts + discounted_amounts;
+  await find_wallet_of_user.update(
+    { wallet_amount: newBalance_of_user },
+    { where: { UserId: user.id } }
+  );
+ }
       var message = {
         to: expert.device_id, // Assuming the user model has a device_id field
         notification: {
