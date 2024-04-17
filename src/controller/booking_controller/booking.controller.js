@@ -739,7 +739,7 @@ if(cancel_booking.status == "pending" && payment_status_of_booking== "paid" ){
  const newBalance_of_user = wallet_amounts + discounted_amounts;
  await find_wallet_of_user.update(
    { wallet_amount: newBalance_of_user },
-   { where: { UserId: user.id } }
+   { where: { UserId: cancel_booking.UserId } }
  );
 }
 
@@ -748,7 +748,7 @@ if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
   const newBalance_of_user = wallet_amounts + discounted_amounts;
   await find_wallet_of_user.update(
     { wallet_amount: newBalance_of_user },
-    { where: { UserId: user.id } }
+    { where: { UserId: cancel_booking.UserId  } }
   );
   
  }
