@@ -709,7 +709,7 @@ const currentTime = new Date();
 
 const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
 
-if(cancel_booking.status == "pending" && timeDifferenceMinutes < 60){
+if(cancel_booking.status == "pending" ){
  // Full Amount refund within one hour 
  const newBalance_of_user = wallet_amounts + discounted_amounts;
  await find_wallet_of_user.update(
