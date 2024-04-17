@@ -680,6 +680,22 @@ exports.Cancle_booking_by_id = async (req, res) => {
   try {
     const { booking_id ,time,expert_id,status} = req.query
     const cancel_booking = await Booking_details.findByPk(booking_id)
+    const payment_status_of_booking = cancel_booking.payment_status
+
+   if(payment_status_of_booking == "unpaid"){
+    const status_change = await Booking_details.update(
+      { status: status },
+      { where: { id: booking_id } }
+    );
+
+    return res.status(200).json({ 
+      status : true ,
+       message : "Payment Status Updated Successfully",
+       data:status_change
+      })
+
+   }
+
     if (cancel_booking) {
       const  user = await User.findByPk(cancel_booking.UserId)
       const expert= await User.findByPk(cancel_booking.expert_id)
@@ -739,10 +755,7 @@ if(cancel_booking.status == "approved" && timeDifferenceMinutes < 1440){
         UserId : expert.id
       });
 
-     const status_change = await Booking_details.update(
-      { status: status },
-      { where: { id: booking_id } }
-    );
+     
   
       fcm.send(message, function(err, response) {
         if (err) {
