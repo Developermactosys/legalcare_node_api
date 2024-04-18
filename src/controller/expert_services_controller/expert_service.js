@@ -306,42 +306,56 @@ exports.getAllExpertService = async(req, res) => {
 //     }
 // }
 
-// // API for get expert service by expert_id
-// exports.get_expertServiceBy_expert_id = async(req, res) => {
-//     const { expert_id } = req.params;
-//     try {
-//         const getAllData = await expert_service.findAll({
-//              where: { UserId: expert_id },
-//             include:[
-//                 {
-//                     model: User,
-//                     as: "User",
-//                     attributes:['id', 'name', 'profile_image']
-//                 },
-//                 {
-//                 model: service,
-//                 as: "service",
-//                 attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
-//             }
-//          ]
-//      })
-//         if(getAllData){
-//             return res.status(200).json({
-//                 status : true,
-//                 message: "Get expert service",
-//                 data : getAllData
-//             })
-//         }
-//         else{
-//             return res.status(200).json({
-//                 status : false,
-//                 message : "expert sevices not found "
-//             })
-//         }
-//     } catch (error) {
-//         return res.status(500).json({
-//             status : false,
-//             message : error.message
-//         })
-//     }
-// }
+// API for get expert service by expert_id
+exports.get_expertServiceBy_expert_id = async(req, res) => {
+    const { expert_id } = req.query;
+    try {
+        const page = Number(req.query.page) || 1;
+        const limit = Number(req.query.limit) || 10;
+        const offset = (page - 1) * limit
+
+        const getAllData = await expert_service.findAll({
+             where: { UserId: expert_id },
+            include:[
+                // {
+                //     model: User,
+                //     as: "User",
+                //     attributes:['id', 'name', 'profile_image']
+                // },
+                {
+                model: service,
+                as: "service",
+                attributes: ['id', 'serviceName','service_img','description','service_cost','service_type']
+            }
+         ],
+         order: [["id", "DESC"]],
+         limit: limit,
+         offset: offset,
+     })
+
+     const totalCount = await expert_service.count({});
+     const totalPages = Math.ceil(totalCount / limit);
+     
+        if(getAllData){
+            return res.status(200).json({
+                status : true,
+                message: "All expert services reterived successfully",
+                data : getAllData,
+                total_Expert_Services: totalCount,
+                currentPage: page,
+                totalPages:totalPages,
+            })
+        }
+        else{
+            return res.status(200).json({
+                status : false,
+                message : "expert sevices not found "
+            })
+        }
+    } catch (error) {
+        return res.status(500).json({
+            status : false,
+            message : error.message
+        })
+    }
+}
