@@ -4,10 +4,11 @@ const db = require("../../../config/db.config");
 const Booking_details = db.booking_detail;
 const service = db.service;
 const User = db.User;
-const wallet_system =db.wallet_system
+const wallet_system = db.wallet_system
 const Notification = db.notification;
 const expert_service = db.expert_service
 const admin_setting = db.admin_setting;
+const TransactionHistory = db.transaction_history;
 // exports.Add_Booking = async (req, res) => {
 //   try {
 //     const { serviceId, discounted_amount, GST, user_id } = req.body;
@@ -71,23 +72,23 @@ const fcm = new FCM(serverKey);
 //     add_booking.in_progress_time = time;
 
 //     await add_booking.save();
-    
+
 //     const expert_id = find_service.UserId
 
 //     const user = await User.findByPk(user_id)
 //     const user_name =  user.name
 //     const expert = await User.findByPk(expert_id) 
 //     const expert_name = expert.name
-   
+
 //     var message = {
 //       to: expert.device_id, // Assuming the user model has a device_id field
 //       notification: {
 //         title: `Booking Confirmation`,
 //         body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.id}.`,
 //       },
-      
+
 //     }
-  
+
 //     await Notification.create({
 //       message: message.notification.body,
 //       type: " Booking ",
@@ -118,7 +119,7 @@ const fcm = new FCM(serverKey);
 
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId, discounted_amount, GST, user_id ,time,expert_id} = req.body;
+    const { serviceId, discounted_amount, GST, user_id, time, expert_id } = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -131,18 +132,18 @@ exports.Add_Booking = async (req, res) => {
     function generateBookingID() {
       // Get the current date
       const currentDate = new Date();
-      
+
       // Extract year, month, and day components
       const year = currentDate.getFullYear();
       const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Adding leading zero if necessary
       const day = currentDate.getDate().toString().padStart(2, '0'); // Adding leading zero if necessary
-      
+
       // Get the sequential number (you can replace this with your own logic to generate sequential numbers)
       const sequentialNumber = add_booking.id; // You need to implement this function
-      
+
       // Format the booking ID
       const bookingID = `LL${day}${month}${year}${sequentialNumber}`;
-      
+
       return bookingID;
     }
 
@@ -151,9 +152,9 @@ exports.Add_Booking = async (req, res) => {
     const service_name = find_service.serviceName
 
     const find_expert_service_id = await expert_service.findOne({
-      where : { serviceId :serviceId ,UserId : expert_id}
+      where: { serviceId: serviceId, UserId: expert_id }
     })
-    
+
     add_booking.booking_id = bookingID
     add_booking.serviceId = serviceId;
     add_booking.discounted_amount = discounted_amount;
@@ -165,30 +166,30 @@ exports.Add_Booking = async (req, res) => {
     add_booking.expertServiceId = find_expert_service_id.id;
 
     await add_booking.save();
-    
+
     // const expert_id = find_service.UserId// 
 
     const user = await User.findByPk(user_id)
-    const user_name =  user.name
-    const expert = await User.findByPk(expert_id) 
+    const user_name = user.name
+    const expert = await User.findByPk(expert_id)
     const expert_name = expert.name
-   
+
     var message = {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
         body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.booking_id}.`,
       },
-      
+
     }
-  
+
     await Notification.create({
       message: message.notification.body,
       type: " Booking ",
-      UserId : expert.id
+      UserId: expert.id
     });
 
-    fcm.send(message, function(err, response) {
+    fcm.send(message, function (err, response) {
       if (err) {
         console.error("Error:", err.message);
         return res.status(200).json({ success: false, message: "Failed to send notification" });
@@ -201,10 +202,10 @@ exports.Add_Booking = async (req, res) => {
         });
       }
     });
-} catch (error) {
-  console.error(error);
-  return res.status(500).json({ error: "Internal Server Error" });
-}
+  } catch (error) {
+    console.error(error);
+    return res.status(500).json({ error: "Internal Server Error" });
+  }
 };
 
 exports.get_booking_by_status = async (req, res) => {
@@ -219,50 +220,50 @@ exports.get_booking_by_status = async (req, res) => {
     }
 
     // if (status === "pending") {
-      const pending_booking = await Booking_details.findAll({
-        where : {
-          [Sequelize.Op.or]: [
-            { 
-              status: status,
-               UserId: user_id,
-            },
-            { 
-              status: status,
-               expert_id: user_id,
-            }
-        ]
-        },
-        include: [
+    const pending_booking = await Booking_details.findAll({
+      where: {
+        [Sequelize.Op.or]: [
           {
-            model: User,
-            as: "User",
-            where: { id: Sequelize.col('booking_detail.UserId') }
+            status: status,
+            UserId: user_id,
           },
           {
-            model: expert_service,
-            as: "expert_service",
-            include: [
-              {
-                model: User,
-                as: "User",
-              },
-              {
-                model: service,
-                as: "service",
-                // where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-              }
-            ]
+            status: status,
+            expert_id: user_id,
           }
-        ],
-        order: [['createdAt', 'DESC']],
-      });
+        ]
+      },
+      include: [
+        {
+          model: User,
+          as: "User",
+          where: { id: Sequelize.col('booking_detail.UserId') }
+        },
+        {
+          model: expert_service,
+          as: "expert_service",
+          include: [
+            {
+              model: User,
+              as: "User",
+            },
+            {
+              model: service,
+              as: "service",
+              // where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
+            }
+          ]
+        }
+      ],
+      order: [['createdAt', 'DESC']],
+    });
 
-      return res.status(200).json({
-        status: true,
-        message: "pending bookings",
-        data: pending_booking,
-      });
-  
+    return res.status(200).json({
+      status: true,
+      message: "pending bookings",
+      data: pending_booking,
+    });
+
 
     // if (status === "reject") {
     //   const rejected_booking = await Booking_details.findAll({
@@ -370,7 +371,7 @@ exports.getBooking_by_status_only = async (req, res) => {
     if (status) {
       query.where.status = { [Sequelize.Op.like]: `%${status}%` };
     }
-    
+
     const pending_bookings = await Booking_details.findAll({
       // where: { status: status },
       where: query.where,
@@ -471,12 +472,12 @@ exports.getAll_bookings = async (req, res) => {
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const get_all_booking = await Booking_details.findAll({
-      attributes:{exclude: ['GST','cosulting_fee','total_amount','service_tax','service_image']},
+      attributes: { exclude: ['GST', 'cosulting_fee', 'total_amount', 'service_tax', 'service_image'] },
       include: [
         {
           model: User,
           as: "User",
-          attributes: ['id','name', 'user_type', 'phone_no'],
+          attributes: ['id', 'name', 'user_type', 'phone_no'],
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
         // {
@@ -497,8 +498,8 @@ exports.getAll_bookings = async (req, res) => {
           as: "expert_service",
           include: [
             {
-              model:User,
-              as:"User"
+              model: User,
+              as: "User"
             },
             {
               model: service,
@@ -519,7 +520,7 @@ exports.getAll_bookings = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "All Booking",
-      count:totalCount,
+      count: totalCount,
       data: get_all_booking,
       currentPage: page,
       totalPages: totalPages,
@@ -546,13 +547,13 @@ exports.get_bookings_by_user_id = async (req, res) => {
       // where: { UserId: user_id },
       where: {
         [Sequelize.Op.or]: [
-          { 
-              UserId: user_id, 
+          {
+            UserId: user_id,
           },
-          { 
-            expert_id: user_id, 
+          {
+            expert_id: user_id,
           }
-      ]
+        ]
       },
       include: [
         {
@@ -560,7 +561,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
           as: "User",
           where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
         },
-      
+
         // {
         //   model: service,
         //   as: "service",
@@ -591,7 +592,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
       limit: pageSize,
     })
-    if(get_booking==[]){
+    if (get_booking == []) {
       const get_booking = await Booking_details.findAll({
         where: { UserId: user_id },
         include: [
@@ -600,7 +601,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
             as: "User",
             where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
           },
-        
+
           // {
           //   model: service,
           //   as: "service",
@@ -711,12 +712,12 @@ exports.delete_booking_by_id = async (req, res) => {
 //     if (cancel_booking) {
 //       const  user = await User.findByPk(cancel_booking.UserId)
 //       const expert= await User.findByPk(cancel_booking.expert_id)
-  
+
 //       const find_service = await service.findByPk(cancel_booking.serviceId)
 //       const service_name = find_service.serviceName
 //       //console.log(expert)
 //       const user_name = user.name;
-      
+
 // console.log(cancel_booking.UserId)
 
 //       const find_wallet_of_user = await wallet_system.findOne({
@@ -752,7 +753,7 @@ exports.delete_booking_by_id = async (req, res) => {
 // //     { where: { UserId: cancel_booking.UserId  } }
 // //   );
 // //  }
- 
+
 //       var message = {
 //         to: expert.device_id, // Assuming the user model has a device_id field
 //         notification: {
@@ -766,8 +767,8 @@ exports.delete_booking_by_id = async (req, res) => {
 //         UserId : expert.id
 //       });
 
-     
-  
+
+
 //       fcm.send(message, function(err, response) {
 //         if (err) {
 //             console.error("Something went wrong!", err);
@@ -801,12 +802,10 @@ exports.delete_booking_by_id = async (req, res) => {
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id,time, status } = req.query;
+    const { booking_id, time, status } = req.query;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
-    const admin_booking_percentage = find_admin_percentage.admin_per_booking 
-
-
+    const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
 
     // Find booking by ID
     const cancel_booking = await Booking_details.findByPk(booking_id);
@@ -814,8 +813,14 @@ exports.Cancle_booking_by_id = async (req, res) => {
     if (!cancel_booking) {
       return res.status(200).json({ status: false, message: "Booking not found" });
     }
+    if(cancel_booking.status == "cancel"){
+      return res.status(200).json({status:false ,message: "your booking is already cancelled"})
+    }
 
     const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
+
+    const find_expert = await User.findByPk(expert_id);
+    const get_user_type = find_expert.user_type
 
     if (payment_status === "unpaid") {
       // Update booking status to cancelled if payment is unpaid
@@ -836,22 +841,66 @@ exports.Cancle_booking_by_id = async (req, res) => {
       if (timeDifferenceMinutes > 1440) {
         return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
       }
-     
+
       // Process refund if booking status is approved and cancellation is within 24 hours
       if (timeDifferenceMinutes < 1440) {
         const userWallet = await wallet_system.findOne({ where: { UserId } });
 
-        
-    
+        const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+
         if (userWallet) {
-          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
-    
+
+
+          // for expert deduction 
+          const expert_percentage = parseFloat(1 - admin_booking_percentage)
+          const expert_amount = parseFloat(discounted_amount * expert_percentage)
+          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+            parseFloat(discounted_amount * expert_percentage);
+
+          await wallet_system.update(
+            { wallet_amount: newBalanceOfExpert },
+            { where: { UserId: expert_id } }
+          );
+
+          // Giving Refund to user 
+          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
+
           await wallet_system.update(
             { wallet_amount: newBalanceOfUser },
             { where: { UserId } }
           );
-    
-          console.log("Full refund processed successfully within 24 hours");
+
+          // console.log("Full refund processed successfully within 24 hours");
+
+          const allTransaction = await TransactionHistory.bulkCreate([
+            {
+              UserId: UserId,
+              payment_method,
+              payment_status,
+              transaction_amount: expert_amount,
+              transaction_id,
+              device_id,
+              status: 1,
+              amount_receiver_id: UserId,
+              expert_id: expert_id,
+              user_type: 1,
+              deduct_type: "refund",
+            },
+            {
+              UserId: expert_id,
+              payment_method,
+              payment_status,
+              transaction_amount: expert_amount,
+              transaction_id,
+              device_id,
+              status: 1,
+              amount_receiver_id: expert_id,
+              expert_id: expert_id,
+              user_type: get_user_type,
+              deduct_type: "refund",
+            },
+           
+          ]);
         }
       }
     }
@@ -861,19 +910,82 @@ exports.Cancle_booking_by_id = async (req, res) => {
       const userWallet = await wallet_system.findOne({ where: { UserId } });
 
       const admin_id = 9
-        const admin_wallet = await wallet_system.findOne({where:{UserId:admin_id}})
+      const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
 
-        const expert_wallet = await wallet_system.findOne({where : { UserId : expert_id}})
+      const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
 
-        
 
       if (userWallet) {
+        // For Admin deduction 
+        const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
+        const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
+          parseFloat(discounted_amount * admin_booking_percentage);
+
+        await wallet_system.update(
+          { wallet_amount: newBalanceOfAdmin },
+          { where: { UserId: admin_id } }
+        );
+
+        // for expert deduction 
+        const expert_percentage = parseFloat(1 - admin_booking_percentage)
+        const expert_amount = parseFloat(discounted_amount * expert_percentage)
+        const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+          parseFloat(discounted_amount * expert_percentage);
+
+        await wallet_system.update(
+          { wallet_amount: newBalanceOfExpert },
+          { where: { UserId: expert_id } }
+        );
+        // Giving Refund to user 
         const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
 
         await wallet_system.update(
           { wallet_amount: newBalanceOfUser },
           { where: { UserId } }
         );
+
+        const allTransaction = await TransactionHistory.bulkCreate([
+          {
+            UserId: UserId,
+            payment_method,
+            payment_status,
+            transaction_amount: discounted_amount,
+            transaction_id,
+            device_id,
+            status: 1,
+            amount_receiver_id: UserId,
+            expert_id: expert_id,
+            user_type: 1,
+            deduct_type: "refund",
+          },
+          {
+            UserId: expert_id,
+            payment_method,
+            payment_status,
+            transaction_amount: expert_amount,
+            transaction_id,
+            device_id,
+            status: 1,
+            amount_receiver_id: expert_id,
+            expert_id: expert_id,
+            user_type: get_user_type,
+            deduct_type: "refund",
+          },
+          {
+            UserId: admin_id,
+            payment_method,
+            payment_status,
+            transaction_amount: admin_amount,
+            transaction_id,
+            device_id,
+            status: 1,
+            amount_receiver_id: admin_id,
+            expert_id: expert_id,
+            user_type: 0,
+            deduct_type: "refund",
+          }
+        ]);
+
       }
       const status_change = await Booking_details.update(
         { status: status },
@@ -926,54 +1038,54 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status ,booking_id, discounted_amount, time } = req.body;
+    const { status, booking_id, discounted_amount, time } = req.body;
 
-  
+
     if (!booking_id) {
       return res.status(200).json({ error: "please do not give empty fileds" });
     }
-    
+
     // console.log(status, discounted_amount)
 
-const discounted_price = parseFloat(discounted_amount);
-const find_booking = await Booking_details.findByPk(booking_id)
+    const discounted_price = parseFloat(discounted_amount);
+    const find_booking = await Booking_details.findByPk(booking_id)
 
-    const update_booking = await Booking_details.update( 
+    const update_booking = await Booking_details.update(
       {
         status: status,
         // discounted_amount : discounted_price
       },
       {
         where: {
-          id:booking_id,
+          id: booking_id,
           // payment_status:"paid"
         },
       }
     );
-if(status=="approved"){
-  find_booking.accepted_time = time
-  await find_booking.save()
-}
-if(status=="reject"){
-  find_booking.rejected_time = time
-  await find_booking.save()
-}
-if(status=="paid"){
-  find_booking.paid_time = time
-  await find_booking.save()
-}
-if(status=="completed"){
-  find_booking.completed_time = time
-  await find_booking.save()
-}
+    if (status == "approved") {
+      find_booking.accepted_time = time
+      await find_booking.save()
+    }
+    if (status == "reject") {
+      find_booking.rejected_time = time
+      await find_booking.save()
+    }
+    if (status == "paid") {
+      find_booking.paid_time = time
+      await find_booking.save()
+    }
+    if (status == "completed") {
+      find_booking.completed_time = time
+      await find_booking.save()
+    }
 
-    if(discounted_price){
+    if (discounted_price) {
       find_booking.discounted_amount = discounted_price;
       await find_booking.save();
     }
 
-    const  user = await User.findByPk(find_booking.UserId)
-    const expert= await User.findByPk(find_booking.expert_id)
+    const user = await User.findByPk(find_booking.UserId)
+    const expert = await User.findByPk(find_booking.expert_id)
 
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
@@ -995,35 +1107,35 @@ if(status=="completed"){
         body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${booking_id}`,
       },
     };
-    
+
     if (status) {
       message.notification.body += ` has been ${status} by ${expert_name}.`;
     } else if (discounted_amount) {
       message.notification.body += ` has got an offer of Rs.${discounted_price} by ${expert_name}.`;
     }
-    
+
 
     await Notification.create({
       message: message.notification.body,
       type: " Booking_status ",
-      UserId :user.id
+      UserId: user.id
     });
 
-    fcm.send(message, function(err, response) {
+    fcm.send(message, function (err, response) {
       if (err) {
-          console.error("Something went wrong!", err);
-          return res.status(400).json({ success: false, message: err.message });
+        console.error("Something went wrong!", err);
+        return res.status(400).json({ success: false, message: err.message });
       } else {
-          console.log("Successfully sent with response: ", response);
-          // Proceed with your response
-          return res.status(200).json({
-              status: true,
-              message: "Booking status updated and notification sent",
-          });
+        console.log("Successfully sent with response: ", response);
+        // Proceed with your response
+        return res.status(200).json({
+          status: true,
+          message: "Booking status updated and notification sent",
+        });
       }
-  });
+    });
 
-    
+
   } catch (error) {
     console.error(error);
     return res.status(500).json({ error: "Internal Server Error" });
@@ -1033,39 +1145,39 @@ if(status=="completed"){
 
 exports.update_Booking_by_payment_status = async (req, res) => {
   try {
-    const { payment_status ,booking_id ,time} = req.body;
+    const { payment_status, booking_id, time } = req.body;
 
-  
+
     if (!payment_status) {
       return res.status(400).json({ error: "please do not give empty fileds" });
     }
- 
-    const update_payment_status = await Booking_details.update( 
-       
+
+    const update_payment_status = await Booking_details.update(
+
       {
         payment_status: payment_status,
       },
       {
         where: {
-          id:booking_id,
-          payment_status:"unpaid"
+          id: booking_id,
+          payment_status: "unpaid"
         },
       }
     );
 
 
     const find_booking = await Booking_details.findByPk(booking_id)
-    const  user = await User.findByPk(find_booking.UserId)
-    const expert= await User.findByPk(find_booking.expert_id)
+    const user = await User.findByPk(find_booking.UserId)
+    const expert = await User.findByPk(find_booking.expert_id)
 
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
 
-    find_booking.paid_time =time;
+    find_booking.paid_time = time;
     await find_booking.save();
-  
+
     //console.log(expert)
-    const user_name= user.name;
+    const user_name = user.name;
     const expert_name = expert.name
 
     var message = {
@@ -1073,29 +1185,29 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       notification: {
         title: `Payment Confirmation`,
         body: `Booking service for ${service_name} of Rs.${find_booking.discounted_amount} is ${payment_status} by ${user_name}.`,
-      }, 
+      },
     }
 
     await Notification.create({
       message: message.notification.body,
       type: " payment_status ",
-      UserId :expert.id
+      UserId: expert.id
     });
 
-    fcm.send(message, function(err, response) {
+    fcm.send(message, function (err, response) {
       if (err) {
-          console.error("Something went wrong!", err);
-          return res.status(400).json({ success: false, message: err.message });
+        console.error("Something went wrong!", err);
+        return res.status(400).json({ success: false, message: err.message });
       } else {
-          console.log("Successfully sent with response: ", response);
-          // Proceed with your response
-          return res.status(200).json({
-              status: true,
-              message: "Payment_Status for the booking is Updated and notification sent",
-              data: update_payment_status,
-          });
+        console.log("Successfully sent with response: ", response);
+        // Proceed with your response
+        return res.status(200).json({
+          status: true,
+          message: "Payment_Status for the booking is Updated and notification sent",
+          data: update_payment_status,
+        });
       }
-  });
+    });
 
   } catch (error) {
     console.error(error);
@@ -1106,10 +1218,10 @@ exports.update_Booking_by_payment_status = async (req, res) => {
 
 
 
-exports.getAllBookingdataForAll = async(req, res) => {
+exports.getAllBookingdataForAll = async (req, res) => {
 
   const { id, email, name, phone_no, createdAt } = req.query;
-      
+
   let query = {
     where: {},
   };
@@ -1133,19 +1245,19 @@ exports.getAllBookingdataForAll = async(req, res) => {
       createdAt
     ); // Assumes createdAt is in 'YYYY-MM-DD' format
   }
-    try {
-      const page = Number(req.query.page) || 1;
-      const limit = Number(req.query.limit) || 10;
-      const offset = (page - 1) * limit;
-      const get_all_booking = await Booking_details.findAll(
-        {
-          attributes:['id','status','payment_status', 'createdAt'],
+  try {
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+    const get_all_booking = await Booking_details.findAll(
+      {
+        attributes: ['id', 'status', 'payment_status', 'createdAt'],
         include: [
           {
             model: User,
             as: "User",
             where: { id: Sequelize.col('booking_detail.UserId') },
-            attributes : ['id', 'name', 'phone_no', 'user_type'],
+            attributes: ['id', 'name', 'phone_no', 'user_type'],
           },
           // {
           //   model: service,
@@ -1175,56 +1287,57 @@ exports.getAllBookingdataForAll = async(req, res) => {
             ]
           }
         ],
-       
+
         order: [['createdAt', 'DESC']],
-        
+
         limit: limit,
         offset: offset,
       })
-  
-      const totalCount = await Booking_details.count({});
-      const totalPages = Math.ceil(totalCount / limit);
-  
-      const bookingStatusForPending = await Booking_details.findAndCountAll({
-        where : {
-          status : 'pending'
-        }
-      })
-      const bookingStatusForApproved = await Booking_details.findAndCountAll({
-        where : {
-          status : 'approved'
-        }
-      })
-      const bookingStatusForReject = await Booking_details.findAndCountAll({
-        where : {
-          status : 'reject'
-        }
-      })
-          const users = await User.findAll({query,
-            attributes : ['id', 'name', 'phone_no', 'user_type'],
-          });
-          
-        
-      return res.status(200).json({
-        status: true,
-        message: "All Booking",
-        bookingStatusForPending:bookingStatusForPending.count || 0,
-        bookingStatusForApproved: bookingStatusForApproved.count || 0,
-        bookingStatusForReject:bookingStatusForReject.count || 0,
-        data: get_all_booking,
-        user: users,
-        currentPage: page,
-        totalPages: totalPages,
-      })
-  
-    } catch (error) {
-     
-      return res.status(500).json({
-        status: false,
-        message: error.message,
-      });
-    }
+
+    const totalCount = await Booking_details.count({});
+    const totalPages = Math.ceil(totalCount / limit);
+
+    const bookingStatusForPending = await Booking_details.findAndCountAll({
+      where: {
+        status: 'pending'
+      }
+    })
+    const bookingStatusForApproved = await Booking_details.findAndCountAll({
+      where: {
+        status: 'approved'
+      }
+    })
+    const bookingStatusForReject = await Booking_details.findAndCountAll({
+      where: {
+        status: 'reject'
+      }
+    })
+    const users = await User.findAll({
+      query,
+      attributes: ['id', 'name', 'phone_no', 'user_type'],
+    });
+
+
+    return res.status(200).json({
+      status: true,
+      message: "All Booking",
+      bookingStatusForPending: bookingStatusForPending.count || 0,
+      bookingStatusForApproved: bookingStatusForApproved.count || 0,
+      bookingStatusForReject: bookingStatusForReject.count || 0,
+      data: get_all_booking,
+      user: users,
+      currentPage: page,
+      totalPages: totalPages,
+    })
+
+  } catch (error) {
+
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
   }
+}
 
 
 //for searching 
