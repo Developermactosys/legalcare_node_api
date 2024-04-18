@@ -52,6 +52,7 @@ exports.getAllExpertService = async(req, res) => {
         const limit = Number(req.query.limit) || 10;
         const offset = (page - 1) * limit
         const getAllData = await expert_service.findAll({
+            where:{expert_service_active: true },
             include:[
                 {
                 model: service,
@@ -359,3 +360,57 @@ exports.get_expertServiceBy_expert_id = async(req, res) => {
         })
     }
 }
+
+
+exports.update_expert_service_for_active = async (req, res) => {
+    const {service_id,expert_id}= req.query;
+    try {
+  
+      const Service = await expert_service.findOne({ serviceId:service_id});
+  
+      if (!Service) {
+        return res.status(200).json({
+          status: false,
+          message: "Service not found"
+        });
+      }
+  
+      const find_service = Service.expert_service_active
+  
+      if(find_service == 1){
+  
+      const updateData_1 = await expert_service.update({
+        expert_service_active: 0
+    },{
+      where : {
+        serviceId : service_id
+      }
+    });
+  
+    return res.status(200).json({
+      status : true,
+      message : "Service is deactivated ",
+      data : updateData_1
+    })
+  }else{
+    const updateData = await expert_service.update({
+        expert_service_active: 1
+  },{
+    where : {
+        serviceId : service_id
+    }
+  });
+  return res.status(200).json({
+    status : true,
+    message : "Service is activated",
+    data : updateData
+  })
+  }
+      
+    } catch (error) {
+      return res.status(500).json({
+          status :false,
+          message : error.message
+      })
+    }
+  };

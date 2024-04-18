@@ -52,7 +52,7 @@ module.exports = (sequelize, DataTypes) => {
 },
 service_active: {
   type:DataTypes.BOOLEAN,
-defaultValue:false
+  defaultValue:true
 },
   expert_fees :{
     type : DataTypes.FLOAT

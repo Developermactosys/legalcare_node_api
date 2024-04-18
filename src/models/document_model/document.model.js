@@ -22,6 +22,12 @@ module.exports = (sequelize, DataTypes) => {
         passbook_image: {
             type: DataTypes.STRING,
         },
+        sender_id: {
+            type: DataTypes.INTEGER
+        },
+        receiver_id: {
+            type: DataTypes.INTEGER
+        },
         document: {
             type: DataTypes.STRING
         },

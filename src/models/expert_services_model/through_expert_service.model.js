@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
     GST :{
       type : DataTypes.FLOAT
     },
+    expert_service_active: {
+      type:DataTypes.BOOLEAN,
+      defaultValue:true
+    },
     description: {
       type: DataTypes.TEXT,
       allowNull: true
