@@ -521,7 +521,7 @@ const updateService = async (req, res) => {
         status:status,
         description:description,
         type_of_service:type_of_service,
-        UserId: expert_id,
+        // UserId: expert_id,
 
     },{
       where : {

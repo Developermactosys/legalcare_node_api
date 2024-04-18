@@ -5,7 +5,7 @@ const { addExpertService, getAllExpertService, getAllExpertServiceById, updateEx
 
 
 router.post('/add_expert_service',uploads.none(), addExpertService)
-// router.get('/get_all_expert_service', getAllExpertService)
+router.get('/get_all_expert_service', getAllExpertService)
 // router.get('/get_expert_service_by_id/:id', getAllExpertServiceById)
 // router.patch('/update_expert_service/:id',uploads.none(), updateExpertServiceById)
 // router.delete("/delete_expert_service/:id", delExpertServiceById)
