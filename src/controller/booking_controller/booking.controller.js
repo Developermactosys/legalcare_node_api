@@ -894,7 +894,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
               // transaction_id,
               // device_id,
               status: 1,
-              amount_receiver_id: expert_id,
+              amount_receiver_id: UserId,
               expert_id: expert_id,
               user_type: get_user_type,
               deduct_type: "refund",
@@ -903,6 +903,11 @@ exports.Cancle_booking_by_id = async (req, res) => {
           ]);
         }
       }
+
+      const status_change = await Booking_details.update(
+        { status: status },
+        { where: { id: booking_id } }
+      );
     }
 
     // Process refund if booking status is pending and payment is paid
@@ -966,7 +971,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             // transaction_id,
             // device_id,
             status: 1,
-            amount_receiver_id: expert_id,
+            amount_receiver_id: UserId,
             expert_id: expert_id,
             user_type: get_user_type,
             deduct_type: "refund",
@@ -979,7 +984,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             // transaction_id,
             // device_id,
             status: 1,
-            amount_receiver_id: admin_id,
+            amount_receiver_id: UserId,
             expert_id: expert_id,
             user_type: 0,
             deduct_type: "refund",
