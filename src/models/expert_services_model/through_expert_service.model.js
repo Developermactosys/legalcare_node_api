@@ -25,6 +25,10 @@ module.exports = (sequelize, DataTypes) => {
     GST :{
       type : DataTypes.FLOAT
     },
+    description: {
+      type: DataTypes.TEXT,
+      allowNull: true
+    },
       deleted_At : {
         type : DataTypes.DATE,
         allowNull : true,

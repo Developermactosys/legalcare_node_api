@@ -481,7 +481,7 @@ const getAllserviceBy_expert_id = async(req, res) => {
     } 
 }
 
-
+// Web  side Update services
 const updateService = async (req, res) => {
     const {
       categoryId,
@@ -558,6 +558,57 @@ const updateService = async (req, res) => {
       })
     }
   };
+
+// App Side update sevices
+const update_expert_service_for_app = async (req, res) => {
+  const {
+    service_type,
+    expert_fees,
+    GST,
+    status,
+    description,
+    serviceId,
+    expert_id
+  } = req.body;
+
+  try {
+    
+    // Update the expert_service record
+    const updateData = await expert_service.update({
+  
+      service_type: service_type,
+      expert_fees: expert_fees,
+      GST : GST,
+      status: status,
+      description: description,
+     
+    }, {
+      where: {
+        serviceId: serviceId ,
+        UserId :expert_id
+      }
+    });
+    // Check if update was successful
+    if (updateData) {
+      return res.status(200).json({
+        status: true,
+        message: "Expert Service updated successfully",
+        data: updateData
+      });
+    } else {
+      return res.status(200).json({
+        status: false,
+        message: "Expert Service not updated"
+      });
+    }
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message
+    });
+  }
+};
+
 
 // Cancle Booking 
 exports.Cancle_service_by_id = async (req, res) => {
@@ -657,60 +708,130 @@ exports.Cancle_service_by_id = async (req, res) => {
     }
   }
 
+// Origional
+// // API for delete Services
+// const deleteService = async (req, res) => {
+//     const { serviceId, expert_id } = req.params;
+//     try {
+//       // Find all bookings associated with the service
+//       const bookingData = await booking.findAll({
+//         where: { serviceId: serviceId }
+//       });
+  
+//       // Check if any booking has 'pending' status
+//       const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+  
+//       if (hasPendingBooking) {
+//         return res.status(200).json({
+//           status: false,
+//           message: "Cannot delete service due to pending bookings"
+//         });
+//       }
+  
+//       // Proceed with service deletion if no pending bookings
+//       const findExpertId = await services.findOne({
+//         where: { UserId: expert_id }
+//       });
+  
+//       if (findExpertId) {
+//         const delServices = await services.findByPk(serviceId);
+  
+//         if (delServices) {
+//           await delServices.destroy(delServices);
+//           return res.status(200).json({
+//             status: true,
+//             message: "Data deleted successfully"
+//           });
+//         } else {
+//           return res.status(200).json({
+//             status: false,
+//             message: "Service not found or not deleted"
+//           });
+//         }
+//       } else {
+//         return res.status(200).json({
+//           status: false,
+//           message: "Expert not found or service not deleted"
+//         });
+//       }
+//     } catch (error) {
+//       return res.status(500).json({
+//         status: false,
+//         message: error.message
+//       });
+//     }
+//   };
 
-// API for delete Services
+
+// App Side delete expert sevices
 const deleteService = async (req, res) => {
-    const { serviceId, expert_id } = req.params;
-    try {
-      // Find all bookings associated with the service
-      const bookingData = await booking.findAll({
-        where: { serviceId: serviceId }
+  const { serviceId, expert_id } = req.params;
+  try {
+    // Find all bookings associated with the service
+    const bookingData = await booking.findAll({
+      where: { serviceId: serviceId , expert_id: expert_id}
+    });
+
+    // Check if any booking has 'pending' status
+    const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+
+    if (hasPendingBooking) {
+      return res.status(200).json({
+        status: false,
+        message: "Cannot delete service due to pending bookings"
       });
-  
-      // Check if any booking has 'pending' status
-      const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
-  
-      if (hasPendingBooking) {
-        return res.status(200).json({
-          status: false,
-          message: "Cannot delete service due to pending bookings"
-        });
-      }
-  
-      // Proceed with service deletion if no pending bookings
-      const findExpertId = await services.findOne({
-        where: { UserId: expert_id }
-      });
-  
-      if (findExpertId) {
-        const delServices = await services.findByPk(serviceId);
-  
-        if (delServices) {
-          await delServices.destroy(delServices);
-          return res.status(200).json({
-            status: true,
-            message: "Data deleted successfully"
-          });
-        } else {
-          return res.status(200).json({
-            status: false,
-            message: "Service not found or not deleted"
-          });
+    }
+
+    // Proceed with service deletion if no pending bookings
+    const findExpertId = await expert_service.findAll({
+      where:{
+         UserId : expert_id ,
+          serviceId : serviceId
         }
+      })
+
+    if (findExpertId) {
+      // const delServices = await services.findByPk(serviceId);
+      const delete_expert_service = await expert_service.findAll({
+      where:{
+         UserId : expert_id ,
+          serviceId : serviceId
+        }
+      })
+
+      if (delete_expert_service) {
+        await expert_service.destroy({
+          where:{
+             UserId : expert_id ,
+              serviceId : serviceId
+            }
+          });
+        return res.status(200).json({
+          status: true,
+          message: "Expert Services deleted successfully"
+        });
       } else {
         return res.status(200).json({
           status: false,
-          message: "Expert not found or service not deleted"
+          message: "Service not found or not deleted"
         });
       }
-    } catch (error) {
-      return res.status(500).json({
+    } else {
+      return res.status(200).json({
         status: false,
-        message: error.message
+        message: "Expert not found or service not deleted"
       });
     }
-  };
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message
+    });
+  }
+};
 
+
+// Web Side delete sevices
   const deleteServiceforAdmin = async(req, res) => {
     const { serviceId } = req.params;
     try {
@@ -798,5 +919,6 @@ module.exports = {
     updateService,
     deleteServiceforAdmin,
     update_service_for_active,
-    get_expertServiceBy_category_id
+    get_expertServiceBy_category_id,
+    update_expert_service_for_app
 }
