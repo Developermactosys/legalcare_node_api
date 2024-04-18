@@ -23,7 +23,7 @@ router.get("/get_expert_service_by_category_id",get_expertServiceBy_category_id)
 
 router.get("/get_allservices_by_expert_id",getAllserviceBy_expert_id) // expert flow
 
-router.patch("/update_service_status",update_service_for_active)
+// router.patch("/update_service_status",update_service_for_active)
 
 router.patch("/update_expert_service",uploads.none(),update_expert_service_for_app)
 

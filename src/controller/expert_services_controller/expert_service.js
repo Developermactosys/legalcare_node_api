@@ -10,11 +10,20 @@ exports.addExpertService = async(req, res) =>{
     const { status, service_type, expert_fees, GST , user_id, service_id ,description} = req.body;
     
     try {
+
         if(!user_id && !service_id){
             return res.status(200).json({
                 status : false,
                 message : "user_id and service_id not found "
             })
+        }
+
+        const find_expert_service = await expert_service.findAll({
+            where:{UserId : user_id , serviceId:service_id}
+        })
+
+        if(find_expert_service){
+            return res.status(200).json({status:false, message:"expert service already exist"})
         }
         const createExpert = await expert_service.create({
              GST:GST, 
@@ -366,12 +375,14 @@ exports.update_expert_service_for_active = async (req, res) => {
     const {service_id,expert_id}= req.query;
     try {
   
-      const Service = await expert_service.findOne({ serviceId:service_id});
+      const Service = await expert_service.findOne({
+        where:{ serviceId:service_id,UserId:expert_id},
+    });
   
       if (!Service) {
         return res.status(200).json({
           status: false,
-          message: "Service not found"
+          message: "Expert Service not found"
         });
       }
   
@@ -383,13 +394,14 @@ exports.update_expert_service_for_active = async (req, res) => {
         expert_service_active: 0
     },{
       where : {
-        serviceId : service_id
+        serviceId : service_id,
+        UserId:expert_id
       }
     });
   
     return res.status(200).json({
       status : true,
-      message : "Service is deactivated ",
+      message : "Expert Service is deactivated ",
       data : updateData_1
     })
   }else{
@@ -397,12 +409,14 @@ exports.update_expert_service_for_active = async (req, res) => {
         expert_service_active: 1
   },{
     where : {
-        serviceId : service_id
+        serviceId : service_id,
+        UserId:expert_id
+
     }
   });
   return res.status(200).json({
     status : true,
-    message : "Service is activated",
+    message : "Expert Service is activated",
     data : updateData
   })
   }
