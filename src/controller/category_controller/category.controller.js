@@ -74,6 +74,7 @@ const getCategory = async (req, res) => {
       status: true,
       message: "Categories retrieved successfully",
       data: category,
+      count:totalCount,
       currentPage: page,
       totalPages: totalPages,
     });

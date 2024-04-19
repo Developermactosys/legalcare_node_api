@@ -24,8 +24,6 @@ async function postAstroReview(req, res) {
             });
         }
 
-       
-
         // Insert review
         const result = await AstroReview.create({
             expert_id :  expert_id,
@@ -61,15 +59,18 @@ async function postAstroReview(req, res) {
                 message: "Your feedback has been submitted successfully",
             });
         } else {
-            return res.status(500).json({
+            return res.status(200).json({
                 status: false,
                 message: "Something went wrong",
             });
         }
     } catch (error) {
+        console.log(error)
+
         res.status(500).json({
             status: false,
             message: error.message,
+            
         });
     }
 }

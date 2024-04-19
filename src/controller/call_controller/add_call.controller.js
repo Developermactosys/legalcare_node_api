@@ -6,6 +6,7 @@ const call_details = db.call_details;
 const User = db.User;
 const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
+const admin_setting = db.admin_setting
 
 // const addCall = async (req, res) => {
 //   try {
@@ -226,7 +227,8 @@ const addCall = async (req, res) => {
         message: "Please provide name, expert_id, duration, user_id, start_time, and end_time."
       });
     }
-
+    const find_admin_percentage = await admin_setting.findByPk(12)
+    const admin_call_percentage = parseFloat(find_admin_percentage.admin_for_call_video_percentage / 100)
     // Fetch expert's per minute rate
     const expert = await User.findOne({
       where: {
@@ -280,12 +282,13 @@ const addCall = async (req, res) => {
     await walletSystem.update({ wallet_amount: newBalance });
 
     // Calculate and update expert's wallet balance
-    const expert_amount = parseFloat(0.9 * requestedAmount);
+    const expert_percentage = parseFloat(1-admin_call_percentage)
+    const expert_amount = parseFloat(expert_percentage * requestedAmount);
     const newBalance_of_expert = parseFloat(walletSystem_of_expert.wallet_amount) + expert_amount;
     await walletSystem_of_expert.update({ wallet_amount: newBalance_of_expert });
 
     // Calculate and update admin's wallet balance
-    const admin_amount = parseFloat(0.1 * requestedAmount);
+    const admin_amount = parseFloat(admin_call_percentage * requestedAmount);
     const newBalance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount) + admin_amount;
     await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
 

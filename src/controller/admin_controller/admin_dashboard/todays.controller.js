@@ -5,6 +5,7 @@ const call = db.call_details;
 const booking = db.booking_detail;
 const service = db.service;
 const video = db.video;
+const expert_service = db.expert_service
 const { Op, Sequelize } = require("sequelize");
 const { QueryTypes } = require('sequelize')
 const moment = require("moment");
@@ -660,18 +661,33 @@ const getTotalVideo = await video.findAndCountAll()
           attributes:['id','name','user_type',"profile_image"],
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
+        // {
+        //   model: service,
+        //   as: "service",
+        //   include: [
+        //     {
+        //       model: User,
+        //       as: "User",
+        //       attributes:['id','name','user_type',"profile_image"],
+        //       where: { id: Sequelize.col('service.UserId') }
+        //     }
+        //   ]
+        // }
         {
-          model: service,
-          as: "service",
+          model: expert_service,
+          as: "expert_service",
           include: [
             {
-              model: User,
-              as: "User",
-              attributes:['id','name','user_type',"profile_image"],
-              where: { id: Sequelize.col('service.UserId') }
-            }
+              model:service,
+              as:"service"
+            }, 
+            {
+                  model: User,
+                  as: "User",
+                  attributes: ['id', 'user_type', 'name', 'profile_image'],
+              },
           ]
-        }
+      },
       ],
     });
 

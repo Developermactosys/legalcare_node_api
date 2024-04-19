@@ -136,7 +136,7 @@ const getAllRatings = async (req, res) => {
         totalReviews: getDetail.count // Total number of reviews processed
       });
     } else {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "Ratings and reviews not found"
       });

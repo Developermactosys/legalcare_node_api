@@ -3,6 +3,7 @@ const db = require("../../../config/db.config");
 const User = db.User;
 const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
+const admin_setting = db.admin_setting;
 
 const deductWalletAmount = async (req, res) => {
   try {
@@ -25,7 +26,7 @@ const deductWalletAmount = async (req, res) => {
     );
     if (isEmptyKey) {
       return res
-        .status(400)
+        .status(200)
         .json({ error: "Please do not leave empty or undefined fields" });
     }
 
@@ -49,6 +50,9 @@ const deductWalletAmount = async (req, res) => {
          .status(200)
          .json({ status: false, message: "Expert does not exist" });
      }
+
+     const find_admin_percentage = await admin_setting.findByPk(12)
+     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
 
     const admin_id = 9;
     // Check for existing wallet system entry
@@ -123,7 +127,8 @@ const deductWalletAmount = async (req, res) => {
     // );
 
     // Updating wallet balance of expert
-    const expert_amount = parseFloat(0.9 * requestedAmount);
+    const expert_percentage = parseFloat( 1- admin_booking_percentage)
+    const expert_amount = parseFloat(expert_percentage * requestedAmount);
     const newBalance_of_expert = wallet_balance_of_expert + expert_amount;
     await new_walletSystem_of_expert.update(
       { wallet_amount: newBalance_of_expert, device_id },
@@ -131,7 +136,7 @@ const deductWalletAmount = async (req, res) => {
     );
 
     // Update wallet balance of admin
-    const admin_amount = parseFloat(0.1 * requestedAmount);
+    const admin_amount = parseFloat(admin_booking_percentage * requestedAmount);
     const newBalance_of_admin = wallet_balance_of_admin + admin_amount;
     await walletSystem_of_admin.update(
       { wallet_amount: newBalance_of_admin, device_id },

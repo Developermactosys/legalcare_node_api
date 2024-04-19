@@ -87,10 +87,10 @@ const transaction_details = async (req, res) => {
   const { user_id, user_type } = req.query;
   try {
     if(!user_id){
-      return res.status(400).json({ status: false, message: "Please provide user_id" })
+      return res.status(200).json({ status: false, message: "Please provide user_id" })
     }
     if(!user_type){
-      return res.status(400).json({ status: false, message: "Please provide user_type" })
+      return res.status(200).json({ status: false, message: "Please provide user_type" })
     }
     const transactionData = await TransactionHistory.findAll({
       where: {
@@ -106,7 +106,7 @@ const transaction_details = async (req, res) => {
       })
     }
     else {
-      return res.status(400).json({ status: false, message: "User does not exist" })
+      return res.status(200).json({ status: false, message: "User does not exist" })
     }
   } catch (error) {
     console.error(error);

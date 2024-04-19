@@ -7,7 +7,7 @@ exports.getChatList_by_user_id = async (req, res) => {
   try {
     const { sender_id, receiver_id } = req.query;
     if (!sender_id && !receiver_id) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         msg: "Please provide your sender_id and receiver_id",
       });
