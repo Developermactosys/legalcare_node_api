@@ -9,7 +9,7 @@ const addRatingBar = async (req, res) => {
   try {
     const userData = await User.findByPk(UserId);
     if (!userData) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "User not found",
       });
@@ -25,7 +25,7 @@ const addRatingBar = async (req, res) => {
           data: createRating,
         });
       } else {
-        return res.status(400).json({
+        return res.status(200).json({
           status: false,
           message: "rating are not added ",
         });

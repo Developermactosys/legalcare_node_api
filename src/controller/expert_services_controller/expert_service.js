@@ -22,7 +22,6 @@ exports.addExpertService = async(req, res) =>{
             where:{UserId : user_id , serviceId:service_id}
         })
 
-        console.log(find_expert_service)
         if(find_expert_service){
             return res.status(200).json({status:false, message:"expert service already exist"})
         }
@@ -42,7 +41,7 @@ exports.addExpertService = async(req, res) =>{
             })
         }
         else{
-            return res.status(400).json({
+            return res.status(200).json({
                 status : false,
                 message : "Expert service is not created "
             })
