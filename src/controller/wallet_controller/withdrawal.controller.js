@@ -157,12 +157,15 @@ const get_withdrawalRequest = async (req, res) => {
     const totalPages = Math.ceil(data.count / limit);
     const totalItems = data.count;
 
-    res.json({
+    return res.status(200).json({
+      status:true,
+      message:"Data reterived successfully",
+      data: data.rows,
+      wallet_amount:wallet_amount,
       currentPage: currentPage,
       totalPages: totalPages,
       totalItems: totalItems,
-      data: data.rows,
-       wallet_amount:wallet_amount
+    
     });
   }else{
 
@@ -284,6 +287,7 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
 
     res.status(200).json({
       status:true,
+      message:"Data reterived successfully",
       currentPage: currentPage,
       totalPages: totalPages,
       totalItems: totalItems,

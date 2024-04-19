@@ -40,6 +40,10 @@ const fcm = new FCM(serverKey);
 // API for get Document 
 exports.getAllDocument = async (req, res) => {
     try {
+      const page = Number(req.query.page) || 1;
+      const limit = Number(req.query.limit) || 10;
+      const offset = (page - 1) * limit;
+
         const docs = await doc.findAll({
             include: [
                 {
@@ -47,17 +51,24 @@ exports.getAllDocument = async (req, res) => {
                     as: "User"
                 },
             ],
-            order: [['createdAt', 'DESC']]
+            order: [['createdAt', 'DESC']],
+            limit: limit,
+            offset: offset,
         });
+        const totalCount = await doc.count({});
+        const totalPages = Math.ceil(totalCount / limit);
 
         if (docs.length > 0) {
             return res.status(200).json({
                 status: true,
                 message: "Document list retrieved successfully",
-                data: docs
+                data: docs,
+                count: totalCount,
+                currentPage: page,
+                totalPages: totalPages,
             });
         } else {
-            return res.status(400).json({
+            return res.status(200).json({
                 status: false,
                 message: "Document list not available"
             });

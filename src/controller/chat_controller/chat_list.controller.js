@@ -30,7 +30,7 @@ exports.getChatList_by_user_id = async (req, res) => {
       // order: [['id', 'DESC']]
     });
 
-    res.json({
+    return res.status(200).json({
       status: true,
       message: "Chat List retrieved successfully",
       chatList: chatList,

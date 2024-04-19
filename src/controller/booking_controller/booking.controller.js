@@ -412,7 +412,7 @@ exports.getBooking_by_status_only = async (req, res) => {
 
     return res.status(200).json({
       status: true,
-      message: "Pending bookings fetched successfully",
+      message: " Bookings fetched successfully",
       data: pending_bookings,
     });
 

@@ -33,7 +33,6 @@ const getWaitingList = async (req, res) => {
         console.error(error);
         res.status(500).json({
             status: false,
-            code: 500,
             message: 'Internal Server Error',
         });
     }

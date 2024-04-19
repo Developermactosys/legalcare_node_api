@@ -156,20 +156,20 @@ async function getAstroReviewList(req, res) {
         });
 
         if (reviews) {
-            res.json({
+           return res.status(200).json({
                 status: true,
-                review: reviews,
                 message: "All reviews",
+                review: reviews,
             });
         } else {
-            res.json({
+            return res.status(200).json({
                 status: false,
                 message: "No reviews found",
             });
         }
     } catch (error) {
         console.error(error);
-        res.status(500).json({
+       return res.status(500).json({
             status: false,
             message: "Internal Server Error",
         });

@@ -28,16 +28,17 @@ const getPaymentHistory = async(req ,res) =>{
             return res.status(200).json({
                 status : true,
                 message : "Payment show successfully",
-                data : findPayment
+                data : findPayment,
+                count:totalCount,
+                currentPage: page,
+                totalPages: totalPages,
             })
         }
         else{
             return res.status(400).json({
                 status : false,
                 message : "Payment is not available",
-                count:totalCount,
-                currentPage: page,
-                totalPages: totalPages,
+                
             })
         }
     } catch (error) {
