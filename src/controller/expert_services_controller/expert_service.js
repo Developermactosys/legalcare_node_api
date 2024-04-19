@@ -18,10 +18,11 @@ exports.addExpertService = async(req, res) =>{
             })
         }
 
-        const find_expert_service = await expert_service.findAll({
+        const find_expert_service = await expert_service.findOne({
             where:{UserId : user_id , serviceId:service_id}
         })
 
+        console.log(find_expert_service)
         if(find_expert_service){
             return res.status(200).json({status:false, message:"expert service already exist"})
         }
