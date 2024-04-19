@@ -40,10 +40,12 @@ async function postAstroReview(req, res) {
          const addRating = parseFloat(result.rating)//3
 
          const extisting_rating =parseFloat(checkExpert.user_rating)
-         const updated_rating = extisting_rating + addRating 
+         const updated_rating = parseFloat(extisting_rating + addRating )
          checkExpert.rating = updated_rating
          await checkExpert.save()
          const final_updated_rating  = parseFloat(updated_rating)
+
+console.log(final_updated_rating)
 
          const add_rating = await User.update({
             user_rating:final_updated_rating 
