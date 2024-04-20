@@ -802,7 +802,7 @@ exports.delete_booking_by_id = async (req, res) => {
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id, time, status } = req.query;
+    const { booking_id, time, status , cancellation_reason } = req.query;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -825,7 +825,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     if (payment_status === "unpaid") {
       // Update booking status to cancelled if payment is unpaid
       const status_change = await Booking_details.update(
-        { status: status },
+        { status: status ,cancellation_reason:cancellation_reason},
         { where: { id: booking_id } }
       );
 
@@ -885,6 +885,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
               expert_id: expert_id,
               user_type: 1,
               deduct_type: "refund",
+              description:cancellation_reason
             },
             {
               UserId: expert_id,
@@ -898,6 +899,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
               expert_id: expert_id,
               user_type: get_user_type,
               deduct_type: "refund",
+              description:cancellation_reason
+
             },
            
           ]);
@@ -905,7 +908,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       }
 
       const status_change = await Booking_details.update(
-        { status: status },
+        { status: status ,cancellation_reason : cancellation_reason},
         { where: { id: booking_id } }
       );
     }
@@ -962,6 +965,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
             expert_id: expert_id,
             user_type: 1,
             deduct_type: "refund",
+            description:cancellation_reason
+
           },
           {
             UserId: expert_id,
@@ -975,6 +980,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
             expert_id: expert_id,
             user_type: get_user_type,
             deduct_type: "refund",
+            description:cancellation_reason
+
           },
           {
             UserId: admin_id,
@@ -988,12 +995,14 @@ exports.Cancle_booking_by_id = async (req, res) => {
             expert_id: expert_id,
             user_type: 0,
             deduct_type: "refund",
+            description:cancellation_reason
+
           }
         ]);
 
       }
       const status_change = await Booking_details.update(
-        { status: status },
+        { status: status , cancellation_reason :cancellation_reason},
         { where: { id: booking_id } }
       );
     }

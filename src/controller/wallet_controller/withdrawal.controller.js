@@ -7,6 +7,73 @@ const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
 const WithdrawalRequest = db.withdrawal_request;
 
+// const withdrawalAmount = async (req, res) => {
+//   try {
+//     const { user_id,  amount,user_type} = req.query;
+
+//   if(!user_id){
+//     return res.status(200).json({ status: false, message: "Please provide user_id" });
+//   }
+
+//     // Check if user exists
+//     const userExists = await User.findByPk(user_id);
+//     if (!userExists) {
+//       return res.status(200).json({ status: false, message: "User does not exist" });
+//     }
+//     function generateTransactionId() {
+//       // Generate a random string
+//       const randomString = Math.random().toString(36).substr(2, 10).toUpperCase(); // Example: "ABC123"
+    
+//       // Get current timestamp
+//       const timestamp = Date.now().toString(); // Example: "1645430912345"
+    
+//       // Combine random string and timestamp to generate transaction ID
+//       const transactionId = `${randomString}-${timestamp}`; // Example: "ABC123-1645430912345"
+    
+//       return transactionId;
+//     }
+    
+//     // Example usage
+//     const transactionId = generateTransactionId();
+    
+    
+
+//     // Check for existing wallet system entry
+//     const walletSystem = await WalletSystem.findOne({ where: { UserId: user_id } });
+//     if (!walletSystem) {
+//       return res.status(200).json({ status: false, message: "Wallet does not exist" });
+//     }
+
+//     const walletBalance = parseFloat(walletSystem.wallet_amount);
+//     const requestedAmount = parseFloat(amount);
+
+//     // Check if requested amount exceeds wallet balance
+//     if (requestedAmount > walletBalance) {
+//       return res.status(200).json({ status: false, message: "Insufficient wallet balance" });
+//     }
+
+//     // Update wallet balance
+//     const newBalance = walletBalance - requestedAmount;
+//     await WalletSystem.update({ wallet_amount: newBalance}, { where: { UserId: user_id } });
+
+//     // Log transaction history
+//     await TransactionHistory.create({
+//       UserId: user_id,
+//       payment_method:"online",
+//       transaction_amount: requestedAmount,
+//       transaction_id : transactionId,
+//       status: 1,
+//       user_type:user_type
+//     });
+
+//     return res.json({ status: true, message: "Wallet amount updated successfully", wallet_amount: newBalance });
+//   } catch (error) {
+//     console.error("Error while deducting amount from wallet:", error);
+//     return res.status(500).json({ status: false, message: "Internal server error" });
+//   }
+// };
+
+// Updated
 const withdrawalAmount = async (req, res) => {
   try {
     const { user_id,  amount,user_type} = req.query;
@@ -20,6 +87,9 @@ const withdrawalAmount = async (req, res) => {
     if (!userExists) {
       return res.status(200).json({ status: false, message: "User does not exist" });
     }
+
+    const get_user_type = userExists.user_type;
+
     function generateTransactionId() {
       // Generate a random string
       const randomString = Math.random().toString(36).substr(2, 10).toUpperCase(); // Example: "ABC123"
@@ -44,6 +114,8 @@ const withdrawalAmount = async (req, res) => {
       return res.status(200).json({ status: false, message: "Wallet does not exist" });
     }
 
+if(get_user_type == "1" || get_user_type == "0"){
+
     const walletBalance = parseFloat(walletSystem.wallet_amount);
     const requestedAmount = parseFloat(amount);
 
@@ -63,16 +135,47 @@ const withdrawalAmount = async (req, res) => {
       transaction_amount: requestedAmount,
       transaction_id : transactionId,
       status: 1,
-      user_type:user_type
+      user_type:get_user_type
     });
 
-    return res.json({ status: true, message: "Wallet amount updated successfully", wallet_amount: newBalance });
+    return res.status(200).json({ status: true, message: "Wallet amount updated successfully", wallet_amount: newBalance });
+
+  }
+  if(get_user_type == "2" || get_user_type == "3" || get_user_type == "4"){
+
+    const walletBalance = parseFloat(walletSystem.outstanding_amount);
+    const requestedAmount = parseFloat(amount);
+    const walletBalance_expert = parseFloat(walletSystem.wallet_amount);
+
+
+    // Check if requested amount exceeds wallet balance
+    if (requestedAmount > walletBalance) {
+      return res.status(200).json({ status: false, message: "Insufficient outstanding amount balance" });
+    }
+
+    // Update wallet balance
+    const newBalance = walletBalance - requestedAmount;
+    await WalletSystem.update({ outstanding_amount: newBalance}, { where: { UserId: user_id } });
+
+    // Log transaction history
+    await TransactionHistory.create({
+      UserId: user_id,
+      payment_method:"online",
+      transaction_amount: requestedAmount,
+      transaction_id : transactionId,
+      status: 1,
+      user_type:get_user_type
+    });
+
+    return res.status(200).json({ status: true, message: "Wallet outstanding amount updated successfully", outstanding_amount: newBalance ,wallet_amount : walletBalance_expert});
+
+  }
+
   } catch (error) {
     console.error("Error while deducting amount from wallet:", error);
     return res.status(500).json({ status: false, message: "Internal server error" });
   }
 };
-
 
 const create_withdrawal_request= async (req, res) => {
   try {

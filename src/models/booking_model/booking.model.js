@@ -76,6 +76,11 @@ cancel_time: {
   allowNull: true,
   defaultValue: null
 },
+cancellation_reason: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
   deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,
