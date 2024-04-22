@@ -425,12 +425,19 @@ exports.get_earning_List_for_admin = async (req, res) => {
         }
       });
 
+ // Format No of digits to two decimal places
+ const formatted_expert_booking = parseFloat(find_expert_booking_count.toFixed(2));
+ const formatted_transaction_for_expert = parseFloat(find_transation_for_expert.toFixed(2));
+ const formatted_transaction_for_admin = parseFloat(find_transation_for_admin.toFixed(2));
+
+
+
       allData.push({
         id:exp_id,
-        expert_total_booking: find_expert_booking_count,
+        expert_total_booking: formatted_expert_booking,
         expert_name: expert_name,
-        expert_total_booking_earning: find_transation_for_expert,
-        admin_total_booking_earning: find_transation_for_admin
+        expert_total_booking_earning: formatted_transaction_for_expert,
+        admin_total_booking_earning: formatted_transaction_for_admin
       });
     }
 
