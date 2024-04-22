@@ -211,6 +211,10 @@ exports.getAdminEarning = async (req, res) => {
   }
 });
     
+  // Format admin_total_audio_call_earning to two decimal places
+  const formatted_audio_earning = parseFloat(sum_of_audio_callearning.toFixed(2));
+  const formatted_video_earning = parseFloat(sum_of_video_callearning.toFixed(2));
+
     if (!AdminEarning) {
       return res.status(200).json({
         status: false,
@@ -221,8 +225,8 @@ exports.getAdminEarning = async (req, res) => {
       status: true,
       message: "AdminEarning retrieved successfully",
       data: AdminEarning,
-      admin_total_video_call_earning : sum_of_video_callearning,
-      admin_total_audio_call_earning : sum_of_audio_callearning
+      admin_total_video_call_earning : formatted_video_earning,
+      admin_total_audio_call_earning : formatted_audio_earning
       
     });
   } catch (error) {
