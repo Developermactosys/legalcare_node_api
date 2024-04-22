@@ -45,7 +45,7 @@ exports.astro_profile_update = async (req, res) => {
     user_expertise,
     user_experience,
     gender,
-    user_aboutus,
+    user_about:user_aboutus,
     per_minute,
     categoryName,
     profile_image
