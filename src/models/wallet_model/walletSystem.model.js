@@ -28,8 +28,9 @@ const wallet_system = sequelize.define('wallet_system', {
     allowNull: true,
   },
   wallet_amount: {
-    type: DataTypes.STRING,
+    type: DataTypes.FLOAT,
     allowNull: true,
+    defaultValue:0
   },
   approve_amount: {
     type: DataTypes.FLOAT,
