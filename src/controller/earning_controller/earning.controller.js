@@ -212,8 +212,8 @@ exports.getAdminEarning = async (req, res) => {
 });
     
   // Format admin_total_audio_call_earning to two decimal places
-  const formatted_audio_earning = parseFloat(sum_of_audio_callearning.toFixed(2));
-  const formatted_video_earning = parseFloat(sum_of_video_callearning.toFixed(2));
+  const formatted_audio_earning = parseFloat(sum_of_audio_callearning.toFixed(3));
+  const formatted_video_earning = parseFloat(sum_of_video_callearning.toFixed(3));
 
     if (!AdminEarning) {
       return res.status(200).json({
@@ -426,9 +426,9 @@ exports.get_earning_List_for_admin = async (req, res) => {
       });
 
  // Format No of digits to two decimal places
- const formatted_expert_booking = parseFloat(find_expert_booking_count.toFixed(2));
- const formatted_transaction_for_expert = parseFloat(find_transation_for_expert.toFixed(2));
- const formatted_transaction_for_admin = parseFloat(find_transation_for_admin.toFixed(2));
+ const formatted_expert_booking = parseFloat(find_expert_booking_count.toFixed(3));
+ const formatted_transaction_for_expert = parseFloat(find_transation_for_expert.toFixed(3));
+ const formatted_transaction_for_admin = parseFloat(find_transation_for_admin.toFixed(3));
 
 
 
