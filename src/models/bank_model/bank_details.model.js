@@ -46,6 +46,36 @@ module.exports = (sequelize, DataTypes) => {
         certificate_of_membership:  {
             type:DataTypes.STRING
         },
+        is_aadhar_card_verify: {
+            type: DataTypes.ENUM,
+        values: ["pending", "approved", "reject"],
+        defaultValue: "pending"
+        },
+        is_passbook_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_certificate_of_membership_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_certificate_of_practice_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_document_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
+        is_pan_card_image_verify: {
+            type: DataTypes.ENUM,
+            values: ["pending", "approved", "reject"],
+            defaultValue: "pending"
+        },
         deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,

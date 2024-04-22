@@ -1,6 +1,7 @@
 const db = require("../../../config/db.config");
 const doc = db.document;
 const User = db.User;
+const BankDetails = db.bank_details
 const Notification = db.notification;
 const { Sequelize,Op } = require("sequelize")
 const FCM = require('fcm-node');
@@ -90,7 +91,7 @@ exports.getAllDocumentById = async(req, res)=>{
     //     message : "expert_id not found "
     //   })
     // }
-    const docData = await doc.findOne({where: {
+    const docData = await BankDetails.findOne({where: {
       UserId : req.query.expert_id
     }})
     if(docData){
@@ -100,7 +101,7 @@ exports.getAllDocumentById = async(req, res)=>{
         data : docData
       })
     }else{
-      return res.status(400).json({
+      return res.status(200).json({
         status : false,
         message : "Document not found",
       })
@@ -380,11 +381,11 @@ exports.updateStatusForDoc = async (req, res) => {
   } = req.body;
 
   try {
-    const addDocument = await doc.update( {is_aadhar_card_verify, is_passbook_verify
+    const addDocument = await BankDetails.update( {is_aadhar_card_verify, is_passbook_verify
       ,is_certificate_of_membership_verify,is_certificate_of_practice_verify, is_document_verify, is_pan_card_image_verify} ,{ where: { UserId: expert_id } });
      
     if (!addDocument) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "Document not found."
       });
