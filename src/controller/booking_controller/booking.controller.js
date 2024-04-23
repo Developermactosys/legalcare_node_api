@@ -949,7 +949,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
         await wallet_system.update(
           { wallet_amount: newBalanceOfUser },
-          { where: { UserId } }
+          { where: { UserId : UserId} }
         );
 
         const allTransaction = await TransactionHistory.bulkCreate([
