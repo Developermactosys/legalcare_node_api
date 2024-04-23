@@ -229,6 +229,9 @@ const addCall = async (req, res) => {
     }
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_call_percentage = parseFloat(find_admin_percentage.admin_for_call_video_percentage / 100)
+   
+    const find_expert = await User.findByPk(expert_id);
+    const get_user_type = find_expert.user_type
     // Fetch expert's per minute rate
     const expert = await User.findOne({
       where: {
@@ -328,7 +331,7 @@ const addCall = async (req, res) => {
         status: 1,
         amount_receiver_id: expert_id,
         expert_id: expert_id,
-        user_type: 2,
+        user_type: get_user_type,
         deduct_type: "audio_call"
       },
       {

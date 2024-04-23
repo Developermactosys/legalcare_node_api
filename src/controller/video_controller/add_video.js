@@ -5,6 +5,8 @@ const video_call_details = db.video
 const WalletSystem = db.wallet_system
 const TransactionHistory = db.transaction_history
 const User = db.User;
+const admin_setting = db.admin_setting
+
 
 
 // // API for add video call
@@ -167,6 +169,11 @@ exports.add_video_call = async (req, res) => {
       });
     }
 
+    const find_admin_percentage = await admin_setting.findByPk(12)
+    const admin_call_percentage = parseFloat(find_admin_percentage.admin_for_call_video_percentage / 100)
+
+    const find_expert = await User.findByPk(expert_id);
+    const get_user_type = find_expert.user_type
     // Fetch expert's per minute rate
     const expert = await User.findOne({
       where: {
@@ -184,7 +191,7 @@ exports.add_video_call = async (req, res) => {
       });
     }
 
-    const admin_id = 6;
+    const admin_id = 9;
 
     // Check for existing wallet system entries
     const walletSystem = await WalletSystem.findOne({
@@ -219,15 +226,22 @@ exports.add_video_call = async (req, res) => {
     const newBalance = parseFloat(walletSystem.wallet_amount) - requestedAmount;
     await walletSystem.update({ wallet_amount: newBalance });
 
+
+// Calculate and update admin's wallet balance
+
+const admin_amount = parseFloat(admin_call_percentage * requestedAmount);
+const newBalance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount) + admin_amount;
+await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
+
+
+
     // Calculate and update expert's wallet balance
-    const expert_amount = parseFloat(0.9 * requestedAmount);
+    const expert_percentage = parseFloat(1-admin_call_percentage)
+    const expert_amount = parseFloat(expert_percentage * requestedAmount);
     const newBalance_of_expert = parseFloat(walletSystem_of_expert.wallet_amount) + expert_amount;
     await walletSystem_of_expert.update({ wallet_amount: newBalance_of_expert });
 
-    // Calculate and update admin's wallet balance
-    const admin_amount = parseFloat(0.1 * requestedAmount);
-    const newBalance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount) + admin_amount;
-    await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
+    
 
     // Create call record
     const result = await video_call_details.create({
@@ -265,7 +279,7 @@ exports.add_video_call = async (req, res) => {
         status: 1,
         amount_receiver_id: expert_id,
         expert_id: expert_id,
-        user_type: 2,
+        user_type: get_user_type,
         deduct_type: "video_call"
       },
       {
