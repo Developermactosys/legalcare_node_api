@@ -832,7 +832,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       // return res.status(200).json({ status: true, message: "Booking is cancelled", data: status_change });
     }
 
-    if (bookingStatus === "approved") {
+    if (bookingStatus === "approved" && payment_status === "paid") {
       // Calculate time difference in minutes between current time and in_progress_time
       const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
       const currentTime = new Date();
