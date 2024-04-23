@@ -10,7 +10,7 @@ exports.expert_list = async (req, res) => {
   try {
   
   const {user_type, type_account, work_type, location,language, experience,category_of_lawyer,
-    type_of_lawyer,case_type, } = req.query;
+    type_of_lawyer,case_type,max_per_minute, min_per_minute } = req.query;
   
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
@@ -49,7 +49,15 @@ exports.expert_list = async (req, res) => {
     if (case_type) {
       query.where.case_type = { [Sequelize.Op.like]: `%${case_type}%` };
     }
-
+    if (min_per_minute && max_per_minute) {
+      query.where.per_minute = {
+        [Sequelize.Op.between]: [min_per_minute, max_per_minute],
+      };
+    } else if (min_per_minute) {
+      query.where.per_minute = { [Sequelize.Op.gte]: min_per_minute };
+    } else if (max_per_minute) {
+      query.where.per_minute = { [Sequelize.Op.lte]: max_per_minute };
+    }
    
     // Fetch users directly without counting
     const users = await User.findAll(query,{

@@ -945,6 +945,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
           { where: { UserId: expert_id } }
         );
         // Giving Refund to user 
+        
         const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
 
         await wallet_system.update(
