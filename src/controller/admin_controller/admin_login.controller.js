@@ -7,13 +7,19 @@ const Token = require("../../services/genrateToken")
 exports.Admin_login = async (req, res) => {
 
     try {
+const { email_id , password ,user_type} = req.body;
+         // Trimmed fields
+        const trimmedPassword = password.trim();
+        const trimmedEmail = email_id.trim();
+        const trimmedUser_type = user_type.trim();
+
         if (!req.body.email_id) {
             return res.status(200).json({ error: 'Please enter your email ' });
         }
         if (!req.body.password) {
             return res.status(200).json({ error: 'please enter your password' });
         }
-        const user = await User.findOne({ where: { email_id: req.body.email_id } });
+        const user = await User.findOne({ where: { email_id: trimmedEmail } });
 
         if (!user) {
             return res.status(200).json({ error: 'Invalid email or password' });
@@ -25,7 +31,7 @@ exports.Admin_login = async (req, res) => {
         user.user_type === "4"  ){
             
         
-        const validPassword = await bcrypt.compare(req.body.password, user.password);
+        const validPassword = await bcrypt.compare(trimmedPassword, user.password);
 
         if (!validPassword) {
             return res.status(200).json({ error: 'Invalid email or password' });
@@ -33,11 +39,11 @@ exports.Admin_login = async (req, res) => {
         const verifyEmail = await User.findOne({
             where: {
                 otp_verify: 1,
-                email_id: req.body.email_id,
-                user_type : req.body.user_type
+                email_id: trimmedEmail,
+                user_type : trimmedUser_type
             }
         })
-        if (!verifyEmail.user_type === req.body.user_type) {
+        if (!verifyEmail.user_type === trimmedUser_type) {
             return res.status(200).json({ message: 'Invalid user_type' })
          }
         if (!verifyEmail) {

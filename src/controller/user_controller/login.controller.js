@@ -15,6 +15,11 @@ const tokenProcess = require("../../services/genrateToken");
 exports.login = async (req, res) => {
   const { phone_no, password, device_token } = req.body;
 
+// Trimmed fields
+const trimmedPassword = password.trim();
+const trimmedPhoneNo = phone_no.trim();
+
+
   // Simple validation
   if (!phone_no || !password || !device_token) {
     return res.json({
@@ -24,7 +29,7 @@ exports.login = async (req, res) => {
   }
 
   try {
-    const user = await User.findOne({ where: { phone_no } });
+    const user = await User.findOne({ where: { phone_no : trimmedPhoneNo} });
 
     if (!user) {
       return res.status(200).json({
@@ -34,7 +39,7 @@ exports.login = async (req, res) => {
     }
 
     // Asynchronous password comparison
-    const passwordIsValid = await bcrypt.compare(password, user.password);
+    const passwordIsValid = await bcrypt.compare(trimmedPassword, user.password);
 
     if (!passwordIsValid) {
       return res.status(200).json({
@@ -78,10 +83,10 @@ exports.login = async (req, res) => {
           user_status: "Online",
           login_from: "app",
         },
-        { where: { phone_no } }
+        { where: { phone_no : trimmedPhoneNo} }
       );
 
-      const updatedUser = await User.findOne({ where: { phone_no } });
+      const updatedUser = await User.findOne({ where: { phone_no :trimmedPhoneNo} });
       res.cookie("refresh_token", refresh_token, { httpOnly: true });
 
       return res.status(200).json({

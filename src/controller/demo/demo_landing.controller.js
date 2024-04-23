@@ -4,11 +4,22 @@ const User = db.User;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 const emailService = require("../../services/emailServices")
+
+
 exports.createUser = async (req, res, next) => {
-
-    const { name, last_name, email, password, confirm_password, phone_no ,login_from} = req.body;
-
+ 
     try {
+        const { name, last_name, email, password, confirm_password, phone_no ,login_from} = req.body;
+
+        
+ // Trimmed fields
+ const trimmedName = name.trim();
+ const trimmedLast_name = last_name.trim();
+ const trimmedEmail = email.trim();
+ const trimmedPassword = password.trim();
+ const confirm_trimmedPassword = confirm_password.trim();
+ const trimmedPhoneNo = phone_no.trim();
+
         const isEmptyKey = Object.keys(req.body).some(key => {
             const value = req.body[key];
             return value === '' || value === null || value === undefined;
@@ -26,12 +37,12 @@ exports.createUser = async (req, res, next) => {
         }
         const otp = Math.floor(1000 + Math.random() * 9000).toString();
 
-        if (password !== confirm_password) {
+        if (trimmedPassword !== confirm_trimmedPassword) {
             return res.status(200).json({ status:false, message: "Passwords do not match" });
         }
 
-        const existingUser = await User.findOne({ where: { email_id: email } });
-        const existingUserPhone_no = await User.findOne({ where: { phone_no: phone_no } });
+        const existingUser = await User.findOne({ where: { email_id: trimmedEmail } });
+        const existingUserPhone_no = await User.findOne({ where: { phone_no: trimmedPhoneNo } });
         if (existingUser) {
             return res.status(200).json({status:false, message: "Email already exists" });
         }
@@ -39,20 +50,20 @@ exports.createUser = async (req, res, next) => {
             return res.status(200).json({status:false, message: "Mobile number already exists" });
         }
 
-        const hashedPassword = await bcrypt.hash(confirm_password, 10);
+        const hashedPassword = await bcrypt.hash(confirm_trimmedPassword, 10);
 
-        const remember_token = jwt.sign({ email_id: email }, process.env.ACCESS_SECRET_KEY, { expiresIn: '7d' });
+        const remember_token = jwt.sign({ email_id: trimmedEmail }, process.env.ACCESS_SECRET_KEY, { expiresIn: '7d' });
 
 
         const newUser = await User.create({
             // first_name: name,
-            name: name,
-            last_name: last_name,
-            email_id: email,
-            phone_no: phone_no,
+            name: trimmedName,
+            last_name: trimmedLast_name,
+            email_id: trimmedEmail,
+            phone_no: trimmedPhoneNo,
             password: hashedPassword,
             token: remember_token,
-            confirm_password: confirm_password,
+            // confirm_password: confirm_password,
             otp: otp,
             user_type: user_type,
             login_from:login_from
@@ -63,7 +74,7 @@ exports.createUser = async (req, res, next) => {
             let yourCompany = 'LegalCare';
             let yourPosition = 'Manager';
 
-            const info = await emailService(otp, name, email, yourName, yourCompany, yourPosition);
+            const info = await emailService(otp, trimmedName, trimmedEmail, yourName, yourCompany, yourPosition);
 
             if (info) {
                 return res.json({

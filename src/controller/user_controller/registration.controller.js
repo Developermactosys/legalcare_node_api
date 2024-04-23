@@ -30,6 +30,12 @@ const registration = async (req, res) => {
       login_from
     } = req.body;
 
+ // Trimmed fields
+ const trimmedName = name.trim();
+ const trimmedEmail = email_id.trim();
+ const trimmedPassword = password.trim();
+ const trimmedPhoneNo = phone_no.trim();
+
     const dateFormat = "YYYY-MM-DD"; 
     const parsedDate = moment(userInputDate, dateFormat);
     
@@ -50,11 +56,13 @@ if(!user_type){
       // const filePath = `/src/uploads/${req.file.filename}`;
       // console.log(filePath);
 
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(trimmedPassword, 10);
 
       const user = await User.create(req.body);
       user.dob = userInputDate,
-      
+      user.name = trimmedName,
+      user.email_id = trimmedEmail,
+      user.phone_no = trimmedPhoneNo,
       user.password= hashedPassword,
       user.user_type =  user_type
       await user.save();
