@@ -956,6 +956,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     const find_expert = await User.findByPk(expert_id);
     const get_user_type = find_expert.user_type
 
+    // User End Cancel booking
     if (status == "cancel" && payment_status === "unpaid") {
       // Update booking status to cancelled if payment is unpaid
       const status_change = await Booking_details.update(
@@ -1000,6 +1001,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
       }
     });
     }
+
+    // User End Cancel booking
 
     if ( status == "cancel" && payment_status == "paid") {
 
@@ -1049,6 +1052,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     }
 
+    // Expert End Cancel booking
+
     if(is_cancel_status == "cancellation_reject"){
       // Update booking status to cancelled if status is reject
       const status_change = await Booking_details.update(
@@ -1093,6 +1098,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
         }
       });
   }
+
+    // Expert End Cancel booking
 
     if(is_cancel_status == "cancellation_approved"){ 
 
@@ -1216,7 +1223,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     });
   }
 
-    // Process refund if booking status is pending and payment is paid
+    // Process refund if booking status is pending and payment is paid on Expert end
     if (bookingStatus === "pending" && payment_status === "paid") {
 
       const userWallet = await wallet_system.findOne({ where: { UserId } });

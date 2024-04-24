@@ -70,6 +70,9 @@ const User = sequelize.define('User', {
     type:DataTypes.STRING,
     defaultValue:"Offline"
   },
+  location: {
+    type:DataTypes.STRING,
+  },
   status: {
     type: DataTypes.ENUM,
     values: [ "verified" , "rejected", "suspended" ],
