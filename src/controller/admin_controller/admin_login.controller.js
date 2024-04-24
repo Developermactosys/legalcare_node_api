@@ -11,7 +11,7 @@ const { email_id , password ,user_type} = req.body;
          // Trimmed fields
         const trimmedPassword = password.trim();
         const trimmedEmail = email_id.trim();
-        const trimmedUser_type = user_type.trim();
+        // const trimmedUser_type = user_type.trim();
 
         if (!req.body.email_id) {
             return res.status(200).json({ error: 'Please enter your email ' });
@@ -40,10 +40,10 @@ const { email_id , password ,user_type} = req.body;
             where: {
                 otp_verify: 1,
                 email_id: trimmedEmail,
-                user_type : trimmedUser_type
+                user_type : user_type
             }
         })
-        if (!verifyEmail.user_type === trimmedUser_type) {
+        if (!verifyEmail.user_type === user_type) {
             return res.status(200).json({ message: 'Invalid user_type' })
          }
         if (!verifyEmail) {
