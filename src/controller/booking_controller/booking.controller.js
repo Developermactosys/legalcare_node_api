@@ -592,7 +592,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       limit: limit,
       offset: offset,
     })
-    
+
     const totalCount = await Booking_details.count({});
     const totalPages = Math.ceil(totalCount / limit);
 
@@ -644,7 +644,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       message: "All Booking",
       data: get_booking,
       currentPages: page,
-      totalPages:totalPages
+      totalPages: totalPages
     })
 
   } catch (error) {
@@ -683,260 +683,9 @@ exports.delete_booking_by_id = async (req, res) => {
 }
 
 // Origional
-exports.Cancle_booking_by_id = async (req, res) => {
-  try {
-    const { booking_id, time, status , cancellation_reason } = req.query;
-
-    const find_admin_percentage = await admin_setting.findByPk(12)
-    const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
-
-    // Find booking by ID
-    const cancel_booking = await Booking_details.findByPk(booking_id);
-
-    if (!cancel_booking) {
-      return res.status(200).json({ status: false, message: "Booking not found" });
-    }
-    if(cancel_booking.status == "cancel"){
-      return res.status(200).json({status:false ,message: "your booking is already cancelled"})
-    }
-
-    const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
-
-    const find_expert = await User.findByPk(expert_id);
-    const get_user_type = find_expert.user_type
-
-    if (payment_status === "unpaid") {
-      // Update booking status to cancelled if payment is unpaid
-      const status_change = await Booking_details.update(
-        { status: status ,cancellation_reason:cancellation_reason},
-        { where: { id: booking_id } }
-      );
-
-      // return res.status(200).json({ status: true, message: "Booking is cancelled", data: status_change });
-    }
-
-    if (bookingStatus === "approved" && payment_status === "paid") {
-      // Calculate time difference in minutes between current time and in_progress_time
-      const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
-      const currentTime = new Date();
-      const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
-
-      if (timeDifferenceMinutes > 1440) {
-        return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
-      }
-
-      // Process refund if booking status is approved and cancellation is within 24 hours
-      if (timeDifferenceMinutes < 1440) {
-        const userWallet = await wallet_system.findOne({ where: { UserId } });
-
-        const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
-
-        if (userWallet) {
-
-
-          // for expert deduction 
-          const expert_percentage = parseFloat(1 - admin_booking_percentage)
-          const expert_amount = parseFloat(discounted_amount * expert_percentage)
-          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-            parseFloat(discounted_amount * expert_percentage);
-
-          await wallet_system.update(
-            { wallet_amount: newBalanceOfExpert },
-            { where: { UserId: expert_id } }
-          );
-
-          // Giving Refund to user 
-          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
-
-          await wallet_system.update(
-            { wallet_amount: newBalanceOfUser },
-            { where: { UserId } }
-          );
-
-          // console.log("Full refund processed successfully within 24 hours");
-
-          const allTransaction = await TransactionHistory.bulkCreate([
-            {
-              UserId: UserId,
-              payment_method:"wallet",
-              payment_status:"wallet_transaction",
-              transaction_amount: expert_amount,
-              // transaction_id,
-              // device_id,
-              status: 1,
-              amount_receiver_id: UserId,
-              expert_id: expert_id,
-              user_type: 1,
-              deduct_type: "refund",
-              description:cancellation_reason
-            },
-            {
-              UserId: expert_id,
-              payment_method:"wallet",
-              payment_status:"wallet_transaction",
-              transaction_amount: expert_amount,
-              // transaction_id,
-              // device_id,
-              status: 1,
-              amount_receiver_id: UserId,
-              expert_id: expert_id,
-              user_type: get_user_type,
-              deduct_type: "refund",
-              description:cancellation_reason
-
-            },
-           
-          ]);
-        }
-      }
-
-      const status_change = await Booking_details.update(
-        { status: status ,cancellation_reason : cancellation_reason},
-        { where: { id: booking_id } }
-      );
-    }
-
-    // Process refund if booking status is pending and payment is paid
-    if (bookingStatus === "pending" && payment_status === "paid") {
-      const userWallet = await wallet_system.findOne({ where: { UserId } });
-
-      const admin_id = 9
-      const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
-
-      const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
-
-
-      if (userWallet) {
-        // For Admin deduction 
-        const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
-        const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
-          parseFloat(discounted_amount * admin_booking_percentage);
-
-        await wallet_system.update(
-          { wallet_amount: newBalanceOfAdmin },
-          { where: { UserId: admin_id } }
-        );
-
-        // for expert deduction 
-        const expert_percentage = parseFloat(1 - admin_booking_percentage)
-        const expert_amount = parseFloat(discounted_amount * expert_percentage)
-        const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-          parseFloat(discounted_amount * expert_percentage);
-
-        await wallet_system.update(
-          { wallet_amount: newBalanceOfExpert },
-          { where: { UserId: expert_id } }
-        );
-        // Giving Refund to user 
-        
-        const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
-
-        await wallet_system.update(
-          { wallet_amount: newBalanceOfUser },
-          { where: { UserId : UserId} }
-        );
-
-        const allTransaction = await TransactionHistory.bulkCreate([
-          {
-            UserId: UserId,
-            payment_method:"wallet",
-            payment_status:"wallet_transaction",
-            transaction_amount: discounted_amount,
-            // transaction_id,
-            // device_id,
-            status: 1,
-            amount_receiver_id: UserId,
-            expert_id: expert_id,
-            user_type: 1,
-            deduct_type: "refund",
-            description:cancellation_reason
-
-          },
-          {
-            UserId: expert_id,
-            payment_method:"wallet",
-            payment_status:"wallet_transaction",
-            transaction_amount: expert_amount,
-            // transaction_id,
-            // device_id,
-            status: 1,
-            amount_receiver_id: UserId,
-            expert_id: expert_id,
-            user_type: get_user_type,
-            deduct_type: "refund",
-            description:cancellation_reason
-
-          },
-          {
-            UserId: admin_id,
-            payment_method:"wallet",
-            payment_status:"wallet_transaction",
-            transaction_amount: admin_amount,
-            // transaction_id,
-            // device_id,
-            status: 1,
-            amount_receiver_id: UserId,
-            expert_id: expert_id,
-            user_type: 0,
-            deduct_type: "refund",
-            description:cancellation_reason
-
-          }
-        ]);
-
-      }
-      const status_change = await Booking_details.update(
-        { status: status , cancellation_reason :cancellation_reason},
-        { where: { id: booking_id } }
-      );
-    }
-
-    // Send notification to expert about booking cancellation
-    const user = await User.findByPk(UserId);
-    const expert = await User.findByPk(expert_id);
-    const serviceDetails = await service.findByPk(serviceId);
-
-    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
-    const user_name = user ? user.name : 'Unknown User';
-
-    const message = {
-      to: expert.device_id, // Assuming the user model has a device_id field
-      notification: {
-        title: `Booking Cancellation`,
-        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
-      },
-    };
-
-    await Notification.create({
-      message: message.notification.body,
-      type: "Booking_cancellation",
-      UserId: expert.id
-    });
-
-    // Send FCM notification
-    fcm.send(message, (err, response) => {
-      if (err) {
-        console.error("FCM notification error:", err);
-        return res.status(200).json({ status: false, message: "Failed to send notification" });
-      } else {
-        console.log("FCM notification sent successfully:", response);
-        return res.status(200).json({
-          status: true,
-          message: "Booking is cancelled and notification sent",
-        });
-      }
-    });
-
-  } catch (error) {
-    console.error("Error in cancelling booking:", error);
-    return res.status(500).json({ status: false, message: error.message });
-  }
-};
-
-
 // exports.Cancle_booking_by_id = async (req, res) => {
 //   try {
-//     const { booking_id, time, status , cancellation_reason ,is_cancel_status} = req.query;
+//     const { booking_id, time, status , cancellation_reason } = req.query;
 
 //     const find_admin_percentage = await admin_setting.findByPk(12)
 //     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -952,14 +701,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
 //     }
 
 //     const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
-    
+
 //     const find_expert = await User.findByPk(expert_id);
 //     const get_user_type = find_expert.user_type
-
-//     if(status == "cancel"){
-
-
-//     }
 
 //     if (payment_status === "unpaid") {
 //       // Update booking status to cancelled if payment is unpaid
@@ -1041,7 +785,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 //               description:cancellation_reason
 
 //             },
-           
+
 //           ]);
 //         }
 //       }
@@ -1084,7 +828,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 //           { where: { UserId: expert_id } }
 //         );
 //         // Giving Refund to user 
-        
+
 //         const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
 
 //         await wallet_system.update(
@@ -1188,6 +932,428 @@ exports.Cancle_booking_by_id = async (req, res) => {
 //     return res.status(500).json({ status: false, message: error.message });
 //   }
 // };
+
+
+exports.Cancle_booking_by_id = async (req, res) => {
+  try {
+    const { booking_id, time, status, cancellation_reason, is_cancel_status } = req.query;
+
+    const find_admin_percentage = await admin_setting.findByPk(12)
+    const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
+
+    // Find booking by ID
+    const cancel_booking = await Booking_details.findByPk(booking_id);
+
+    if (!cancel_booking) {
+      return res.status(200).json({ status: false, message: "Booking not found" });
+    }
+    if (cancel_booking.status == "cancel") {
+      return res.status(200).json({ status: false, message: "your booking is already cancelled" })
+    }
+
+    const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
+
+    const find_expert = await User.findByPk(expert_id);
+    const get_user_type = find_expert.user_type
+
+    if (status == "cancel" && payment_status === "unpaid") {
+      // Update booking status to cancelled if payment is unpaid
+      const status_change = await Booking_details.update(
+        { status: status, cancellation_reason: cancellation_reason },
+        { where: { id: booking_id } }
+      );
+
+      // return res.status(200).json({ status: true, message: "Booking is cancelled", data: status_change });
+      // Send notification to expert about booking cancellation
+    const user = await User.findByPk(UserId);
+    const expert = await User.findByPk(expert_id);
+    const serviceDetails = await service.findByPk(serviceId);
+
+    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    const user_name = user ? user.name : 'Unknown User';
+
+    const message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Cancellation`,
+        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: "Booking_cancellation",
+      UserId: expert.id
+    });
+
+    // Send FCM notification
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.error("FCM notification error:", err);
+        return res.status(200).json({ status: false, message: "Failed to send notification" });
+      } else {
+        console.log("FCM notification sent successfully:", response);
+        return res.status(200).json({
+          status: true,
+          message: "Booking is cancelled and notification sent",
+        });
+      }
+    });
+    }
+
+    if ( status == "cancel" && payment_status == "paid") {
+
+      // Update booking status to cancelled if status is cancel
+      const status_change = await Booking_details.update(
+        { is_cancel_status: "cancellation_pending" },
+        { where: { id: booking_id } }
+      );
+
+
+      // Send notification to expert about booking cancellation
+      const user = await User.findByPk(UserId);
+      const expert = await User.findByPk(expert_id);
+      const serviceDetails = await service.findByPk(serviceId);
+
+      const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+      const user_name = user ? user.name : 'Unknown User';
+      const expert_name = expert ? expert.name: "Unknown expert"
+
+      const message = {
+        to: expert.device_id, // Assuming the user model has a device_id field
+        notification: {
+          title: `Booking Cancellation Request`,
+          body: `Dear ${expert_name}, you have received a cancellation request for ${service_name} sent by ${user_name} .`,
+        },
+      };
+
+      await Notification.create({
+        message: message.notification.body,
+        type: "Booking Cancellation Request",
+        UserId: expert.id
+      });
+
+      // Send FCM notification
+      fcm.send(message, (err, response) => {
+        if (err) {
+          console.error("FCM notification error:", err);
+          return res.status(200).json({ status: false, message: "Failed to send notification" });
+        } else {
+          console.log("FCM notification sent successfully:", response);
+          return res.status(200).json({
+            status: true,
+            message: "Request for Booking cancellation is send successfully and notification sent",
+          });
+        }
+      });
+
+    }
+
+    if(is_cancel_status == "cancellation_reject"){
+      // Update booking status to cancelled if status is reject
+      const status_change = await Booking_details.update(
+        { is_cancel_status: "cancellation_reject" },
+        { where: { id: booking_id } }
+      );
+
+      // Send notification to expert about booking cancellation
+      const user = await User.findByPk(UserId);
+      const expert = await User.findByPk(expert_id);
+      const serviceDetails = await service.findByPk(serviceId);
+
+      const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+      const user_name = user ? user.name : 'Unknown User';
+      const expert_name = expert ? expert.name: "Unknown expert"
+
+      const message = {
+        to: user.device_id, // Assuming the user model has a device_id field
+        notification: {
+          title: `Rejection for Booking Cancellation `,
+          body: `Dear ${user_name}, your Booking cancelllation request for ${service_name}, has been rejected by ${expert_name} .`,
+        },
+      };
+
+      await Notification.create({
+        message: message.notification.body,
+        type: "Rejection for Booking Cancellation",
+        UserId: user.id
+      });
+
+      // Send FCM notification
+      fcm.send(message, (err, response) => {
+        if (err) {
+          console.error("FCM notification error:", err);
+          return res.status(200).json({ status: false, message: "Failed to send notification" });
+        } else {
+          console.log("FCM notification sent successfully:", response);
+          return res.status(200).json({
+            status: true,
+            message: "Request for Booking Cancellation is rejected and notification sent",
+          });
+        }
+      });
+  }
+
+    if(is_cancel_status == "cancellation_approved"){ 
+
+    if (bookingStatus === "approved" && payment_status === "paid") {
+      
+      // Calculate time difference in minutes between current time and in_progress_time
+      const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
+      const currentTime = new Date();
+      // const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
+
+      // if (timeDifferenceMinutes > 1440) {
+      //   return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
+      // }
+
+      // Process refund if booking status is approved and cancellation is within 24 hours
+      // if (timeDifferenceMinutes < 1440) {
+        const userWallet = await wallet_system.findOne({ where: { UserId } });
+
+        const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+
+        if (userWallet) {
+
+
+          // for expert deduction 
+          const expert_percentage = parseFloat(1 - admin_booking_percentage)
+          const expert_amount = parseFloat(discounted_amount * expert_percentage)
+          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+            parseFloat(discounted_amount * expert_percentage);
+
+          await wallet_system.update(
+            { wallet_amount: newBalanceOfExpert },
+            { where: { UserId: expert_id } }
+          );
+
+          // Giving Refund to user 
+          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
+
+          await wallet_system.update(
+            { wallet_amount: newBalanceOfUser },
+            { where: { UserId } }
+          );
+
+          // console.log("Full refund processed successfully within 24 hours");
+
+          const allTransaction = await TransactionHistory.bulkCreate([
+            {
+              UserId: UserId,
+              payment_method: "wallet",
+              payment_status: "wallet_transaction",
+              transaction_amount: expert_amount,
+              // transaction_id,
+              // device_id,
+              status: 1,
+              amount_receiver_id: UserId,
+              expert_id: expert_id,
+              user_type: 1,
+              deduct_type: "refund",
+              description: cancellation_reason
+            },
+            {
+              UserId: expert_id,
+              payment_method: "wallet",
+              payment_status: "wallet_transaction",
+              transaction_amount: expert_amount,
+              // transaction_id,
+              // device_id,
+              status: 1,
+              amount_receiver_id: UserId,
+              expert_id: expert_id,
+              user_type: get_user_type,
+              deduct_type: "refund",
+              description: cancellation_reason
+
+            },
+
+          ]);
+        }
+      // }
+
+      const status_change = await Booking_details.update(
+        { status: "cancel" ,is_cancel_status : is_cancel_status},
+        { where: { id: booking_id } }
+      );
+    }
+
+    
+    // Send notification to expert about booking cancellation
+    const user = await User.findByPk(UserId);
+    const expert = await User.findByPk(expert_id);
+    const serviceDetails = await service.findByPk(serviceId);
+
+    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    const user_name = user ? user.name : 'Unknown User';
+
+    const message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Cancellation`,
+        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: "Booking_cancellation",
+      UserId: expert.id
+    });
+
+    // Send FCM notification
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.error("FCM notification error:", err);
+        return res.status(200).json({ status: false, message: "Failed to send notification" });
+      } else {
+        console.log("FCM notification sent successfully:", response);
+        return res.status(200).json({
+          status: true,
+          message: "Booking is cancelled and notification sent",
+        });
+      }
+    });
+  }
+
+    // Process refund if booking status is pending and payment is paid
+    if (bookingStatus === "pending" && payment_status === "paid") {
+
+      const userWallet = await wallet_system.findOne({ where: { UserId } });
+
+      const admin_id = 9
+      const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
+
+      const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+
+
+      if (userWallet) {
+        // For Admin deduction 
+        const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
+        const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
+          parseFloat(discounted_amount * admin_booking_percentage);
+
+        await wallet_system.update(
+          { wallet_amount: newBalanceOfAdmin },
+          { where: { UserId: admin_id } }
+        );
+
+        // for expert deduction 
+        const expert_percentage = parseFloat(1 - admin_booking_percentage)
+        const expert_amount = parseFloat(discounted_amount * expert_percentage)
+        const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+          parseFloat(discounted_amount * expert_percentage);
+
+        await wallet_system.update(
+          { wallet_amount: newBalanceOfExpert },
+          { where: { UserId: expert_id } }
+        );
+        // Giving Refund to user 
+
+        const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
+
+        await wallet_system.update(
+          { wallet_amount: newBalanceOfUser },
+          { where: { UserId: UserId } }
+        );
+
+        const allTransaction = await TransactionHistory.bulkCreate([
+          {
+            UserId: UserId,
+            payment_method: "wallet",
+            payment_status: "wallet_transaction",
+            transaction_amount: discounted_amount,
+            // transaction_id,
+            // device_id,
+            status: 1,
+            amount_receiver_id: UserId,
+            expert_id: expert_id,
+            user_type: 1,
+            deduct_type: "refund",
+            description: cancellation_reason
+
+          },
+          {
+            UserId: expert_id,
+            payment_method: "wallet",
+            payment_status: "wallet_transaction",
+            transaction_amount: expert_amount,
+            // transaction_id,
+            // device_id,
+            status: 1,
+            amount_receiver_id: UserId,
+            expert_id: expert_id,
+            user_type: get_user_type,
+            deduct_type: "refund",
+            description: cancellation_reason
+
+          },
+          {
+            UserId: admin_id,
+            payment_method: "wallet",
+            payment_status: "wallet_transaction",
+            transaction_amount: admin_amount,
+            // transaction_id,
+            // device_id,
+            status: 1,
+            amount_receiver_id: UserId,
+            expert_id: expert_id,
+            user_type: 0,
+            deduct_type: "refund",
+            description: cancellation_reason
+
+          }
+        ]);
+
+      }
+      const status_change = await Booking_details.update(
+        { status: status, cancellation_reason: cancellation_reason },
+        { where: { id: booking_id } }
+      );
+
+        // Send notification to expert about booking cancellation
+    const user = await User.findByPk(UserId);
+    const expert = await User.findByPk(expert_id);
+    const serviceDetails = await service.findByPk(serviceId);
+
+    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    const user_name = user ? user.name : 'Unknown User';
+
+    const message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Cancellation`,
+        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: "Booking_cancellation",
+      UserId: expert.id
+    });
+
+    // Send FCM notification
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.error("FCM notification error:", err);
+        return res.status(200).json({ status: false, message: "Failed to send notification" });
+      } else {
+        console.log("FCM notification sent successfully:", response);
+        return res.status(200).json({
+          status: true,
+          message: "Booking is cancelled and notification sent",
+        });
+      }
+    });
+    }
+
+
+  } catch (error) {
+    console.error("Error in cancelling booking:", error);
+    return res.status(500).json({ status: false, message: error.message });
+  }
+};
 
 exports.update_Booking_by_status = async (req, res) => {
   try {

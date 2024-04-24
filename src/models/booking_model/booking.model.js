@@ -81,6 +81,11 @@ cancellation_reason: {
   allowNull: true,
   defaultValue: null
 },
+is_cancel_status: {
+  type: DataTypes.ENUM,
+  values: ["cancellation_pending", "cancellation_approved", "cancellation_reject" ],
+  allowNull: true,
+},
   deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,
