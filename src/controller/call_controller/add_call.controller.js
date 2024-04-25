@@ -217,7 +217,8 @@ const addCall = async (req, res) => {
       payment_status,
       transaction_id,
       payment_method,
-      user_type
+      user_type,
+      description
     } = req.body;
 
     // Validate request data
@@ -319,7 +320,8 @@ const addCall = async (req, res) => {
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 1,
-        deduct_type: "audio_call"
+        deduct_type: "audio_call",
+        description:description
       },
       {
         UserId: expert_id,
@@ -332,7 +334,9 @@ const addCall = async (req, res) => {
         amount_receiver_id: expert_id,
         expert_id: expert_id,
         user_type: get_user_type,
-        deduct_type: "audio_call"
+        deduct_type: "audio_call",
+        description:description
+
       },
       {
         UserId: admin_id,
@@ -345,7 +349,9 @@ const addCall = async (req, res) => {
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 0,
-        deduct_type: "audio_call"
+        deduct_type: "audio_call",
+        description:description
+
       }
     ]);
 

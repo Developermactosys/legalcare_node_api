@@ -158,7 +158,8 @@ exports.add_video_call = async (req, res) => {
       payment_status,
       transaction_id,
       payment_method,
-      user_type
+      user_type,
+      description
     } = req.body;
 
     // Validate request data
@@ -267,7 +268,8 @@ await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 1,
-        deduct_type: "video_call"
+        deduct_type: "video_call",
+        description:description
       },
       {
         UserId: expert_id,
@@ -280,7 +282,9 @@ await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
         amount_receiver_id: expert_id,
         expert_id: expert_id,
         user_type: get_user_type,
-        deduct_type: "video_call"
+        deduct_type: "video_call",
+        description:description
+
       },
       {
         UserId: admin_id,
@@ -293,7 +297,9 @@ await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 0,
-        deduct_type: "video_call"
+        deduct_type: "video_call",
+        description:description
+
       }
     ]);
 

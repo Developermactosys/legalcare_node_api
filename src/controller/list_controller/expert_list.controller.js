@@ -3,7 +3,7 @@
 const db = require("../../../config/db.config");
 
 const User = db.User;
-const {Sequelize,Op,like } = require("sequelize")
+const {Sequelize,Op,like, where } = require("sequelize")
 
 exports.expert_list = async (req, res) => {
   
@@ -14,7 +14,7 @@ exports.expert_list = async (req, res) => {
   
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
-    const offset = Number(req.query.offset) || 0;
+    const offset = (page - 1) * limit;
 
     let query = {
       where: {},
@@ -23,8 +23,6 @@ exports.expert_list = async (req, res) => {
     //   query.where.id = id; // Direct match
     // }
     // Add the order clause for random order
-    query.order = Sequelize.literal('RAND()'); // For MySQL
-    // For PostgreSQL, use: query.order = Sequelize.literal('RANDOM()');
 
     if (user_type) {
       query.where.user_type = { [Sequelize.Op.like]: `%${user_type}%` };
@@ -36,7 +34,7 @@ exports.expert_list = async (req, res) => {
       query.where.work_type = { [Sequelize.Op.like]: `%${work_type}%` };
     }
     if (location) {
-      query.where.address = { [Sequelize.Op.like]: `%${location}%` };
+      query.where.location = { [Sequelize.Op.like]: `%${location}%` };
     }
     if (language) {
       query.where.user_language = { [Sequelize.Op.like]: `%${language}%` };
@@ -62,7 +60,10 @@ exports.expert_list = async (req, res) => {
     } else if (max_per_minute) {
       query.where.per_minute = { [Sequelize.Op.lte]: max_per_minute };
     }
-   
+
+    query.order = Sequelize.literal('RAND()'); // For MySQL
+    // For PostgreSQL, use: query.order = Sequelize.literal('RANDOM()');
+
     // Fetch users directly without counting
     const users = await User.findAll(query,{
       where: {
@@ -71,12 +72,11 @@ exports.expert_list = async (req, res) => {
         // chat_active: 1,
         // call_active: 1,
       },
+      order: query.order,
       limit: limit,
       offset: offset,
-      order: query.order,
     });
-
-    const totalCount = await User.count({});
+    const totalCount = users.length
     const totalPages = Math.ceil(totalCount / limit)
 
     if (users.length > 0) { // Ensure we got results for the specified user types
@@ -85,7 +85,8 @@ exports.expert_list = async (req, res) => {
         message: "Showing Data of expert list",
         list: users,
         currentPage: page,
-        totalPages,
+        totalPages : totalPages,
+        count : users.length
       });
     } else {
       return res.status(200).json({
@@ -162,3 +163,6 @@ exports.expert_list = async (req, res) => {
 //     });
 //   }
 // };
+
+
+
