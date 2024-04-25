@@ -49,7 +49,7 @@ if(!user_type){
       const formattedDateForDB = parsedDate.format("YYYY-MM-DD");
       // Use `formattedDateForDB` in your INSERT statement for the `dob` column
     }
-    const existingUser = await User.findOne({ where: { phone_no: phone_no } });
+    const existingUser = await User.findOne({ where: { phone_no: trimmedPhoneNo } });
 
     if (!existingUser) {
      
