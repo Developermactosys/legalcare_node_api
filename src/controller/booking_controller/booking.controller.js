@@ -212,6 +212,10 @@ exports.Add_Booking = async (req, res) => {
 exports.get_booking_by_status = async (req, res) => {
   try {
     const { status, user_id } = req.body;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
       return value === "" || value === null || value === undefined;
@@ -257,12 +261,20 @@ exports.get_booking_by_status = async (req, res) => {
         }
       ],
       order: [['createdAt', 'DESC']],
+      limit: limit,
+      offset: offset,
     });
+
+    const totalCount = await Booking_details.count({});
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: "pending bookings",
       data: pending_booking,
+      // count: totalCount,
+      currentPage: page,
+      totalPages: totalPages,
     });
 
 
@@ -363,7 +375,9 @@ exports.get_booking_by_status = async (req, res) => {
 exports.getBooking_by_status_only = async (req, res) => {
   try {
     const { status } = req.query;
-
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
     let query = {
       where: {},
     };
@@ -409,12 +423,20 @@ exports.getBooking_by_status_only = async (req, res) => {
         }
       ],
       order: [['createdAt', 'DESC']],
+      limit: limit,
+      offset: offset,
     });
+
+    const totalCount = await Booking_details.count({});
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: " Bookings fetched successfully",
       data: pending_bookings,
+      // count: totalCount,
+      currentPage: page,
+      totalPages: totalPages,
     });
 
   } catch (error) {
