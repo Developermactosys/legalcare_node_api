@@ -1149,7 +1149,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             {
               UserId: UserId,
               payment_method: "wallet",
-              payment_status: "wallet_transaction",
+              payment_status: "Refund for booking ",
               transaction_amount: expert_amount,
               // transaction_id,
               // device_id,
@@ -1163,7 +1163,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             {
               UserId: expert_id,
               payment_method: "wallet",
-              payment_status: "wallet_transaction",
+              payment_status: "deduct for Refund",
               transaction_amount: expert_amount,
               // transaction_id,
               // device_id,
@@ -1269,7 +1269,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
           {
             UserId: UserId,
             payment_method: "wallet",
-            payment_status: "wallet_transaction",
+            payment_status: "Refund for booking ",
             transaction_amount: discounted_amount,
             // transaction_id,
             // device_id,
@@ -1284,7 +1284,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
           {
             UserId: expert_id,
             payment_method: "wallet",
-            payment_status: "wallet_transaction",
+            payment_status: "deduct for Refund ",
             transaction_amount: expert_amount,
             // transaction_id,
             // device_id,
@@ -1299,7 +1299,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
           {
             UserId: admin_id,
             payment_method: "wallet",
-            payment_status: "wallet_transaction",
+            payment_status: "deduct for Refund",
             transaction_amount: admin_amount,
             // transaction_id,
             // device_id,
