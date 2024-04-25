@@ -213,6 +213,7 @@ const getAllBanner = async (req, res) => {
   const offset = (page - 1) * limit;
   try {
     const banner = await LiveEvent.findAll({
+      where :{ event_status : "Active" },
       limit: limit,
       offset: offset,
     });
