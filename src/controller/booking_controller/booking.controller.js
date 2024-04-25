@@ -154,10 +154,11 @@ exports.Add_Booking = async (req, res) => {
     const find_expert_service_id = await expert_service.findOne({
       where: { serviceId: serviceId, UserId: expert_id }
     })
+    const find_service_cost = find_expert_service_id.expert_fees 
 
     add_booking.booking_id = bookingID
     add_booking.serviceId = serviceId;
-    add_booking.discounted_amount = discounted_amount;
+    add_booking.discounted_amount = find_service_cost;
     add_booking.GST = GST;
     add_booking.UserId = user_id;
     add_booking.expert_id = expert_id;
@@ -1226,7 +1227,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     // Process refund if booking status is pending and payment is paid on Expert end
     if (bookingStatus === "pending" && payment_status === "paid") {
 
-      const userWallet = await wallet_system.findOne({ where: { UserId } });
+      const userWallet = await wallet_system.findOne({ where: { UserId : UserId} });
 
       const admin_id = 9
       const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
