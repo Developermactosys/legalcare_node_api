@@ -22,6 +22,10 @@ exports.expert_list = async (req, res) => {
     // if (id) {
     //   query.where.id = id; // Direct match
     // }
+    // Add the order clause for random order
+    query.order = Sequelize.literal('RAND()'); // For MySQL
+    // For PostgreSQL, use: query.order = Sequelize.literal('RANDOM()');
+
     if (user_type) {
       query.where.user_type = { [Sequelize.Op.like]: `%${user_type}%` };
     }
@@ -69,6 +73,7 @@ exports.expert_list = async (req, res) => {
       },
       limit: limit,
       offset: offset,
+      order: query.order,
     });
 
     const totalCount = await User.count({});
