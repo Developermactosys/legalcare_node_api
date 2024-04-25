@@ -1005,53 +1005,53 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     // User End Cancel booking
 
-    if ( status == "cancel" && payment_status == "paid") {
+    // if ( status == "cancel" && payment_status == "paid") {
 
-      // Update booking status to cancelled if status is cancel
-      const status_change = await Booking_details.update(
-        { is_cancel_status: "cancellation_pending" },
-        { where: { id: booking_id } }
-      );
+    //   // Update booking status to cancelled if status is cancel
+    //   const status_change = await Booking_details.update(
+    //     { is_cancel_status: "cancellation_pending" },
+    //     { where: { id: booking_id } }
+    //   );
 
 
-      // Send notification to expert about booking cancellation
-      const user = await User.findByPk(UserId);
-      const expert = await User.findByPk(expert_id);
-      const serviceDetails = await service.findByPk(serviceId);
+    //   // Send notification to expert about booking cancellation
+    //   const user = await User.findByPk(UserId);
+    //   const expert = await User.findByPk(expert_id);
+    //   const serviceDetails = await service.findByPk(serviceId);
 
-      const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
-      const user_name = user ? user.name : 'Unknown User';
-      const expert_name = expert ? expert.name: "Unknown expert"
+    //   const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    //   const user_name = user ? user.name : 'Unknown User';
+    //   const expert_name = expert ? expert.name: "Unknown expert"
 
-      const message = {
-        to: expert.device_id, // Assuming the user model has a device_id field
-        notification: {
-          title: `Booking Cancellation Request`,
-          body: `Dear ${expert_name}, you have received a cancellation request for ${service_name} sent by ${user_name} .`,
-        },
-      };
+    //   const message = {
+    //     to: expert.device_id, // Assuming the user model has a device_id field
+    //     notification: {
+    //       title: `Booking Cancellation Request`,
+    //       body: `Dear ${expert_name}, you have received a cancellation request for ${service_name} sent by ${user_name} .`,
+    //     },
+    //   };
 
-      await Notification.create({
-        message: message.notification.body,
-        type: "Booking Cancellation Request",
-        UserId: expert.id
-      });
+    //   await Notification.create({
+    //     message: message.notification.body,
+    //     type: "Booking Cancellation Request",
+    //     UserId: expert.id
+    //   });
 
-      // Send FCM notification
-      fcm.send(message, (err, response) => {
-        if (err) {
-          console.error("FCM notification error:", err);
-          return res.status(200).json({ status: false, message: "Failed to send notification" });
-        } else {
-          console.log("FCM notification sent successfully:", response);
-          return res.status(200).json({
-            status: true,
-            message: "Request for Booking cancellation is send successfully and notification sent",
-          });
-        }
-      });
+    //   // Send FCM notification
+    //   fcm.send(message, (err, response) => {
+    //     if (err) {
+    //       console.error("FCM notification error:", err);
+    //       return res.status(200).json({ status: false, message: "Failed to send notification" });
+    //     } else {
+    //       console.log("FCM notification sent successfully:", response);
+    //       return res.status(200).json({
+    //         status: true,
+    //         message: "Request for Booking cancellation is send successfully and notification sent",
+    //       });
+    //     }
+    //   });
 
-    }
+    // }
 
     // Expert End Cancel booking
 
