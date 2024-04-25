@@ -1009,7 +1009,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
       // Update booking status to cancelled if status is cancel
       const status_change = await Booking_details.update(
-        { is_cancel_status: "cancellation_pending" },
+        { is_cancel_status: "cancellation_pending", cancellation_reason: cancellation_reason  },
         { where: { id: booking_id } }
       );
 
