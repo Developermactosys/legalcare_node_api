@@ -3,6 +3,7 @@ const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 
 const User = db.User;
+const wallet_system = db.wallet_system
 
 const edit_user = async (req, res) => {
     const { id, device_id, name, phone_no, dob, address, blood_group, gender, country, zipcode, city, birth_time,email_id ,user_type} = req.body;
@@ -66,6 +67,13 @@ const edit_user = async (req, res) => {
         id: user_id,
         // device_id:device_id,
       },
+      include:[
+        {
+          model:wallet_system,
+          as:"wallet_system",
+          attributes:["wallet_amount"]
+        }
+      ]
   
     });
     if (totalUsers) {

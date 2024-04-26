@@ -53,6 +53,7 @@ const LiveEvent = db.live_event;
 //   }
 // }
 // src\uploads\event_image
+
 const addBanner = async (req, res) => {
   if (Object.keys(req.body).length === 0) {
     return res.json({ message: "No fields provided in the request body" });
