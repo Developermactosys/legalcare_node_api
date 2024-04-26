@@ -26,12 +26,13 @@ const edit_user = async (req, res) => {
           message: "Data does not found!!!!!!!!!!!!",
         });
       }
-      // if(phone_no != user.phone_no || email_id != user.email_id || user_type != user.user_type){
-      //   return res.status(200).json({
-      //     status:false , 
-      //     message: "Phone Number, Email Id and User type can not be editable"
-      //   })
-      // }
+
+      if(user.phone_no !== req.body.phone_no || user.email_id !== req.body.email_id || user.user_type !== req.body.user_type){
+        return res.status(200).json({
+          status:false , 
+          message: "Phone Number, Email Id and User type can not be editable"
+        })
+      }
   
       const updateUser =  await User.update(req.body, {
         where: { id: id },
@@ -44,13 +45,13 @@ const edit_user = async (req, res) => {
       await user.save()
       
   }
-      res.json({
+     return res.status(200).json({
         status: true,
         message: "Data Update Successfully",
       });
     } catch (error) {
       console.error(error);
-      res.status(500).json({
+     return res.status(500).json({
         status: false,
         message: "An error occurred while updating the data.",
       });
