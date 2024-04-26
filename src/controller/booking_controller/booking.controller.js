@@ -1227,7 +1227,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Dear ${user_name} your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}.${expert_amount} added to your wallet.`,
+        body: `Dear ${user_name} your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. ${expert_amount} added to your wallet.`,
       },
     };
 
