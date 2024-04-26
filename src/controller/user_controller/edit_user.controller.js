@@ -86,9 +86,9 @@ const edit_user = async (req, res) => {
 
     // Check if phone_no, email_id, and user_type are being updated
     if (
-      phone_no !== user.phone_no ||
-      email_id !== user.email_id ||
-      user_type !== user.user_type
+      user.phone_no !== phone_no ||
+      user.email_id !== email_id ||
+      user.user_type !== user_type
     ) {
       return res.status(200).json({
         status: false,
