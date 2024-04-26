@@ -1194,7 +1194,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
               expert_id: expert_id,
               user_type: get_user_type,
               deduct_type: "deducted (refund to user )",
-              description: cancellation_reason
+              description: "Deducted, refunded to user",
 
             },
 
@@ -1315,7 +1315,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             expert_id: expert_id,
             user_type: get_user_type,
             deduct_type: "deducted (refund to user )",
-            description: cancellation_reason
+            description: "Deducted, refunded to user ",
 
           },
           {
