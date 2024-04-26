@@ -1447,7 +1447,8 @@ exports.update_Booking_by_status = async (req, res) => {
     const find_service = await service.findByPk(find_booking.serviceId)
     const service_name = find_service.serviceName
 
-    const expert_name = expert.name
+    // const expert_name = expert.name
+    const expert_name = expert ? expert.name : 'Unknown User';
 
     // var message = {
     //   to: user.device_id, // Assuming the user model has a device_id field
