@@ -1205,7 +1205,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       // }
 
       const status_change = await Booking_details.update(
-        { status: "cancel" ,is_cancel_status : is_cancel_status},
+        { status: "cancel" ,is_cancel_status : is_cancel_status,cancel_time: time},
         { where: { id: booking_id } }
       );
     }
@@ -1343,7 +1343,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
       }
       const status_change = await Booking_details.update(
-        { status: status, cancellation_reason: cancellation_reason },
+        { status: status, cancellation_reason: cancellation_reason ,cancel_time: time},
         { where: { id: booking_id } }
       );
 
