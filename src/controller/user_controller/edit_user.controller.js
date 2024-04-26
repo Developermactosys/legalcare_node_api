@@ -6,25 +6,28 @@ const User = db.User;
 const wallet_system = db.wallet_system
 
 const edit_user = async (req, res) => {
-    const { id, device_id, name, phone_no, dob, address, blood_group, gender, country, zipcode, city, birth_time,email_id ,user_type} = req.body;
-    const profile_image = req.file;
   
-    if (!id || !device_id) {
-      return res.status(200).json({
-        status: false,
-        code: 201,
-        message: "id and device_id are required",
-        data: req.body,
-      });
-    }
-  if(phone_no || email_id || user_type){
-    return res.status(200).json({
-      status:false , 
-      message: "Phone Number, Email Id and User type can not be editable"
-    })
-  }
     try {
+      const { id, device_id, name, phone_no, dob, address, blood_group, gender, country, zipcode, city, birth_time,email_id ,user_type} = req.body;
+      const profile_image = req.file;
+    
+      if (!id || !device_id) {
+        return res.status(200).json({
+          status: false,
+          code: 201,
+          message: "id and device_id are required",
+          data: req.body,
+        });
+      }
       const user = await User.findByPk(id);
+      
+    if(phone_no != user.phone_no || email_id != user.email_id || user_type != user.user_type){
+      return res.status(200).json({
+        status:false , 
+        message: "Phone Number, Email Id and User type can not be editable"
+      })
+    }
+
   
       if (!user) {
         return res.status(200).json({
