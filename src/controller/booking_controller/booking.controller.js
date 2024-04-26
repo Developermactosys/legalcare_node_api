@@ -995,12 +995,14 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
     const user_name = user ? user.name : 'Unknown User';
+    const expert_name = expert ? expert.name : 'Unknown User';
+
 
     const message = {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+        body: `Dear ${expert_name},your unpaid booking service for ${service_name} is cancelled by ${user_name}.`,
       },
     };
 
@@ -1049,7 +1051,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         to: expert.device_id, // Assuming the user model has a device_id field
         notification: {
           title: `Booking Cancellation Request`,
-          body: `Dear ${expert_name}, you have received a cancellation request for ${service_name} sent by ${user_name} .`,
+          body: `Dear ${expert_name}, cancellation request received for Booking ID:${cancel_booking.booking_id} `,
         },
       };
 
@@ -1097,7 +1099,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         to: user.device_id, // Assuming the user model has a device_id field
         notification: {
           title: `Rejection for Booking Cancellation `,
-          body: `Dear ${user_name}, your Booking cancelllation request for ${service_name}, has been rejected by ${expert_name} .`,
+          body: `Dear ${user_name},${expert_name} declined your cancelllation request for ${cancel_booking.booking_id}.`,
         },
       };
 
@@ -1208,7 +1210,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
       );
     }
 
-    
+    const expert_percentage = parseFloat(1 - admin_booking_percentage)
+    const expert_amount = parseFloat(discounted_amount * expert_percentage)
+
     // Send notification to expert about booking cancellation
     const user = await User.findByPk(UserId);
     const expert = await User.findByPk(expert_id);
@@ -1216,19 +1220,21 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
     const user_name = user ? user.name : 'Unknown User';
+    const expert_name = expert ? expert.name : 'Unknown User';
+
 
     const message = {
-      to: expert.device_id, // Assuming the user model has a device_id field
+      to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+        body: `Dear ${user_name} your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}.${expert_amount} added to your wallet.`,
       },
     };
 
     await Notification.create({
       message: message.notification.body,
       type: "Booking_cancellation",
-      UserId: expert.id
+      UserId: user.id
     });
 
     // Send FCM notification
@@ -1348,12 +1354,14 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
     const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
     const user_name = user ? user.name : 'Unknown User';
+    const expert_name = expert ? expert.name : 'Unknown User';
+
 
     const message = {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
+        body: `Dear ${expert_name} the service for the booking ID:${cancel_booking.booking_id}, has been cancelled by ${user_name}.`,
       },
     };
 
