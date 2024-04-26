@@ -27,12 +27,12 @@ const edit_user = async (req, res) => {
         });
       }
 
-      if(user.phone_no !== req.body.phone_no || user.email_id !== req.body.email_id ){
-        return res.status(200).json({
-          status:false , 
-          message: "Phone Number and Email Id can not be editable"
-        })
-      }
+      // if(user.phone_no !== req.body.phone_no || user.email_id !== req.body.email_id ){
+      //   return res.status(200).json({
+      //     status:false , 
+      //     message: "Phone Number and Email Id can not be editable"
+      //   })
+      // }
   
       const updateUser =  await User.update(req.body, {
         where: { id: id },
