@@ -27,10 +27,10 @@ const edit_user = async (req, res) => {
         });
       }
 
-      if(user.phone_no !== req.body.phone_no || user.email_id !== req.body.email_id || user.user_type !== req.body.user_type){
+      if(user.phone_no !== req.body.phone_no || user.email_id !== req.body.email_id ){
         return res.status(200).json({
           status:false , 
-          message: "Phone Number, Email Id and User type can not be editable"
+          message: "Phone Number and Email Id can not be editable"
         })
       }
   
