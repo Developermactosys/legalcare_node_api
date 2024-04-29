@@ -489,6 +489,7 @@ exports.getBooking_by_status_only = async (req, res) => {
 //     });
 //   }
 // }
+
 exports.getAll_bookings = async (req, res) => {
   try {
     const page = Number(req.query.page) || 1;
