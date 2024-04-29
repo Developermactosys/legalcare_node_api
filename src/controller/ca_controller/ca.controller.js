@@ -2,6 +2,8 @@ const { Op } = require("sequelize");
 const db = require("../../../config/db.config");
 const  User = db.User;
 const bank_details = db.bank_details;
+const  booking = db.booking_detail
+const expert_service = db.expert_service
 
 exports.getAllCa = async (req, res) => {
   try {
@@ -159,24 +161,44 @@ exports.getByIdCa = async (req, res) => {
   }
 };
 
+
+// when booking is pending then expert does not delatable 
 exports.deleteCA = async (req, res) => {
   const caId = req.params.id;
-
   try {
+       // Check if any booking has 'pending' status
+       const bookingData = await booking.findAll({
+        where: { expert_id: caId}
+      });
+  
+       const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+
+       if (hasPendingBooking) {
+         return res.status(200).json({
+           status: false,
+           message: "Cannot delete Expert due to pending bookings"
+         });
+       }
+       // expert delete
     const deletedCA = await User.destroy({
       where: {
         id: caId,
-        user_type: 2,
+        // user_type: 2,
       },
     });
 
+    // Expert related services also delete 
+const deleteExpert_services = await expert_service.destroy({
+  where:{UserId: caId }
+})
+
     if (deletedCA === 0) {
-      return res.json({ message: "No CA found with the provided ID" });
+      return res.json({ message: "No Expert found with the provided ID" });
     }
 
     return res.status(200).json({
       success: true,
-      message: "CA deleted successfully",
+      message: "Expert and It's relevant services deleted successfully ",
     });
   } catch (error) {
     return res.status(500).json({
