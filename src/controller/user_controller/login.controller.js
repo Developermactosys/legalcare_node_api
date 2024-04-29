@@ -37,7 +37,12 @@ const trimmedPhoneNo = phone_no.trim();
         message: "Login Failed, please check mobile number.",
       });
     }
-
+if(user.status == "suspended" || user.is_active == 0){
+  return res.status(200).json({
+    status: false,
+    message: "Login Failed, because of user is suspended or it's deactive.",
+  });
+}
     // Asynchronous password comparison
     const passwordIsValid = await bcrypt.compare(trimmedPassword, user.password);
 

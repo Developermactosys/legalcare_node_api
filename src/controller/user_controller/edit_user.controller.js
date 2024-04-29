@@ -124,6 +124,8 @@ const view_user = async(req,res)=>{
     const totalUsers = await User.findOne({
       where: {
         id: user_id,
+        is_active: 1,
+        status:"verified"
         // device_id:device_id,
       },
       include:[
@@ -142,9 +144,9 @@ const view_user = async(req,res)=>{
         data: totalUsers,
       });
     } else {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
-        message: "User not found",
+        message: "User not found or it's Deactive or it's Suspended",
       });
     }
   } catch (error) {
