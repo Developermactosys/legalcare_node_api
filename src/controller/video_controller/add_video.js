@@ -249,7 +249,7 @@ await walletSystem_of_admin.update({ wallet_amount: newBalance_of_admin });
       UserId: user_id,
       expert_id: expert_id,
       senderName: name,
-      call_duration: duration,
+      video_call_duration: duration,
       current_used_bal: requestedAmount,
       start_time: start_time,
       end_time: end_time
