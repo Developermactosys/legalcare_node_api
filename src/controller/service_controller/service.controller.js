@@ -783,7 +783,7 @@ const deleteService = async (req, res) => {
     }
 
     // Proceed with service deletion if no pending bookings
-    const findExpertId = await expert_service.findAll({
+    const findExpertId = await expert_service.findOne({
       where:{
          UserId : expert_id ,
           serviceId : serviceId
@@ -819,7 +819,7 @@ const deleteService = async (req, res) => {
     } else {
       return res.status(200).json({
         status: false,
-        message: "Expert not found or service not deleted"
+        message: "Expert Service is Already deleted "
       });
     }
   } catch (error) {
