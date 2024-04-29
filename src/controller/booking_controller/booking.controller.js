@@ -266,7 +266,7 @@ exports.get_booking_by_status = async (req, res) => {
     });
 
     const totalCount = await Booking_details.count({});
-    const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(pending_booking.length / limit);
 
     return res.status(200).json({
       status: true,
