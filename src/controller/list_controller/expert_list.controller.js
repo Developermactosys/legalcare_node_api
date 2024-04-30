@@ -36,6 +36,9 @@ exports.expert_list = async (req, res) => {
     if (location) {
       query.where.location = { [Sequelize.Op.like]: `%${location}%` };
     }
+    if (address) {
+      query.where.address = { [Sequelize.Op.like]: `%${address}%` };
+    }
     if (language) {
       query.where.user_language = { [Sequelize.Op.like]: `%${language}%` };
     }

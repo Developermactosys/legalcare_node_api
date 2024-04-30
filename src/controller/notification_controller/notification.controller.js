@@ -11,7 +11,7 @@ exports.view_notification = async (req, res) => {
 
     // Validating request
     if (!user_id) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         code: 201,
         message: "user_id is required",
@@ -22,7 +22,7 @@ exports.view_notification = async (req, res) => {
     // Checking if user exists
     const checkUser = await User.findOne({ where: { id: user_id } });
     if (!checkUser) {
-      return res.status(404).json({
+      return res.status(200).json({
         status: false,
         message: "User not found",
       });
@@ -50,7 +50,7 @@ exports.view_notification = async (req, res) => {
       offset: offset,
     });
 
-       const totalCount = await Notification.count({});
+       const totalCount = await Notification.count({where: { UserId: user_id }});
        const totalPages = Math.ceil(totalCount / limit);
 
 

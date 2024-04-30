@@ -214,7 +214,7 @@ exports.get_booking_by_status = async (req, res) => {
   try {
     const { status, user_id } = req.body;
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 10;
+    const limit = Number(req.query.limit) || 2;
     const offset = (page - 1) * limit;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
@@ -266,14 +266,27 @@ exports.get_booking_by_status = async (req, res) => {
       offset: offset,
     });
 
-    const totalCount = await Booking_details.count({});
-    const totalPages = Math.ceil(pending_booking.length / limit);
+     const totalCount = await Booking_details.count({
+      where: {
+        [Sequelize.Op.or]: [
+          {
+            status: status,
+            UserId: user_id,
+          },
+          {
+            status: status,
+            expert_id: user_id,
+          }
+        ]
+      }
+     });
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: "pending bookings",
+      count: totalCount,
       data: pending_booking,
-      // count: totalCount,
       currentPage: page,
       totalPages: totalPages,
     });
@@ -566,7 +579,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
   try {
     const { user_id } = req.query;
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 5;
+    const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
     const get_booking = await Booking_details.findAll({
       // where: { UserId: user_id },
@@ -586,18 +599,6 @@ exports.get_bookings_by_user_id = async (req, res) => {
           as: "User",
           where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
         },
-
-        // {
-        //   model: service,
-        //   as: "service",
-        //   include: [
-        //     {
-        //       model: User,
-        //       as: "User",
-        //       where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-        //     }
-        //   ]
-        // }
         {
           model: expert_service,
           as: "expert_service",
@@ -618,51 +619,48 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
     })
 
-    const totalCount = get_booking.length;
+     const totalCount = await Booking_details.count({where: {
+      [Sequelize.Op.or]: [
+        {
+          UserId: user_id,
+        },
+        {
+          expert_id: user_id,
+        }
+      ]
+    },});
     const totalPages = Math.ceil(totalCount/ limit);
 
 
-    if (get_booking == []) {
-      const get_booking = await Booking_details.findAll({
-        where: { UserId: user_id },
-        include: [
-          {
-            model: User,
-            as: "User",
-            where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
-          },
-
-          // {
-          //   model: service,
-          //   as: "service",
-          //   include: [
-          //     {
-          //       model: User,
-          //       as: "User",
-          //       where: { id: Sequelize.col('service.UserId') } // Here, we specify the association between the User model and the service model using the UserId from the service object
-          //     }
-          //   ]
-          // }
-          {
-            model: expert_service,
-            as: "expert_service",
-            include: [
-              {
-                model: User,
-                as: "User",
-              },
-              {
-                model: service,
-                as: "service",
-              }
-            ]
-          }
-        ],
-        order: [['createdAt', 'DESC']],
-        limit: limit,
-        offset: offset,
-      })
-    }
+    // if (get_booking == []) {
+    //   const get_booking = await Booking_details.findAll({
+    //     where: { UserId: user_id },
+    //     include: [
+    //       {
+    //         model: User,
+    //         as: "User",
+    //         where: { id: Sequelize.col('booking_detail.UserId') } // finding expert 
+    //       },
+    //       {
+    //         model: expert_service,
+    //         as: "expert_service",
+    //         include: [
+    //           {
+    //             model: User,
+    //             as: "User",
+    //           },
+    //           {
+    //             model: service,
+    //             as: "service",
+    //           }
+    //         ]
+    //       }
+    //     ],
+    //     order: [['createdAt', 'DESC']],
+    //     limit: limit,
+    //     offset: offset,
+    //   })
+    // }
 
     return res.status(200).json({
       status: true,
