@@ -413,14 +413,34 @@ exports.totalCountForCustomer = async(req, res)=>{
         // });
       }
         const getCall = await video.findAndCountAll({
-          where : {
-            UserId: id
-          }
+          // where : {
+          //   UserId: id
+          // }
+          where: {
+            [Sequelize.Op.or]: [
+              {
+                UserId: id,
+              },
+              {
+                expert_id: id,
+              },
+            ],
+          },
         })
       const dataForCall = await call.findAndCountAll({
-        where : {
-          UserId: id
-        }
+        // where : {
+        //   UserId: id
+        // }
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              UserId: id,
+            },
+            {
+              expert_id: id,
+            },
+          ],
+        },
       })
 
  // Calculate sum of all earnings (transaction_amount) for video calls
