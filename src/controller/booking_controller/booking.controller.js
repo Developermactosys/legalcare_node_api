@@ -410,17 +410,6 @@ exports.getBooking_by_status_only = async (req, res) => {
           as: "User",
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
-        // {
-        //   model: service, // Assuming `Service` is the correct model name
-        //   as: "service",
-        //   include: [
-        //     {
-        //       model: User,
-        //       as: "User",
-        //       where: { id: Sequelize.col('service.UserId') }
-        //     }
-        //   ]
-        // }
         {
           model: expert_service,
           as: "expert_service",
@@ -441,14 +430,14 @@ exports.getBooking_by_status_only = async (req, res) => {
       offset: offset,
     });
 
-    const totalCount = await Booking_details.count({});
-    const totalPages = Math.ceil(pending_bookings.length / limit);
+    const totalCount = await Booking_details.count({where: query.where});
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: " Bookings fetched successfully",
+      count: totalCount,
       data: pending_bookings,
-      // count: totalCount,
       currentPage: page,
       totalPages: totalPages,
     });
@@ -518,19 +507,6 @@ exports.getAll_bookings = async (req, res) => {
           attributes: ['id', 'name', 'user_type', 'phone_no'],
           where: { id: Sequelize.col('booking_detail.UserId') }
         },
-        // {
-        //   model: service,
-        //   as: "service",
-        //   attributes:['serviceName','service_cost','UserId','categoryId','status'],
-        //   include: [
-        //     {
-        //       model: User,
-        //       as: "User",
-        //       attributes: ['id','name', 'user_type', 'phone_no'],
-        //       where: { id: Sequelize.col('service.UserId') } 
-        //     }
-        //   ]
-        // }
         {
           model: expert_service,
           as: "expert_service",
@@ -665,6 +641,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "All Booking",
+      count:totalCount,
       data: get_booking,
       currentPages: page,
       totalPages:totalPages
