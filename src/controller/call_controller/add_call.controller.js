@@ -256,7 +256,7 @@ const addCall = async (req, res) => {
     const walletSystem = await WalletSystem.findOne({
       where: { UserId: user_id }
     });
-    const walletSystem_of_expert = await WalletSystem.findOne({
+    const find_walletSystem_of_expert = await WalletSystem.findOne({
       where: { UserId: expert_id }
     });
     const walletSystem_of_admin = await WalletSystem.findOne({
@@ -266,13 +266,26 @@ const addCall = async (req, res) => {
     if (!walletSystem) {
       return res.status(200).json({ status: false, message: "Wallet does not exist" });
     }
-    if (!walletSystem_of_expert) {
-      return res.status(200).json({ status: false, message: "Expert's wallet does not exist" });
+    if (!find_walletSystem_of_expert) {
+  
+        // No wallet entry exists, create it
+       const  new_walletSystem_of_expert = await WalletSystem.create({
+          UserId: expert_id,
+          wallet_amount:0,
+          // Assuming you might want to store additional fields like device_id, etc.
+        });
+      
+      
+
+      // return res.status(200).json({ status: false, message: "Expert's wallet does not exist" });
     }
     if (!walletSystem_of_admin) {
       return res.status(200).json({ status: false, message: "Admin's wallet does not exist" });
     }
 
+    const walletSystem_of_expert = await WalletSystem.findOne({
+      where: { UserId: expert_id },
+    });
     // Deduction amount
     const requestedAmount = parseFloat(current_used_bal);
 
