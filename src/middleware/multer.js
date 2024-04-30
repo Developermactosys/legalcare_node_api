@@ -45,6 +45,8 @@ const fileStorage = multer.diskStorage({
     uploadPath = path.join(__dirname, "../../src/uploads/theme_images");
   }else if (file.fieldname === "logo_img") {
     uploadPath = path.join(__dirname, "../../src/uploads/theme_images");
+  }else if (file.fieldname === "query_img") {
+    uploadPath = path.join(__dirname, "../../src/uploads/query_img");
   }
   else {
       console.log(`multer problem ${file.fieldname}`);

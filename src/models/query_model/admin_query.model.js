@@ -21,7 +21,9 @@ module.exports = (sequelize, DataTypes) => {
           ticketId: {
             type: DataTypes.STRING
           },
-         
+          query_img: {
+            type: DataTypes.STRING
+          },
           status: {
             type: DataTypes.INTEGER
           },
