@@ -58,7 +58,7 @@ exports.view_notification = async (req, res) => {
       return res.status(200).json({
         status: true,
         message: "All user notifications",
-        count: count.count,
+        count: totalCount,
         data: notification,
         currentPage: page,
         totalPages: totalPages,
