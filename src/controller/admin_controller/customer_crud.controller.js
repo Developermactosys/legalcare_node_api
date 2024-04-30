@@ -15,22 +15,36 @@ const TransactionHistory = db.transaction_history;
 // API for count total user
 exports.totalUser = async (req, res) => {
     try {
+      const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
+
       const user_type = "1";
       const countUsers = await User.findAndCountAll({
         where: {
           user_type: user_type,
         },
-        limit: 5,
-        offset: 0,
+      limit: limit,
+      offset: offset,
       });
+
+      const totalCount = await User.count({where:{
+        user_type: user_type,deleted_At:null
+      }
+    });
+      const totalPages = Math.ceil(totalCount/ limit);
+
       if (countUsers) {
         return res.status(200).json({
           success: true,
           message: "Show Data and Count all data",
+          // count:totalCount,
           data: countUsers,
+          currentPages: page,
+          totalPages:totalPages
         });
       } else {
-        return res.status(400).json({
+        return res.status(200).json({
           success: false,
           message: "Data not found",
         });

@@ -268,6 +268,7 @@ exports.get_booking_by_status = async (req, res) => {
 
      const totalCount = await Booking_details.count({
       where: {
+        deleted_At:null,
         [Sequelize.Op.or]: [
           {
             status: status,
@@ -595,8 +596,10 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
     })
 
-     const totalCount = await Booking_details.count({where: {
-      [Sequelize.Op.or]: [
+     const totalCount = await Booking_details.count({
+      where: {
+        deleted_At:null,
+        [Sequelize.Op.or]:[
         {
           UserId: user_id,
         },
@@ -604,7 +607,8 @@ exports.get_bookings_by_user_id = async (req, res) => {
           expert_id: user_id,
         }
       ]
-    },});
+      
+    }});
     const totalPages = Math.ceil(totalCount/ limit);
 
 
