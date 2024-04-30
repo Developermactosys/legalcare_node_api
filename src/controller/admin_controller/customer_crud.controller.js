@@ -2,7 +2,7 @@
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>For Admin Section >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
 const db = require("../../../config/db.config")
 const User = db.User;
-const Sequelize = require("sequelize");
+const {Sequelize,Op,or }= require("sequelize");
 const wallet_system = db.wallet_system;
 const chat = db.chat;
 const call=db.call_details;
@@ -230,9 +230,19 @@ exports.getAllCallDetailById = async(req, res) =>{
     const findUser = await User.findByPk(id)
     if(findUser){
       const getCall = await call.findAndCountAll({
-        where : {
-          UserId: id
-        }
+        // where : {
+        //   UserId: id
+        // }
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              UserId: id,
+            },
+            {
+              expert_id: id,
+            },
+          ],
+        },
       })
       if(getCall){
         return res.status(200).json({
@@ -267,9 +277,19 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
     const findUser = await User.findByPk(id)
     if(findUser){
       const getCall = await video.findAndCountAll({
-        where : {
-          UserId: id
-        }
+        // where : {
+        //   UserId: id
+        // }
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              UserId: id,
+            },
+            {
+              expert_id: id,
+            },
+          ],
+        },
       })
       if(getCall){
         return res.status(200).json({
