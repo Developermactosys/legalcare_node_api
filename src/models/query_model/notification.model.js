@@ -9,6 +9,9 @@ const notification = sequelize.define("notification", {
   is_read :{
     type : DataTypes.BOOLEAN,
     defaultValue:0
+  },
+  data :{
+    type : DataTypes.JSON,
   }
 });
 return notification;

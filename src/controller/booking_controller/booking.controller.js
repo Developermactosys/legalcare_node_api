@@ -188,7 +188,7 @@ exports.Add_Booking = async (req, res) => {
       message: message.notification.body,
       type: " Booking ",
       UserId: expert.id,
-      title: add_booking
+      data: add_booking
     });
 
     fcm.send(message, function (err, response) {
@@ -1012,7 +1012,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       message: message.notification.body,
       type: "Booking_cancellation",
       UserId: expert.id,
-      title: cancel_booking,
+      data: cancel_booking,
 
     });
 
@@ -1063,7 +1063,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         message: message.notification.body,
         type: "Booking Cancellation Request",
         UserId: expert.id,
-        title: cancel_booking,
+        data: cancel_booking,
 
       });
 
@@ -1113,7 +1113,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         message: message.notification.body,
         type: "Rejection for Booking Cancellation",
         UserId: user.id,
-        title: cancel_booking,
+        data: cancel_booking,
 
       });
 
@@ -1379,7 +1379,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       message: message.notification.body,
       type: "Booking_cancellation",
       UserId: expert.id,
-      title: cancel_booking,
+      data: cancel_booking,
 
     });
 
@@ -1489,7 +1489,7 @@ exports.update_Booking_by_status = async (req, res) => {
       message: message.notification.body,
       type: " Booking_status ",
       UserId: user.id,
-      title: find_booking,
+      data: find_booking,
 
     });
 
@@ -1564,7 +1564,7 @@ exports.update_Booking_by_payment_status = async (req, res) => {
       message: message.notification.body,
       type: " payment_status ",
       UserId: expert.id,
-      title:find_booking
+      data:find_booking
     });
 
     fcm.send(message, function (err, response) {
