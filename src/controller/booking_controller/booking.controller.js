@@ -618,7 +618,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
     })
 
-    const totalCount = get_booking.count();
+    const totalCount = get_booking.length;
     const totalPages = Math.ceil(totalCount/ limit);
 
 
