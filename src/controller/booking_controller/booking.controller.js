@@ -187,7 +187,8 @@ exports.Add_Booking = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: " Booking ",
-      UserId: expert.id
+      UserId: expert.id,
+      title: add_booking
     });
 
     fcm.send(message, function (err, response) {
@@ -1010,7 +1011,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: "Booking_cancellation",
-      UserId: expert.id
+      UserId: expert.id,
+      title: cancel_booking,
+
     });
 
     // Send FCM notification
@@ -1059,7 +1062,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
       await Notification.create({
         message: message.notification.body,
         type: "Booking Cancellation Request",
-        UserId: expert.id
+        UserId: expert.id,
+        title: cancel_booking,
+
       });
 
       // Send FCM notification
@@ -1107,7 +1112,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
       await Notification.create({
         message: message.notification.body,
         type: "Rejection for Booking Cancellation",
-        UserId: user.id
+        UserId: user.id,
+        title: cancel_booking,
+
       });
 
       // Send FCM notification
@@ -1235,7 +1242,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: "Booking_cancellation",
-      UserId: user.id
+      UserId: user.id,
+      data: cancel_booking,
+
     });
 
     // Send FCM notification
@@ -1369,7 +1378,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: "Booking_cancellation",
-      UserId: expert.id
+      UserId: expert.id,
+      title: cancel_booking,
+
     });
 
     // Send FCM notification
@@ -1477,7 +1488,9 @@ exports.update_Booking_by_status = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: " Booking_status ",
-      UserId: user.id
+      UserId: user.id,
+      title: find_booking,
+
     });
 
     fcm.send(message, function (err, response) {
@@ -1550,7 +1563,8 @@ exports.update_Booking_by_payment_status = async (req, res) => {
     await Notification.create({
       message: message.notification.body,
       type: " payment_status ",
-      UserId: expert.id
+      UserId: expert.id,
+      title:find_booking
     });
 
     fcm.send(message, function (err, response) {
