@@ -214,7 +214,7 @@ exports.get_booking_by_status = async (req, res) => {
   try {
     const { status, user_id } = req.body;
     const page = Number(req.query.page) || 1;
-    const limit = Number(req.query.limit) || 2;
+    const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
