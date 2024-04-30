@@ -429,7 +429,7 @@ exports.getBooking_by_status_only = async (req, res) => {
     });
 
     const totalCount = await Booking_details.count({});
-    const totalPages = Math.ceil(totalCount / limit);
+    const totalPages = Math.ceil(pending_bookings.length / limit);
 
     return res.status(200).json({
       status: true,
@@ -618,7 +618,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
     })
 
-    const totalCount = await Booking_details.count({});
+    const totalCount = get_booking.length
     const totalPages = Math.ceil(totalCount / limit);
 
 
@@ -1667,7 +1667,7 @@ exports.getAllBookingdataForAll = async (req, res) => {
         offset: offset,
       })
 
-    const totalCount = await Booking_details.count({});
+    const totalCount = get_all_booking.length;
     const totalPages = Math.ceil(totalCount / limit);
 
     const bookingStatusForPending = await Booking_details.findAndCountAll({
