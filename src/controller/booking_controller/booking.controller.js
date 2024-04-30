@@ -618,8 +618,8 @@ exports.get_bookings_by_user_id = async (req, res) => {
       offset: offset,
     })
 
-    const totalCount = await Booking_details.count({})
-    const totalPages = Math.ceil(get_booking.length/ limit);
+    const totalCount = get_booking.count;
+    const totalPages = Math.ceil(totalCount/ limit);
 
 
     if (get_booking == []) {
@@ -669,7 +669,7 @@ exports.get_bookings_by_user_id = async (req, res) => {
       message: "All Booking",
       data: get_booking,
       currentPages: page,
-      totalPages: totalPages
+      totalPages:totalPages
     })
 
   } catch (error) {
