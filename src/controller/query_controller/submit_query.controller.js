@@ -75,7 +75,7 @@ exports.submitQuery = async (req, res) => {
   try {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({
+      return res.status(200).json({
         status: false,
         code: 201,
         message: errors.array()[0].msg,
@@ -97,7 +97,7 @@ exports.submitQuery = async (req, res) => {
       UserId: user_id,
       query: text_query,
       date: new Date(),
-      ticketid: ticketID,
+      ticketId: ticketID,
       amount,
     });
 
