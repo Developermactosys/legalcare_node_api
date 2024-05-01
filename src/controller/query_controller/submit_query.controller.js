@@ -112,12 +112,12 @@ exports.submitQuery = async (req, res) => {
   
        }
 
-    await Notification.create({
-      message: "New query request from User",
-      UserId: user_id,
-      title: "New Query Arrived",
-      type: "query",
-    });
+    // await Notification.create({
+    //   message: "New query request from User",
+    //   UserId: user_id,
+    //   title: "New Query Arrived",
+    //   type: "query",
+    // });
 
     return res.status(200).json({
       status: true,
