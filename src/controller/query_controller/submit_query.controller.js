@@ -4,7 +4,9 @@ const  Notification  = db.notification ;
 const { validationResult } = require("express-validator");
 
 const generateTicketID = () => {
-  return "TICKET-" + Math.random().toString(36).substr(2, 9).toUpperCase();
+  const randomString = Math.random().toString(36).substr(2, 6).toUpperCase(); // Generates a random string of length 6
+  const randomNumber = Math.floor(Math.random() * 1000); // Generates a random number between 0 and 999
+  return "TICKET-" + randomString + randomNumber;
 };
 
 // exports.submitQuery = async (req, res) => {
