@@ -152,6 +152,9 @@ exports.submitQuery = async (req, res) => {
 exports.getAllSubmitQuery = async(req, res) => {
   const user_type = 1;
   try{
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
   const getUserQuery = await AdminQuery.findAll({where : {
    type : user_type
   },
@@ -161,13 +164,23 @@ exports.getAllSubmitQuery = async(req, res) => {
        as: "User",
        attributes: ['id','name','user_type','profile_image']
      },
-   ]
+   ],
+   order: [["id", "DESC"]],
+   limit: limit,
+   offset: offset,
   })
+
+  const totalCount = await AdminQuery.count({where: { type: user_type }});
+  const totalPages = Math.ceil(totalCount / limit);
+
   if(getUserQuery){
    return res.status(200).json({
      status : true,
      message : "Show data successfully",
-     data : getUserQuery
+     count: totalCount,
+     data : getUserQuery,
+     currentPage: page,
+     totalPages: totalPages,
    })
   }else{
    return res.status(200).json({
@@ -187,6 +200,9 @@ exports.getAllSubmitQuery = async(req, res) => {
 exports.getAllSubmitQueryForExpert = async(req, res) => {
  const user_type = ['2','3','4'];
  try{
+  const page = Number(req.query.page) || 1;
+  const limit = Number(req.query.limit) || 10;
+  const offset = (page - 1) * limit;
  const getUserQuery = await AdminQuery.findAll({where : {
   type : user_type
  },
@@ -196,15 +212,26 @@ exports.getAllSubmitQueryForExpert = async(req, res) => {
       as: "User",
       attributes: ['id','name','user_type','profile_image']
     },
-  ]
+  ],
+  order: [["id", "DESC"]],
+  limit: limit,
+  offset: offset,
  })
+
+ const totalCount = await AdminQuery.count({where: { type: user_type }});
+ const totalPages = Math.ceil(totalCount / limit);
+
  if(getUserQuery){
   return res.status(200).json({
     status : true,
     message : "Data retrived successfully",
-    data : getUserQuery
+    count: totalCount,
+    data : getUserQuery,
+    currentPage: page,
+    totalPages: totalPages,
   })
- }else{
+  }
+ else{
   return res.status(200).json({
     status : false,
     message : "data not found"
@@ -216,7 +243,7 @@ exports.getAllSubmitQueryForExpert = async(req, res) => {
     message : error.message
   })
 }
-} 
+}
 
 
 // API for update status for query
