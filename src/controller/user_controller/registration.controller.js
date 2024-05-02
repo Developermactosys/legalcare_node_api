@@ -136,7 +136,7 @@ const otpVerify = async (req, res) => {
       }
 
       // Update user as verified
-      await User.update({ otp_verify: 1 }, { where: { phone_no: phone_no } });
+      await User.update({ otp_verify: 1 , is_active: 1 }, { where: { phone_no: phone_no } });
 
       // Respond with user details
       return res.json({
