@@ -110,7 +110,7 @@ exports.submitQuery = async (req, res) => {
       type:checkUserType,
       query_type,
       query_id,
-      status: 0,
+      // status: "Pending",
       UserId: user_id,
       query: text_query,
       date: new Date(),
