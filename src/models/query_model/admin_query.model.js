@@ -25,8 +25,11 @@ module.exports = (sequelize, DataTypes) => {
             type: DataTypes.STRING
           },
           status: {
-            type: DataTypes.INTEGER
-          },
+            type: DataTypes.ENUM,
+            values: ["Pending", "Hold", "In Progress","Complete"],
+            allowNull: false,
+            defaultValue: "Pending"
+        },
           query_type: {
             type: DataTypes.STRING
           },

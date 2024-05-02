@@ -1,5 +1,6 @@
 const db = require("../../../config/db.config")
 const  AdminQuery  = db.admin_query ;
+const User = db.User;
 const  Notification  = db.notification ;
 const { validationResult } = require("express-validator");
 
@@ -90,9 +91,23 @@ exports.submitQuery = async (req, res) => {
     const amount = parseFloat(req.body.amount) || 0;
 
     const ticketID = generateTicketID();
+
+    const findUser = await User.findOne({
+      where : {
+        id : user_id
+      }
+    })
+    const checkUserType = findUser.user_type;
+
+    if(!findUser){
+      return res.status(200).json({
+        status : false,
+        message : "Please provide a User Id"
+      })
+    }
     
     const add_query = await AdminQuery.create({
-      type,
+      type:checkUserType,
       query_type,
       query_id,
       status: 0,
@@ -132,3 +147,102 @@ exports.submitQuery = async (req, res) => {
     });
   }
 };
+
+// get all query for user side
+exports.getAllSubmitQuery = async(req, res) => {
+  const user_type = 1;
+  try{
+  const getUserQuery = await AdminQuery.findAll({where : {
+   type : user_type
+  },
+   include: [
+     {
+       model: User,
+       as: "User",
+       attributes: ['id','name','user_type','profile_image']
+     },
+   ]
+  })
+  if(getUserQuery){
+   return res.status(200).json({
+     status : true,
+     message : "Show data successfully",
+     data : getUserQuery
+   })
+  }else{
+   return res.status(200).json({
+     status : false,
+     message : "data not found"
+   })
+  }
+ }catch(error){
+   return res.status(500).json({
+     status : false,
+     message : error.message
+   })
+ }
+} 
+
+// get all query for expert side
+exports.getAllSubmitQueryForExpert = async(req, res) => {
+ const user_type = ['2','3','4'];
+ try{
+ const getUserQuery = await AdminQuery.findAll({where : {
+  type : user_type
+ },
+  include: [
+    {
+      model: User,
+      as: "User",
+      attributes: ['id','name','user_type','profile_image']
+    },
+  ]
+ })
+ if(getUserQuery){
+  return res.status(200).json({
+    status : true,
+    message : "Data retrived successfully",
+    data : getUserQuery
+  })
+ }else{
+  return res.status(200).json({
+    status : false,
+    message : "data not found"
+  })
+ }
+}catch(error){
+  return res.status(500).json({
+    status : false,
+    message : error.message
+  })
+}
+} 
+
+
+// API for update status for query
+exports.updateStatusQuery = async(req, res) => {
+ const { id, status } = req.query;
+ try {
+   const queryUpdate = await AdminQuery.update({
+     status : status
+   }, {where : {
+     id: id
+   }})
+   if(queryUpdate){
+     return res.status(200).json({
+       status : true,
+       message : "Query status updated successfully"
+     })
+   }else{
+     return res.status(200).json({
+       status : false,
+       message : "Query not updated "
+     })
+   }
+ } catch (error) {
+   return res.status(500).json({
+     status : false,
+     message : error.message
+   })
+ }
+}
