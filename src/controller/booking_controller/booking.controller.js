@@ -1649,21 +1649,49 @@ exports.getAllBookingdataForAll = async (req, res) => {
     const totalCount = get_all_booking.length;
     const totalPages = Math.ceil(totalCount / limit);
 
-    const bookingStatusForPending = await Booking_details.findAndCountAll({
+    const bookingStatusForPending = await Booking_details.findAll({
       where: {
-        status: 'pending'
-      }
-    })
+        status: "pending",
+      },
+      include: [
+        {
+          model: User,
+          as:"User",
+          where: {
+            deleted_At: null
+          }
+        }
+      ]
+    });
     const bookingStatusForApproved = await Booking_details.findAndCountAll({
       where: {
-        status: 'approved'
-      }
-    })
+        status: "approved",
+      },
+      include: [
+        {
+          model: User,
+          as:"User",
+          where: {
+            deleted_At: null
+          }
+        }
+      ]
+    });
+    
     const bookingStatusForReject = await Booking_details.findAndCountAll({
       where: {
-        status: 'reject'
-      }
-    })
+        status: "reject",
+      },
+      include: [
+        {
+          model: User,
+          as:"User",
+          where: {
+            deleted_At: null
+          }
+        }
+      ]
+    });
     const users = await User.findAll({
       query,
       attributes: ['id', 'name', 'phone_no', 'user_type'],
