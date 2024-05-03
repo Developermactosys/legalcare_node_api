@@ -1649,7 +1649,7 @@ exports.getAllBookingdataForAll = async (req, res) => {
     const totalCount = get_all_booking.length;
     const totalPages = Math.ceil(totalCount / limit);
 
-    const bookingStatusForPending = await Booking_details.findAll({
+    const bookingStatusForPending = await Booking_details.findAndCountAll({
       where: {
         status: "pending",
       },
