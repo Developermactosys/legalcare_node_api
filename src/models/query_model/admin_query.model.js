@@ -45,6 +45,9 @@ module.exports = (sequelize, DataTypes) => {
           approve_amt: {
             type: DataTypes.FLOAT
           },
+          issue_with: {
+            type: DataTypes.STRING
+          },
           deleted_At: {
             type: DataTypes.DATE,
             allowNull: true,

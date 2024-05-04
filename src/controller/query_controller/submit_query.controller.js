@@ -86,7 +86,7 @@ exports.submitQuery = async (req, res) => {
       });
     }
 
-    const { user_id, type, query_type, text_query } = req.body;
+    const { user_id, type, query_type, text_query, issue_with } = req.body;
     const query_id = req.body.query_id || 0;
     const amount = parseFloat(req.body.amount) || 0;
 
@@ -115,6 +115,7 @@ exports.submitQuery = async (req, res) => {
       query: text_query,
       date: new Date(),
       ticketId: ticketID,
+      issue_with : issue_with,
       amount,
     });
 
