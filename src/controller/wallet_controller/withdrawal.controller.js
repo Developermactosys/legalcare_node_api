@@ -425,7 +425,20 @@ const update_withdrawal_request_status= async (req, res) => {
       return res.status(200).json({ status: false, message: "Expert does not exist" });
     }
 
-   
+    const find_withdrawal = await WithdrawalRequest.findOne({where:{ id: withdrawal_request_id }})
+    const status_approved = find_withdrawal.status
+    if(status_approved == "approved" || status_approved == 'realised'){
+      await WithdrawalRequest.update(
+        {
+            payment_method:payment_method,
+            transaction_id:transaction_id
+         },
+        { where: { id: withdrawal_request_id } }
+      );
+    return res.status(200).json({ status: true, message: "Withdrawal request updated successfully" });
+
+    }
+
     // Check for existing wallet system entry
     const walletSystem = await WalletSystem.findOne({ where: { UserId: expert_id } });
     if (!walletSystem) {
@@ -461,9 +474,9 @@ const update_withdrawal_request_status= async (req, res) => {
      // Log transaction history
      await TransactionHistory.create({
        UserId: expert_id,
-       payment_method:payment_method,
+      // payment_method:payment_method,
        transaction_amount: requestedAmount_1,
-       transaction_id : transaction_id,
+      // transaction_id : transaction_id,
        status: 1,
        user_type:user_Type
      });

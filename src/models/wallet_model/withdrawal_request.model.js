@@ -59,6 +59,9 @@ module.exports = (sequelize, DataTypes) => {
       reject_description : {
         type: DataTypes.STRING,
       },
+      transaction_id: {
+        type: DataTypes.STRING,
+      },
       deleted_At: {
         type: DataTypes.DATE,
         allowNull: true,
