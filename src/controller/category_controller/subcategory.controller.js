@@ -91,6 +91,45 @@ offset: offset,
   }
 };
 
+// Get All category without pagination for admin side 
+const get_all_SubCategory = async (req, res) => {
+  try {
+    const sub_category = await subcategory.findAll({
+    attributes:['id','subcategoryName','subcategory_img'],
+// include:[{
+//   model: category,
+//   as: "category",
+// },
+// {
+//   model:service,
+//   as:"service"
+// }
+// ],
+
+});
+    if (!sub_category) {
+      return res.status(204).json({
+        status: false,
+        code: 204,
+        message: "subcategory not found",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      code: 200,
+      message: "subcategory get successfully",
+      data: sub_category,
+      
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
 // get sub category by id
 const getSubCategoryById = async (req, res) => {
   if (!req.query.subcategory_id) {
@@ -274,5 +313,6 @@ module.exports = {
   updateSubCategory,
   getSubCategoryById,
   deleteSubCategory,
-  getSubCategoryBy_categoryId
+  getSubCategoryBy_categoryId,
+  get_all_SubCategory
 };

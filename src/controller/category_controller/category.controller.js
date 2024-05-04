@@ -86,6 +86,46 @@ const getCategory = async (req, res) => {
   }
 };
 
+// Get All category without pagination for admin side 
+const get_all_category = async (req, res) => {
+  try {
+   
+    const category = await Category.findAll({
+      attributes:['id','category_name','category_image'],
+    //   include:[{
+    //     model: subcategory,
+    //     as: "subcategory",
+    //     attributes:['id','subcategoryName','subcategory_img'],
+    //   },
+    //   {
+    //     model:service,
+    //     as:"service"
+    //   }
+    // ],
+      
+    });
+
+
+    if (!category) {
+      return res.status(200).json({
+        status: false,
+        message: "Category not found",
+      });
+    }
+    return res.status(200).json({
+      status: true,
+      message: "Categories retrieved successfully",
+      data: category,
+    });
+  } catch (error) {
+    return res.status(500).json({
+      status: false,
+      message: error.message,
+    });
+  }
+};
+
+
 // get category by id including subcategory
 const getCategoryById = async (req, res) => {
   if (!req.params.id) {
@@ -325,5 +365,6 @@ module.exports = {
   getCategory,
   updateCategory,
   getCategoryById,
-  deleteCategory
+  deleteCategory,
+  get_all_category
 };

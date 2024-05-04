@@ -413,7 +413,7 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
 
 const update_withdrawal_request_status= async (req, res) => {
   try {
-    const { withdrawal_request_id, requested_amount,expert_id ,status, reject_description} = req.body;
+    const { withdrawal_request_id, requested_amount,expert_id ,status, reject_description,payment_method,transaction_id} = req.body;
 
     if (!withdrawal_request_id) {
       return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
@@ -461,9 +461,9 @@ const update_withdrawal_request_status= async (req, res) => {
      // Log transaction history
      await TransactionHistory.create({
        UserId: expert_id,
-      //  payment_method:payment_method,
+       payment_method:payment_method,
        transaction_amount: requestedAmount_1,
-      //  transaction_id : transaction_id,
+       transaction_id : transaction_id,
        status: 1,
        user_type:user_Type
      });
