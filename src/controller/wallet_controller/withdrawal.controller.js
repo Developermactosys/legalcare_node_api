@@ -418,13 +418,6 @@ const update_withdrawal_request_status= async (req, res) => {
     if (!withdrawal_request_id) {
       return res.status(200).json({ status: false, message: "Please provide withdrawal_request_id" });
     }
-
-    // Check if user exists
-    const userExists = await User.findByPk(expert_id);
-    if (!userExists) {
-      return res.status(200).json({ status: false, message: "Expert does not exist" });
-    }
-
     const find_withdrawal = await WithdrawalRequest.findOne({where:{ id: withdrawal_request_id }})
     const status_approved = find_withdrawal.status
     if(status_approved == "approved" || status_approved == 'realised'){
@@ -437,6 +430,11 @@ const update_withdrawal_request_status= async (req, res) => {
       );
     return res.status(200).json({ status: true, message: "Withdrawal request updated successfully" });
 
+    }
+    // Check if user exists
+    const userExists = await User.findByPk(expert_id);
+    if (!userExists) {
+      return res.status(200).json({ status: false, message: "Expert does not exist" });
     }
 
     // Check for existing wallet system entry
