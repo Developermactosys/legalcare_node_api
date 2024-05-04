@@ -171,14 +171,48 @@ exports.deleteCA = async (req, res) => {
         where: { expert_id: caId}
       });
   
-       const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+      //  const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
 
-       if (hasPendingBooking) {
-         return res.status(200).json({
-           status: false,
-           message: "Cannot delete Expert due to pending bookings"
-         });
-       }
+      //  if (hasPendingBooking) {
+      //    return res.status(200).json({
+      //      status: false,
+      //      message: "Cannot delete Expert due to pending bookings"
+      //    });
+      //  }
+
+       // Find all bookings associated with the service
+  
+    // Check if any booking has 'pending' status
+    const hasPendingBooking = bookingData.some(booking => booking.status === 'pending');
+
+    if (hasPendingBooking) {
+      return res.status(200).json({
+        status: false,
+        message: "Cannot delete Expert due to pending bookings"
+      });
+    }
+
+    // Proceed with service deletion if no pending bookings
+    const findExpertId = await expert_service.findOne({
+      where:{
+         UserId : caId 
+        }
+      })
+
+    if (findExpertId) {
+      // const delServices = await services.findByPk(serviceId);
+      const delete_expert_service = await expert_service.findAll({
+      where:{
+         UserId : caId 
+        }
+      })
+
+      if (delete_expert_service) {
+        await expert_service.destroy({
+          where:{
+             UserId : caId ,
+            }
+          });
        // expert delete
     const deletedCA = await User.destroy({
       where: {
@@ -187,10 +221,6 @@ exports.deleteCA = async (req, res) => {
       },
     });
 
-    // Expert related services also delete 
-const deleteExpert_services = await expert_service.destroy({
-  where:{UserId: caId }
-})
 
     if (deletedCA === 0) {
       return res.json({ message: "No Expert found with the provided ID" });
@@ -200,13 +230,16 @@ const deleteExpert_services = await expert_service.destroy({
       success: true,
       message: "Expert and It's relevant services deleted successfully ",
     });
-  } catch (error) {
+  } 
+}
+}catch (error) {
     return res.status(500).json({
       success: false,
       message: error.message,
     });
   }
-};
+
+}
 
 exports.updateCA = async (req, res) => {
   const caId = req.params.id;

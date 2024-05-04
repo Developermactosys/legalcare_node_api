@@ -1388,13 +1388,155 @@ exports.update_Booking_by_status = async (req, res) => {
   try {
     const { status, booking_id, discounted_amount, time } = req.body;
 
+    const find_admin_percentage = await admin_setting.findByPk(12)
+    const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
 
     if (!booking_id) {
       return res.status(200).json({ error: "please do not give empty fileds" });
     }
 
     // console.log(status, discounted_amount)
+    const reject_booking = await Booking_details.findByPk(booking_id);
 
+    const { payment_status , UserId , expert_id,discounted_amount: reject_discounted_amount,serviceId} = reject_booking;
+
+    const find_expert = await User.findByPk(expert_id);
+    const get_user_type = find_expert.user_type
+  // Process refund if booking status is pending and payment is paid on Expert end
+  if (status === "reject" && payment_status === "paid") {
+
+    const userWallet = await wallet_system.findOne({ where: { UserId : UserId} });
+
+    const admin_id = 9
+    const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
+
+    const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+
+
+    if (userWallet) {
+      // For Admin deduction 
+      const admin_amount = parseFloat(reject_discounted_amount * admin_booking_percentage);
+      const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
+        parseFloat(reject_discounted_amount * admin_booking_percentage);
+
+      await wallet_system.update(
+        { wallet_amount: newBalanceOfAdmin },
+        { where: { UserId: admin_id } }
+      );
+
+      // for expert deduction 
+      const expert_percentage = parseFloat(1 - admin_booking_percentage)
+      const expert_amount = parseFloat(reject_discounted_amount * expert_percentage)
+      const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+        parseFloat(reject_discounted_amount * expert_percentage);
+
+      await wallet_system.update(
+        { wallet_amount: newBalanceOfExpert },
+        { where: { UserId: expert_id } }
+      );
+      // Giving Refund to user 
+
+      const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(reject_discounted_amount);
+
+      await wallet_system.update(
+        { wallet_amount: newBalanceOfUser },
+        { where: { UserId: UserId } }
+      );
+
+      const allTransaction = await TransactionHistory.bulkCreate([
+        {
+          UserId: UserId,
+          payment_method: "wallet",
+          payment_status: "Refund",
+          transaction_amount: reject_discounted_amount,
+          // transaction_id,
+          // device_id,
+          status: 1,
+          amount_receiver_id: UserId,
+          expert_id: expert_id,
+          user_type: 1,
+          deduct_type: "refund",
+          description: "refund because of booking rejection"
+
+        },
+        {
+          UserId: expert_id,
+          payment_method: "wallet",
+          payment_status: "deduct",
+          transaction_amount: expert_amount,
+          // transaction_id,
+          // device_id,
+          status: 1,
+          amount_receiver_id: UserId,
+          expert_id: expert_id,
+          user_type: get_user_type,
+          deduct_type: "deducted (refund to user )",
+          description: "deduct because of booking rejection",
+
+        },
+        {
+          UserId: admin_id,
+          payment_method: "wallet",
+          payment_status: "deduct",
+          transaction_amount: admin_amount,
+          // transaction_id,
+          // device_id,
+          status: 1,
+          amount_receiver_id: UserId,
+          expert_id: expert_id,
+          user_type: 0,
+          deduct_type: "deducted (refund to user )",
+          description: "deduct because of booking rejection from expert"
+
+        }
+      ]);
+
+    }
+    const status_change = await Booking_details.update(
+      { status: status,rejected_time: time},
+      { where: { id: booking_id } }
+    );
+
+      // Send notification to expert about booking cancellation
+  const user = await User.findByPk(UserId);
+  const expert = await User.findByPk(expert_id);
+  const serviceDetails = await service.findByPk(serviceId);
+
+  const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+  const user_name = user ? user.name : 'Unknown User';
+  const expert_name = expert ? expert.name : 'Unknown User';
+
+
+  const message = {
+    to: user.device_id, // Assuming the user model has a device_id field
+    notification: {
+      title: `Booking Cancellation`,
+      body: `Dear ${user_name} the service for the booking ID:${reject_booking.booking_id}, has been rejected by ${expert_name}.`,
+    },
+  };
+
+  await Notification.create({
+    message: message.notification.body,
+    type: "Booking_rejection",
+    UserId: user.id,
+    data: reject_booking,
+
+  });
+
+  // Send FCM notification
+  fcm.send(message, (err, response) => {
+    if (err) {
+      console.error("FCM notification error:", err);
+      return res.status(200).json({ status: false, message: "Failed to send notification" });
+    } else {
+      console.log("FCM notification sent successfully:", response);
+      return res.status(200).json({
+        status: true,
+        message: "Booking is cancelled and notification sent",
+      });
+    }
+  });
+  }else{ 
     const discounted_price = parseFloat(discounted_amount);
     const find_booking = await Booking_details.findByPk(booking_id)
 
@@ -1414,10 +1556,10 @@ exports.update_Booking_by_status = async (req, res) => {
       find_booking.accepted_time = time
       await find_booking.save()
     }
-    if (status == "reject") {
-      find_booking.rejected_time = time
-      await find_booking.save()
-    }
+    // if (status == "reject") {
+    //   find_booking.rejected_time = time
+    //   await find_booking.save()
+    // }
     if (status == "paid") {
       find_booking.paid_time = time
       await find_booking.save()
@@ -1485,7 +1627,7 @@ exports.update_Booking_by_status = async (req, res) => {
         });
       }
     });
-
+}
 
   } catch (error) {
     console.error(error);
