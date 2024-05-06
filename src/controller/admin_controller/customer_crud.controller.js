@@ -398,14 +398,8 @@ exports.totalCountForCustomer = async(req, res)=>{
         where: {
           [Sequelize.Op.or]: [{ from_user_id: id }, { to_user_id: id }],
         },
-        // include: [{
-        //   model: User,
-        //   as: "User",
-        //   where: { deleted_At: null }
-        // }],
         group:  ["from_user_id", "to_user_id"],
       });
-      console.log(results)
       let uniqueChatsCounts;
       if (results.length > 0) {
         const chats = {};
@@ -415,7 +409,7 @@ exports.totalCountForCustomer = async(req, res)=>{
           addChat(to_user_id, from_user_id);
         });
   
-        function countUniqueChats(id) {
+        function countUniqueChats() {
           const uniqueChats = {};
           if (chats[id]) {
             chats[id].forEach((receiverId) => {
@@ -437,7 +431,6 @@ exports.totalCountForCustomer = async(req, res)=>{
         }
         
         uniqueChatsCounts = countUniqueChats();
-        console.log(uniqueChatsCounts);
         
         // return res.send({
         //   status: true,
