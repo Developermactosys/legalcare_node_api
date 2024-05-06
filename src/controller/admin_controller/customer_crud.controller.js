@@ -436,6 +436,7 @@ exports.totalCountForCustomer = async(req, res)=>{
         }
         
         uniqueChatsCounts = countUniqueChats();
+        console.log(uniqueChatsCounts);
         
         // return res.send({
         //   status: true,
