@@ -381,12 +381,24 @@ exports.totalCountForCustomer = async(req, res)=>{
           message:"Please provide valid id",
         });
       }
+      const find_user = await User.findOne({
+        where: {
+          id: id,
+          deleted_At : null
+        }
+      })
+      if (!find_user) {
+        return res.status(200).json({
+          status: false,
+          message : "User not exist"
+        })
+      }
       const results = await chat.findAll({
         attributes: ["from_user_id", "to_user_id"],
         where: {
           [Sequelize.Op.or]: [{ from_user_id: id }, { to_user_id: id }],
         },
-        group: ["from_user_id", "to_user_id"],
+        group:  ["from_user_id", "to_user_id"],
       });
       let uniqueChatsCounts;
       if (results.length > 0) {
@@ -499,3 +511,6 @@ const sum_of_chat_earning = await TransactionHistory.sum('transaction_amount', {
         })
       }
 }
+
+
+
