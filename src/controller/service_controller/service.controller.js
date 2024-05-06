@@ -195,7 +195,8 @@ const getServiceById = async (req, res) => {
                           model: User,
                           as: "User",
                           // attributes: ['id', 'user_type', 'name', 'profile_image'],
-                      }
+                          where:{deleted_At:null}
+                      },
                   ],
               },
               {
