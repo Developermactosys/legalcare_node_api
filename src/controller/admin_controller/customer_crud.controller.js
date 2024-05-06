@@ -381,6 +381,18 @@ exports.totalCountForCustomer = async(req, res)=>{
           message:"Please provide valid id",
         });
       }
+      const find_user = await User.findOne({
+        where: {
+          id: id, 
+          deleted_At : null
+        }
+      })
+      if (!find_user) {
+        return res.status(200).json({
+          status: false,
+          message : "User not exist"
+        })
+      }
       const results = await chat.findAll({
         attributes: ["from_user_id", "to_user_id"],
         where: {
