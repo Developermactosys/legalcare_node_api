@@ -14,9 +14,9 @@ const callHistoryController = async (req, res) => {
                 id: user_id
             }
         })
-    const get_user_type_2 = get_user_type.user_type;
+        const get_user_type_2 = get_user_type.user_type;
 
-        if (get_user_type_2 === "1") {
+        if (get_user_type_2 == "1") {
           callDetails = await CallDetail.findAll({
             where: { UserId: user_id },
             include: [
@@ -28,9 +28,9 @@ const callHistoryController = async (req, res) => {
             order: [["id", "DESC"]],
           });
         } else if (
-          get_user_type_2 === "2" ||
-          get_user_type_2 === "3" ||
-          get_user_type_2 === "4"
+          get_user_type_2 == "2" ||
+          get_user_type_2 == "3" ||
+          get_user_type_2 == "4"
         ) {
           callDetails = await CallDetail.findAll({
             where: { expert_id: user_id },
