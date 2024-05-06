@@ -1,3 +1,4 @@
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const User = db.User;
 const Notification = db.notification;
@@ -52,6 +53,8 @@ exports.view_notification = async (req, res) => {
 
        const totalCount = await Notification.count({where: { UserId: user_id }});
        const totalPages = Math.ceil(totalCount / limit);
+       
+       const total_unread_count = await Notification.count({where:{UserId: user_id,is_read:0 }})
 
 
     if (notification) {
@@ -59,6 +62,7 @@ exports.view_notification = async (req, res) => {
         status: true,
         message: "All user notifications",
         count: totalCount,
+        UnreadCount:total_unread_count,
         data: notification,
         currentPage: page,
         totalPages: totalPages,
