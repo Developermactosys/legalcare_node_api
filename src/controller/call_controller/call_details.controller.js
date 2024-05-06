@@ -9,7 +9,9 @@ const callHistoryController = async (req, res) => {
         const { user_id, user_type } = req.body;
         let callDetails;
         const get_user_type = await User.findOne({
-            id : user_id
+            where: {
+                id: user_id
+            }
         })
     const get_user_type_2 = get_user_type.user_type;
 
