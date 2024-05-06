@@ -403,7 +403,7 @@ exports.totalCountForCustomer = async(req, res)=>{
           as: "User",
           where: { deleted_At: null }
         }],
-        group: ["from_user_id", "to_user_id"],
+        group:  ["from_user_id", "to_user_id", "User.id"],
       });
       let uniqueChatsCounts;
       if (results.length > 0) {
