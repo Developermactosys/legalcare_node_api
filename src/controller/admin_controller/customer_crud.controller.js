@@ -398,11 +398,11 @@ exports.totalCountForCustomer = async(req, res)=>{
         where: {
           [Sequelize.Op.or]: [{ from_user_id: id }, { to_user_id: id }],
         },
-        include: [
-          model : User,
-          as : "User",
-          where : {deleted_At : null}
-        ]
+        include: [{
+          model: User,
+          as: "User",
+          where: { deleted_At: null }
+        }]
         group: ["from_user_id", "to_user_id"],
       });
       let uniqueChatsCounts;
