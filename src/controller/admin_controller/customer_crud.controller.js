@@ -398,13 +398,14 @@ exports.totalCountForCustomer = async(req, res)=>{
         where: {
           [Sequelize.Op.or]: [{ from_user_id: id }, { to_user_id: id }],
         },
-        include: [{
-          model: User,
-          as: "User",
-          where: { deleted_At: null }
-        }],
-        group:  ["from_user_id", "to_user_id", "User.id"],
+        // include: [{
+        //   model: User,
+        //   as: "User",
+        //   where: { deleted_At: null }
+        // }],
+        group:  ["from_user_id", "to_user_id"],
       });
+      console.log(results)
       let uniqueChatsCounts;
       if (results.length > 0) {
         const chats = {};
@@ -504,7 +505,7 @@ const sum_of_chat_earning = await TransactionHistory.sum('transaction_amount', {
       message : "Showing total_count for total_call ,total_video and total_chat",
       call: dataForCall.count || 0,
       video: getCall.count || 0,
-      chat_count: Object.keys(uniqueChatsCounts || 0).length || 0,
+      chat_count: Object.keys(uniqueChatsCounts).length || 0,
       Expert_total_video_callearning :sum_of_video_callearning,
       Expert_total_audio_callearning :sum_of_audio_callearning,
       Expert_total_chat_earning : sum_of_chat_earning || 0
