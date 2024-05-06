@@ -954,15 +954,15 @@ exports.Cancle_booking_by_id = async (req, res) => {
     if (cancel_booking.status == "cancel") {
       return res.status(200).json({ status: false, message: "your booking is already cancelled" })
     }
-     if (cancel_booking.is_cancel_status == "cancellation_pending") {
-       return res
-         .status(200)
-         .json({
-           status: false,
-           message:
-             "You already cancelled the booking, please wait until expert approve or reject your cancellation request."
-         });
-     }
+    //  if (cancel_booking.is_cancel_status == "cancellation_pending") {
+    //    return res
+    //      .status(200)
+    //      .json({
+    //        status: false,
+    //        message:
+    //          "You already cancelled the booking, please wait until expert approve or reject your cancellation request."
+    //      });
+    //  }
 
     const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
 
