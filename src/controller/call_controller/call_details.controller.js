@@ -14,6 +14,9 @@ const callHistoryController = async (req, res) => {
                 id: user_id
             }
         })
+        if(!get_user_type){
+          return res.status(200).json({status: false, message:"User or Expert doesn't exist"})
+        }
         const get_user_type_2 = get_user_type.user_type;
 
         if (get_user_type_2 == "1") {
