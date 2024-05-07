@@ -373,7 +373,17 @@ exports.videoHistoryController = async (req, res) => {
         let final_data = []
         let response 
 
-        if (user_type === "2") {
+        const get_user_type = await User.findOne({
+          where: {
+              id: user_id
+          }
+      })
+      if(!get_user_type){
+        return res.status(200).json({status: false, message:"User or Expert doesn't exist"})
+      }
+      const get_user_type_2 = get_user_type.user_type;
+
+        if (get_user_type_2 == "2" || get_user_type_2 == "3" ||get_user_type_2 == "4"  ) {
             callDetails = await video_call_details.findAll({
                 where: { expert_id: user_id },
                 include: [
@@ -391,7 +401,7 @@ exports.videoHistoryController = async (req, res) => {
           };
           return res.status(200).json(response);
 
-        } else if (user_type === "1") {
+        } else if (get_user_type_2 == "1") {
             callDetails = await video_call_details.findAll({
                 where: { UserId: user_id },
                 // include: [

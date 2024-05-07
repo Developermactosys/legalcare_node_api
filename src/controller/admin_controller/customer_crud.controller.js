@@ -492,16 +492,13 @@ exports.totalCountForCustomer = async(req, res)=>{
         }
       );
 
-      // Calculate sum of all earnings (transaction_amount) for Chats
-      const sum_of_chat_earning = await TransactionHistory.sum(
-        "transaction_amount",
-        {
-          where: {
-            deduct_type: "chat",
-            UserId: id,
-          },
-        }
-      );
+// Calculate sum of all earnings (transaction_amount) for Chats
+const sum_of_chat_earning = await TransactionHistory.sum('transaction_amount', {
+  where: {
+  deduct_type: "chat",
+  UserId: id
+  }
+  });
 
       return res.status(200).json({
         status: true,
