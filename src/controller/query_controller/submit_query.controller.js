@@ -255,7 +255,8 @@ exports.updateStatusQuery = async(req, res) => {
      status : status,
      response:response
    }, {where : {
-     id: id
+     id: id,
+     response:null
    }})
    if(queryUpdate){
      return res.status(200).json({
@@ -265,7 +266,7 @@ exports.updateStatusQuery = async(req, res) => {
    }else{
      return res.status(200).json({
        status : false,
-       message : "Query not updated "
+       message : "You already Responded to this query"
      })
    }
  } catch (error) {
