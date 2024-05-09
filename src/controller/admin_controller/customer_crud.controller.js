@@ -263,7 +263,19 @@ exports.getAllCallDetailById = async(req, res) =>{
         limit: limit,
        offset: offset,
       })
-      const totalPages = Math.ceil(getCall.count() / limit);
+      const totalCount = await call.count({
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              UserId: id,
+            },
+            {
+              expert_id: id,
+            },
+          ],
+        }
+       });
+       const totalPages = Math.ceil(totalCount / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
@@ -318,7 +330,19 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
         limit: limit,
         offset: offset,
       })
-      const totalPages = Math.ceil(getCall.count() / limit);
+      const totalCount = await video.count({
+        where: {
+          [Sequelize.Op.or]: [
+            {
+              UserId: id,
+            },
+            {
+              expert_id: id,
+            },
+          ],
+        }
+       });
+       const totalPages = Math.ceil(totalCount / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
@@ -364,7 +388,13 @@ exports.getAllDocumentDetailById = async(req, res) =>{
         limit: limit,
         offset: offset,
       })
-      const totalPages = Math.ceil(getCall.count() / limit);
+
+      const totalCount = await document.count({
+        where : {
+          UserId: id
+        }
+       });
+      const totalPages = Math.ceil(totalCount / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
