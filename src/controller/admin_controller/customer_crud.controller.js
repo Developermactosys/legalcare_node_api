@@ -241,6 +241,9 @@ exports.totalUser = async (req, res) => {
 exports.getAllCallDetailById = async(req, res) =>{
   try {
     const { id } = req.params;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
     const findUser = await User.findByPk(id)
     if(findUser){
       const getCall = await call.findAndCountAll({
@@ -257,12 +260,17 @@ exports.getAllCallDetailById = async(req, res) =>{
             },
           ],
         },
+        limit: limit,
+      offset: offset,
       })
+      const totalPages = Math.ceil(getCall.count() / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
           message : "Showing Call detail's ",
-          data: getCall
+          data: getCall,
+          currentPage : page, 
+          totalPages: totalPages
         })
       }else{
         return res.status(400).json({
@@ -288,6 +296,9 @@ exports.getAllCallDetailById = async(req, res) =>{
 exports.getAllVideoCallDetailById = async(req, res) =>{
   try {
     const { id } = req.params;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
     const findUser = await User.findByPk(id)
     if(findUser){
       const getCall = await video.findAndCountAll({
@@ -304,12 +315,17 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
             },
           ],
         },
+        limit: limit,
+        offset: offset,
       })
+      const totalPages = Math.ceil(getCall.count() / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
           message : "Showing Video Call detail's",
-          data :getCall
+          data :getCall,
+          currentPage : page, 
+          totalPages: totalPages
         })
       }else{
         return res.status(400).json({
@@ -336,18 +352,26 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
 exports.getAllDocumentDetailById = async(req, res) =>{
   try {
     const { id } = req.params;
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
+    const offset = (page - 1) * limit;
     const findUser = await User.findByPk(id)
     if(findUser){
       const getCall = await document.findAll({
         where : {
           UserId: id
         }
+        limit: limit,
+        offset: offset,
       })
+      const totalPages = Math.ceil(getCall.count() / limit);
       if(getCall){
         return res.status(200).json({
           status : true,
           message : "Showing document's ",
-          data:getCall
+          data:getCall,
+          currentPage : page, 
+          totalPages: totalPages
         })
       }else{
         return res.status(400).json({
