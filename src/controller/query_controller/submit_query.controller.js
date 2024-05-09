@@ -256,7 +256,7 @@ exports.updateStatusQuery = async(req, res) => {
      response:response
    }, {where : {
      id: id,
-     response:null
+     response:NULL
    }})
    if(queryUpdate){
      return res.status(200).json({
