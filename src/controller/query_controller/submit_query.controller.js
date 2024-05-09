@@ -249,10 +249,11 @@ exports.getAllSubmitQueryForExpert = async(req, res) => {
 
 // API for update status for query
 exports.updateStatusQuery = async(req, res) => {
- const { id, status } = req.query;
+ const { id, status ,response} = req.query;
  try {
    const queryUpdate = await AdminQuery.update({
-     status : status
+     status : status,
+     response:response
    }, {where : {
      id: id
    }})
