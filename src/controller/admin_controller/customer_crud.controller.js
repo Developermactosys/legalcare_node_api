@@ -261,7 +261,7 @@ exports.getAllCallDetailById = async(req, res) =>{
           ],
         },
         limit: limit,
-      offset: offset,
+       offset: offset,
       })
       const totalPages = Math.ceil(getCall.count() / limit);
       if(getCall){
@@ -360,7 +360,7 @@ exports.getAllDocumentDetailById = async(req, res) =>{
       const getCall = await document.findAll({
         where : {
           UserId: id
-        }
+        },
         limit: limit,
         offset: offset,
       })
