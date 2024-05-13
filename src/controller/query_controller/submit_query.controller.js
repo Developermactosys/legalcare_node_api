@@ -251,9 +251,9 @@ exports.getAllSubmitQueryForExpert = async(req, res) => {
 exports.updateStatusQuery = async(req, res) => {
  const { id, status ,response} = req.query;
  try {
-  const queryToUpdate = await AdminQuery.findOne({ where: { id:id,
-    //  response: null 
-    } });
+  // const queryToUpdate = await AdminQuery.findOne({ where: { id:id,
+  //     response: null 
+  //   } });
 
   // if(!queryToUpdate){
   //   return res.status(200).json({
