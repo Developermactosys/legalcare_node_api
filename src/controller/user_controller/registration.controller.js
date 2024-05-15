@@ -170,7 +170,7 @@ const store_otp = async(req, res) => {
     if (!checkuser) {
         return res.json({
             status: false,
-            message: "Your user doesn't exist",
+            message: " User doesn't exist",
         });
     }
     if(!otp){
