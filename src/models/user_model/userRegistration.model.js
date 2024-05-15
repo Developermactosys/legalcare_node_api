@@ -48,7 +48,10 @@ const User = sequelize.define('User', {
     defaultValue: 0,
   },
   amount: DataTypes.FLOAT,
-  per_minute: DataTypes.FLOAT,
+  per_minute:{
+    type: DataTypes.FLOAT,
+    defaultValue: 0,
+  },
   blood_group: DataTypes.STRING,
   gender: DataTypes.STRING,
   country: DataTypes.STRING,
