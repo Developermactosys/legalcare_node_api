@@ -17,7 +17,7 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.ENUM,
       values: ["Top Services", "Other Services"],
       allowNull: false,
-      defaultValue: "Top Services"
+      defaultValue: "Other Services"
   },
   expert_fees :{
     type : DataTypes.FLOAT
