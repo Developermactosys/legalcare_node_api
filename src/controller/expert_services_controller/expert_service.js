@@ -343,7 +343,7 @@ exports.get_expertServiceBy_expert_id = async(req, res) => {
          offset: offset,
      })
 
-     const totalCount = await expert_service.count({});
+     const totalCount = await expert_service.count({where: { UserId: expert_id }});
      const totalPages = Math.ceil(totalCount / limit);
      
         if(getAllData){
