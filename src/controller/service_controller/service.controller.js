@@ -336,7 +336,10 @@ const getServiceBy_expertId = async(req, res) => {
        limit: limit,
        offset: offset,
   })
-  const totalCount = await services.count({});
+  const totalCount = await services.count({where :{
+    UserId:expert_id,
+    service_type :service_type,
+}});
   const totalPages = Math.ceil(totalCount / limit);
 
       if(getServices){
