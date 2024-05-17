@@ -1191,8 +1191,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
               amount_receiver_id: UserId,
               expert_id: expert_id,
               user_type: get_user_type,
-              deduct_type: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
-              description: "Deducted, refunded to user",
+              deduct_type: "Deducted",
+              description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
 
             },
 
@@ -1318,8 +1318,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
             amount_receiver_id: UserId,
             expert_id: expert_id,
             user_type: get_user_type,
-            deduct_type: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
-            description: "Deducted, refunded to user ",
+            deduct_type: "Deducted, refunded to user ",
+            description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`
 
           },
           {
