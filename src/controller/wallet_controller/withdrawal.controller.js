@@ -496,7 +496,7 @@ const update_withdrawal_request_status= async (req, res) => {
       { status: status , approve_date:Date.now(), reject_description:reject_description },
       { where: { id: withdrawal_request_id } }
     );
-    return res.status(200).json({ status: false, message: "Withdrawal request rejected"});
+    return res.status(200).json({ status: true, message: "Withdrawal request rejected"});
 
   }
     
