@@ -488,7 +488,7 @@ const update_withdrawal_request_status= async (req, res) => {
        },
       { where: { id: withdrawal_request_id } }
     );
-    return res.status(200).json({ status: true, message: "Withdrawal request created successfully", wallet_amount: newBalance });
+    return res.status(200).json({ status: true, message: "Withdrawal request updated successfully", wallet_amount: newBalance });
 
 
     }else{
