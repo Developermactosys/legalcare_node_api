@@ -1307,7 +1307,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             amount_receiver_id: UserId,
             expert_id: expert_id,
             user_type: 1,
-            deduct_type: `User Side Refunded for BookingID:-${cancel_booking.booking_id}`,
+            deduct_type: ` Refunded for BookingID:-${cancel_booking.booking_id}`,
             description: cancellation_reason
 
           },
