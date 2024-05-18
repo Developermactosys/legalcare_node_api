@@ -194,7 +194,11 @@ exports.Add_Booking = async (req, res) => {
     fcm.send(message, function (err, response) {
       if (err) {
         console.error("Error:", err.message);
-        return res.status(200).json({ success: false, message: "Failed to send notification" });
+        return res.status(200).json({  
+          success: true,
+          message: "Booked successfully ",
+          data: add_booking,
+        });
       } else {
         console.log("Successfully sent with response: ", response);
         return res.status(200).json({
