@@ -12,6 +12,8 @@ const fileStorage = multer.diskStorage({
       uploadPath = path.join(__dirname, "../../public/uploads/document_of_academy");
     } else if (file.fieldname === "document_for_tutor") {
       uploadPath = path.join(__dirname,  "../../public/uploads/document_of_tutor");
+    }else if (file.fieldname === "academic_tutor_image") {
+      uploadPath = path.join(__dirname,  "../../public/uploads/document_of_academy/academic_tutor_image");
     }
   else {
       console.log(`multer problem ${file.fieldname}`);

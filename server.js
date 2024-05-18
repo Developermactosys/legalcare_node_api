@@ -15,7 +15,6 @@ app.use(express.static(path.join(__dirname, "public", "uploads")));
 app.use(cookieParser());
 app.use(cors());
 
-
 const Routes = require('./src/routes/main.routes');
 
 app.use('/', Routes);
