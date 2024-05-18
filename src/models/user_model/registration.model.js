@@ -83,6 +83,34 @@ is_verify:{
     allowNull: false,
     defaultValue: "verified"
   }, 
+  country:{
+    type:DataTypes.STRING,
+ },
+ language:{
+  type:DataTypes.STRING,
+},
+ timezone:{
+  type:DataTypes.STRING,
+  allowNull:true
+},
+ notification:{
+  type: DataTypes.BOOLEAN,
+},
+intro_of_video:{
+    type:DataTypes.STRING,
+},
+alternate_number:{
+    type:DataTypes.BIGINT,
+},
+whatsapp_number:{
+    type:DataTypes.BIGINT,
+},
+skype_id:{
+    type:DataTypes.STRING,
+},
+website:{
+    type:DataTypes.STRING,
+},
   rating: {
     type:DataTypes.INTEGER,
   },

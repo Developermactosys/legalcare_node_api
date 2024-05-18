@@ -7,7 +7,9 @@ const User = db.user;
 const edit_user = async (req, res) => {
   
     try {
-      const { id ,academy_name,teach_on,address,wilaya,commune,zipcode,brief_intro,last_name,first_name} = req.body;
+      const { id,academy_name,teach_on,address,wilaya,commune,zipcode,brief_intro,last_name,country,
+           first_name,timezone,notification,alternate_number,whatsapp_number,skype_id,website} = req.body;
+           
       const {profile_image,document_for_tutor,document_for_academy} = req.files;
     
       if (!id ) {
@@ -32,6 +34,13 @@ user.zipcode = zipcode;
 user.brief_intro = brief_intro;
 user.first_name = first_name;
 user.last_name = last_name;
+user.country = country;
+user.timezone = timezone;
+user.notification = notification;
+user.alternate_number = alternate_number;
+user.whatsapp_number = whatsapp_number;
+user.skype_id = skype_id;
+user.website = website;
 await user.save();
 
 
