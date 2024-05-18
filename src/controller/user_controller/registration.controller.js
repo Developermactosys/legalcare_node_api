@@ -4,7 +4,6 @@ const secret_key = process.env.SECRET_KEY
 const User = db.user;
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-const moment = require('moment');
 
 const { validationResult } = require('express-validator');
 
