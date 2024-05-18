@@ -973,7 +973,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     if (status == "cancel" && payment_status === "unpaid") {
       // Update booking status to cancelled if payment is unpaid
       const status_change = await Booking_details.update(
-        { status: status, cancellation_reason: cancellation_reason },
+        { status: status, cancellation_reason: cancellation_reason,cancel_time:time },
         { where: { id: booking_id } }
       );
 
@@ -1303,7 +1303,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
             amount_receiver_id: UserId,
             expert_id: expert_id,
             user_type: 1,
-            deduct_type: `Refunded for BookingID:-${cancel_booking.booking_id}`,
+            deduct_type: `User Side Refunded for BookingID:-${cancel_booking.booking_id}`,
             description: cancellation_reason
 
           },
