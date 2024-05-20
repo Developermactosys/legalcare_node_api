@@ -229,6 +229,16 @@ exports.get_booking_by_status = async (req, res) => {
       return res.status(200).json({ error: "please do not give empty fields" });
     }
 
+    // Check if the user exists
+    const userExists = await User.findOne({ where: { id: user_id } });
+
+    if (!userExists) {
+      return res.status(200).json({
+        status: false,
+        message: "User or Expert does not exists",
+      });
+    }
+    
     // if (status === "pending") {
     const pending_booking = await Booking_details.findAll({
       where: {
@@ -562,6 +572,16 @@ exports.get_bookings_by_user_id = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+
+    // Check if the user exists
+    const userExists = await User.findOne({ where: { id: user_id } });
+
+    if (!userExists) {
+      return res.status(200).json({
+        status: false,
+        message: "User or Expert does not exists",
+      });
+    }
     const get_booking = await Booking_details.findAll({
       // where: { UserId: user_id },
       where: {

@@ -4,10 +4,11 @@ const db = require("../../../config/db.config");
 const subcategory = db.subcategory;     
 const category = db.category;
 const service = db.service;
+const {Sequelize,Op,contains,QueryTypes,sequelize } = require("sequelize");
 
 
 const createSubCategory = async (req, res) => {
-  const { categoryId , subcategoryName, description, color, status } = req.body;
+  const { categoryId , subcategoryName, description, color, status,type_of_subcategory } = req.body;
   try {
 
     const find_subcategory_name = await subcategory.findOne({
@@ -25,6 +26,7 @@ const createSubCategory = async (req, res) => {
       status,
       description,
       color,
+      type_of_subcategory,
       subcategory_img: filePath,
       categoryId  : categoryId ,
     });
@@ -47,8 +49,15 @@ const getSubCategory = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
-
+    const {type_of_subcategory} = req.query;
+    let query = {
+        where: {},
+      };  
+      if (type_of_subcategory) {
+        query.where.type_of_subcategory = { [Sequelize.Op.like]: `%${type_of_subcategory}%` };
+      }
     const sub_category = await subcategory.findAll({
+      where: query.where,
 include:[{
   model: category,
   as: "category",
@@ -211,7 +220,7 @@ const getSubCategoryBy_categoryId = async (req, res) => {
 
 // update sub category api
 const updateSubCategory = async (req, res) => {
-  const { subcategoryName, description, color, status } = req.body;
+  const { subcategoryName, description, color, status,type_of_subcategory } = req.body;
   if (!req.params.id) {
     return res.json({
       status: false,
@@ -242,6 +251,7 @@ const updateSubCategory = async (req, res) => {
           status,
           description,
           color,
+          type_of_subcategory,
           subcategory_img: filePath,
         },
         { where: { id: req.params.id } }

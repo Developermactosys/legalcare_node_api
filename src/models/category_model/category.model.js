@@ -31,6 +31,11 @@ const category = sequelize.define('category', {
       category_image : {
         type : DataTypes.STRING,
       },
+      type_of_category: {
+        type: DataTypes.ENUM,
+        values: ["CS category", "Lawyer category", "CA category"],
+        allowNull: true,
+    },
       delete_At : {
         type : DataTypes.DATE,
         allowNull : true,

@@ -8,7 +8,7 @@ const {Sequelize,Op,contains,QueryTypes,sequelize } = require("sequelize");
 
 // API for create category
 const createCategory = async (req, res) => {
-  const { id, category_name, description, color, status } = req.body;
+  const { id, category_name, description, color, status,type_of_category } = req.body;
   try {
 
 const find_category_name = await Category.findOne({
@@ -26,6 +26,7 @@ if(find_category_name){
       status,
       description,
       color,
+      type_of_category,
       category_image: filePath,
     });
 
@@ -48,7 +49,16 @@ const getCategory = async (req, res) => {
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
+    const {type_of_category} = req.query;
+    let query = {
+        where: {},
+      };  
+      if (type_of_category) {
+        query.where.type_of_category = { [Sequelize.Op.like]: `%${type_of_category}%` };
+      }
+
     const category = await Category.findAll({
+      where: query.where,
       include:[{
         model: subcategory,
         as: "subcategory",
@@ -287,7 +297,7 @@ const getCategoryById = async (req, res) => {
 // updateCategory Api
 
 const updateCategory = async (req, res) => {
-  const { category_name, description, color, status } = req.body;
+  const { category_name, description, color, status,type_of_category } = req.body;
   if (!req.params.id) {
     return res.json({
       status: false,
@@ -309,6 +319,7 @@ const updateCategory = async (req, res) => {
           status,
           description,
           color,
+          type_of_category,
           category_image: filePath,
         },
         {

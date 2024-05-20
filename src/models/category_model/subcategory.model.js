@@ -30,6 +30,11 @@ module.exports = (sequelize, DataTypes) => {
         subcategory_img: {
           type: DataTypes.STRING,
         },
+        type_of_subcategory: {
+          type: DataTypes.ENUM,
+          values: ["CS subcategory", "Lawyer subcategory", "CA subcategory"],
+          allowNull: true,
+      },
         delete_At: {
           type: DataTypes.DATE,
           allowNull: true,
