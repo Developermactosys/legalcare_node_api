@@ -194,10 +194,9 @@ const store_otp = async(req, res) => {
       message : "OTP stored successfully"
     })
 }catch (error) {
-  console.error('OTP store Error:', error);
   return res.status(500).json({
       status: false,
-      message: "Internal Server Error",
+      message: error.message,
   });
 }
 }

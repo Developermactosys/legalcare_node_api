@@ -39,7 +39,7 @@ if(req.file){
 catch(error){
         return res.status(500).json({
             status: false,
-            message:"Enternal server error",
+            message: error.message,
           });
     }
 }
