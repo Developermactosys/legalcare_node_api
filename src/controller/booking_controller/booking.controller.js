@@ -179,7 +179,7 @@ exports.Add_Booking = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.booking_id}.`,
+        body: ` You have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.booking_id}.`,
       },
 
     }
@@ -238,7 +238,7 @@ exports.get_booking_by_status = async (req, res) => {
         message: "User or Expert does not exists",
       });
     }
-    
+
     // if (status === "pending") {
     const pending_booking = await Booking_details.findAll({
       where: {
@@ -1016,7 +1016,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Dear ${expert_name},your unpaid booking service for ${service_name} is cancelled by ${user_name}.`,
+        body: `Your unpaid booking service for ${service_name} is cancelled by ${user_name}.`,
       },
     };
 
@@ -1067,7 +1067,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         to: expert.device_id, // Assuming the user model has a device_id field
         notification: {
           title: `Booking Cancellation Request`,
-          body: `Dear ${expert_name}, cancellation request received for Booking ID:${cancel_booking.booking_id} `,
+          body: `Cancellation request received for Booking ID:${cancel_booking.booking_id} `,
         },
       };
 
@@ -1117,7 +1117,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
         to: user.device_id, // Assuming the user model has a device_id field
         notification: {
           title: `Rejection for Booking Cancellation `,
-          body: `Dear ${user_name},${expert_name} declined your cancelllation request for ${cancel_booking.booking_id}.`,
+          body: `${expert_name} declined your cancelllation request for ${cancel_booking.booking_id}.`,
         },
       };
 
@@ -1247,7 +1247,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Dear ${user_name} your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. ${expert_amount} added to your wallet.`,
+        body: ` Your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. ${expert_amount} added to your wallet.`,
       },
     };
 
@@ -1383,7 +1383,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: `Dear ${expert_name} the service for the booking ID:${cancel_booking.booking_id}, has been cancelled by ${user_name}.`,
+        body: `Your service for the booking ID:${cancel_booking.booking_id}, has been cancelled by ${user_name}.`,
       },
     };
 
@@ -1544,7 +1544,7 @@ exports.update_Booking_by_status = async (req, res) => {
     to: user.device_id, // Assuming the user model has a device_id field
     notification: {
       title: `Booking Cancellation`,
-      body: `Dear ${user_name} the service for the booking ID:${reject_booking.booking_id}, has been rejected by ${expert_name}.`,
+      body: `Your booked service for the booking ID:${reject_booking.booking_id}, has been rejected by ${expert_name}.`,
     },
   };
 
@@ -1628,7 +1628,7 @@ exports.update_Booking_by_status = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Confirmation`,
-        body: `Dear ${user.name}, your service request for ${service_name} with Booking ID : ${find_booking.booking_id}`,
+        body: ` Your service request for ${service_name} with Booking ID : ${find_booking.booking_id}`,
       },
     };
 
