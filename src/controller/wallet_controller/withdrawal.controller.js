@@ -226,9 +226,100 @@ const create_withdrawal_request= async (req, res) => {
 };
 
 
+// Orignal
+// const get_withdrawalRequest = async (req, res) => {
+
+//   try {
+//     const { status } = req.query;
+//     const page = parseInt(req.query.page) || 1; // Current page
+//     const limit = parseInt(req.query.limit) || 10; // Number of items per page
+   
+//     // Calculate offset for pagination
+//     const offset = (page - 1) * limit;
+
+
+//     if(status === 'pending'){
+//     const data = await WithdrawalRequest.findAndCountAll({
+//       where: { status: status }, // Define the where condition without curly braces
+//       include: [{
+//         model: User,
+//         as: "User",
+//         attributes: ['id', 'user_type', 'name', 'profile_image']
+//       },
+      
+//     ],
+//       limit: limit,
+//       offset: offset,
+//       order: [['id', 'DESC']] // You can change the order as needed
+//     });
+
+//     const userIds = data.rows.map((item) => item.UserId);
+
+//     // Filter WalletSystem data based on extracted UserIds
+//     const wallet_amount = await WalletSystem.findAll({
+//       where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
+//       attributes: ['UserId', 'wallet_amount']
+//     });
+//     const currentPage = page;
+//     const totalPages = Math.ceil(data.count / limit);
+//     const totalItems = data.count;
+
+//     return res.status(200).json({
+//       status:true,
+//       message:"Data reterived successfully",
+//       data: data.rows,
+//       wallet_amount:wallet_amount,
+//       currentPage: currentPage,
+//       totalPages: totalPages,
+//       totalItems: totalItems,
+    
+//     });
+//   }else{
+
+//     const data = await WithdrawalRequest.findAndCountAll({
+//       where: {
+//         status: {
+//           [Op.or]: ['approved', 'reject'] // Use Op.or to match either 'approved' or 'reject'
+//         }
+//       },
+//       include: [{
+//         model: User,
+//         as: "User",
+//         attributes: ['id', 'user_type', 'name', 'profile_image']
+//       }],
+//       limit: limit,
+//       offset: offset,
+//       order: [['id', 'DESC']] // You can change the order as needed
+//     });
+//     const userIds = data.rows.map((item) => item.UserId);
+
+//     // Filter WalletSystem data based on extracted UserIds
+//     const wallet_amount = await WalletSystem.findAll({
+//       where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
+//       attributes: ['UserId', 'wallet_amount']
+//     });
+//     const currentPage = page;
+//     const totalPages = Math.ceil(data.count / limit);
+//     const totalItems = data.count;
+
+//     res.json({
+//       currentPage: currentPage,
+//       totalPages: totalPages,
+//       totalItems: totalItems,
+//       data: data.rows,
+//       wallet_amount: wallet_amount
+
+//     });
+//   }
+
+//   } catch (error) {
+//     console.error('Error fetching data:', error);
+//     res.status(500).json({ error: 'Internal server error' });
+//   }
+// }
+
 
 const get_withdrawalRequest = async (req, res) => {
-
   try {
     const { status } = req.query;
     const page = parseInt(req.query.page) || 1; // Current page
@@ -237,51 +328,20 @@ const get_withdrawalRequest = async (req, res) => {
     // Calculate offset for pagination
     const offset = (page - 1) * limit;
 
+    let whereCondition = {};
 
-    if(status === 'pending'){
-    const data = await WithdrawalRequest.findAndCountAll({
-      where: { status: status }, // Define the where condition without curly braces
-      include: [{
-        model: User,
-        as: "User",
-        attributes: ['id', 'user_type', 'name', 'profile_image']
-      },
-      
-    ],
-      limit: limit,
-      offset: offset,
-      order: [['id', 'DESC']] // You can change the order as needed
-    });
-
-    const userIds = data.rows.map((item) => item.UserId);
-
-    // Filter WalletSystem data based on extracted UserIds
-    const wallet_amount = await WalletSystem.findAll({
-      where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
-      attributes: ['UserId', 'wallet_amount']
-    });
-    const currentPage = page;
-    const totalPages = Math.ceil(data.count / limit);
-    const totalItems = data.count;
-
-    return res.status(200).json({
-      status:true,
-      message:"Data reterived successfully",
-      data: data.rows,
-      wallet_amount:wallet_amount,
-      currentPage: currentPage,
-      totalPages: totalPages,
-      totalItems: totalItems,
-    
-    });
-  }else{
-
-    const data = await WithdrawalRequest.findAndCountAll({
-      where: {
+    if (status === 'pending') {
+      whereCondition = { status: status };
+    } else {
+      whereCondition = {
         status: {
-          [Op.or]: ['approved', 'reject'] // Use Op.or to match either 'approved' or 'reject'
+          [Op.or]: ['approved', 'reject']
         }
-      },
+      };
+    }
+
+    const data = await WithdrawalRequest.findAndCountAll({
+      where: whereCondition,
       include: [{
         model: User,
         as: "User",
@@ -291,32 +351,50 @@ const get_withdrawalRequest = async (req, res) => {
       offset: offset,
       order: [['id', 'DESC']] // You can change the order as needed
     });
+
     const userIds = data.rows.map((item) => item.UserId);
 
     // Filter WalletSystem data based on extracted UserIds
-    const wallet_amount = await WalletSystem.findAll({
-      where: { UserId: userIds }, // Filter by UserIds extracted from WithdrawalRequest data
+    const wallet_amounts = await WalletSystem.findAll({
+      where: { UserId: userIds },
       attributes: ['UserId', 'wallet_amount']
     });
+
+    // Create a map of UserId to wallet_amount
+    const walletMap = wallet_amounts.reduce((map, wallet) => {
+      map[wallet.UserId] = wallet.wallet_amount;
+      return map;
+    }, {});
+
+    // Merge wallet_amount into data.rows
+    const mergedData = data.rows.map((item) => {
+      return {
+        ...item.dataValues,
+        wallet_amount: walletMap[item.UserId] || null
+      };
+    });
+
     const currentPage = page;
     const totalPages = Math.ceil(data.count / limit);
     const totalItems = data.count;
 
-    res.json({
+    return res.status(200).json({
+      status: true,
+      message: "Data retrieved successfully",
+      data: mergedData,
       currentPage: currentPage,
       totalPages: totalPages,
-      totalItems: totalItems,
-      data: data.rows,
-      wallet_amount: wallet_amount
-
+      totalItems: totalItems
     });
-  }
-
   } catch (error) {
     console.error('Error fetching data:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
-}
+};
+
+
+
+
 
 // const get_withdrawalRequest_by_expert_id = async (req, res) => {
 //   try {
