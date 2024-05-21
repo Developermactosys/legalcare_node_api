@@ -372,7 +372,7 @@ const get_withdrawalRequest = async (req, res) => {
       };
     });
 
-    const totalCount = await WithdrawalRequest.count({where: { UserId: userIds }});
+    const totalCount = await WithdrawalRequest.count({});
     const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
