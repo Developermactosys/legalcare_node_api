@@ -322,10 +322,8 @@ const create_withdrawal_request= async (req, res) => {
 const get_withdrawalRequest = async (req, res) => {
   try {
     const { status } = req.query;
-    const page = parseInt(req.query.page) || 1; // Current page
-    const limit = parseInt(req.query.limit) || 10; // Number of items per page
-   
-    // Calculate offset for pagination
+    const page = Number(req.query.page) || 1;
+    const limit = Number(req.query.limit) || 10;
     const offset = (page - 1) * limit;
 
     let whereCondition = {};
