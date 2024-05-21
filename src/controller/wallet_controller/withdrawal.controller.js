@@ -374,17 +374,15 @@ const get_withdrawalRequest = async (req, res) => {
       };
     });
 
-    const currentPage = page;
-    const totalPages = Math.ceil(data.count / limit);
-    const totalItems = data.count;
+    const totalCount = await WithdrawalRequest.count({where: { UserId: userIds }});
+    const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
       status: true,
       message: "Data retrieved successfully",
       data: mergedData,
-      currentPage: currentPage,
+      currentPage: page,
       totalPages: totalPages,
-      totalItems: totalItems
     });
   } catch (error) {
     console.error('Error fetching data:', error);
