@@ -269,6 +269,7 @@ const updateSubCategory = async (req, res) => {
           status,
           description,
           color,
+          type_of_subcategory
         },
         { where: { id: req.params.id } }
       );
