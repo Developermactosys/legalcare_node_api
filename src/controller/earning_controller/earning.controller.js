@@ -425,10 +425,20 @@ exports.get_earning_List_for_admin = async (req, res) => {
         }
       });
       
+      const find_deducted_transation_for_admin = await TransactionHistory.sum('transaction_amount', {
+        where: {
+          UserId: 9,
+          // expert_id: find_expert[i].id,
+          payment_status:"deduct for booking",
+        }
+      });
+
+      const total_admin_amount = find_transation_for_admin - find_deducted_transation_for_admin
        // Format No of digits to two decimal places
       const formatted_expert_booking = find_expert_booking_count !== null ? parseFloat(find_expert_booking_count.toFixed(3)) : 0;
       const formatted_transaction_for_expert = find_transation_for_expert !== null ? parseFloat(find_transation_for_expert.toFixed(3)) : 0;
-      const formatted_transaction_for_admin = find_transation_for_admin !== null ? parseFloat(find_transation_for_admin.toFixed(3)) : 0;
+      const formatted_transaction_for_admin = total_admin_amount !== null ? parseFloat
+      (total_admin_amount.toFixed(3)) : 0;
       
 
 

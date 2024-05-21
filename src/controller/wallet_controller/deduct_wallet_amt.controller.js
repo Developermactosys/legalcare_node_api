@@ -119,43 +119,31 @@ const deductWalletAmount = async (req, res) => {
       { where: { UserId: user_id } }
     );
 
-    // // Update wallet balance of admin
-    // const newBalance_of_admin = walletBalance + requestedAmount;
-    // await walletSystem_of_admin.update(
-    //   { wallet_amount: newBalance_of_admin, device_id },
-    //   { where: { UserId: admin_id } }
-    // );
-
-    // Updating wallet balance of expert
-    const expert_percentage = parseFloat( 1- admin_booking_percentage)
-    const expert_amount = parseFloat(expert_percentage * requestedAmount);
-    const newBalance_of_expert = wallet_balance_of_expert + expert_amount;
-    await new_walletSystem_of_expert.update(
-      { wallet_amount: newBalance_of_expert, device_id },
-      { where: { UserId: expert_id } }
-    );
-
     // Update wallet balance of admin
-    const admin_amount = parseFloat(admin_booking_percentage * requestedAmount);
-    const newBalance_of_admin = wallet_balance_of_admin + admin_amount;
+    const newBalance_of_admin = walletBalance + requestedAmount;
     await walletSystem_of_admin.update(
       { wallet_amount: newBalance_of_admin, device_id },
       { where: { UserId: admin_id } }
     );
 
-    // // Log transaction history
-    // await TransactionHistory.create({
-    //   UserId: user_id,
-    //   payment_method,
-    //   payment_status,
-    //   transaction_amount: requestedAmount,
-    //   transaction_id,
-    //   device_id,
-    //   status: 1,
-    //   user_type:user_type,
-    //   deduct_type:deduct_type,
-    //   description:description
-    // });
+    // // Updating wallet balance of expert
+    // const expert_percentage = parseFloat( 1- admin_booking_percentage)
+    // const expert_amount = parseFloat(expert_percentage * requestedAmount);
+    // const newBalance_of_expert = wallet_balance_of_expert + expert_amount;
+    // await new_walletSystem_of_expert.update(
+    //   { wallet_amount: newBalance_of_expert, device_id },
+    //   { where: { UserId: expert_id } }
+    // );
+
+    // // Update wallet balance of admin
+    // const admin_amount = parseFloat(admin_booking_percentage * requestedAmount);
+    // const newBalance_of_admin = wallet_balance_of_admin + admin_amount;
+    // await walletSystem_of_admin.update(
+    //   { wallet_amount: newBalance_of_admin, device_id },
+    //   { where: { UserId: admin_id } }
+    // );
+
+   
     const allTransaction = await TransactionHistory.bulkCreate([
       {
         UserId: user_id,
@@ -171,25 +159,25 @@ const deductWalletAmount = async (req, res) => {
         deduct_type:deduct_type,
        description:description
       },
-      {
-        UserId: expert_id,
-        payment_method,
-        payment_status,
-        transaction_amount: expert_amount,
-        transaction_id,
-        device_id,
-        status: 1,
-        amount_receiver_id: expert_id,
-        expert_id: expert_id,
-        user_type: get_user_type,
-        deduct_type:deduct_type,
-        description:description
-      },
+      // {
+      //   UserId: expert_id,
+      //   payment_method,
+      //   payment_status,
+      //   transaction_amount: expert_amount,
+      //   transaction_id,
+      //   device_id,
+      //   status: 1,
+      //   amount_receiver_id: expert_id,
+      //   expert_id: expert_id,
+      //   user_type: get_user_type,
+      //   deduct_type:deduct_type,
+      //   description:description
+      // },
       {
         UserId: admin_id,
         payment_method,
         payment_status,
-        transaction_amount: admin_amount,
+        transaction_amount: requestedAmount,
         transaction_id,
         device_id,
         status: 1,

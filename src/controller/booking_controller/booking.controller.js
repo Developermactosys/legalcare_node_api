@@ -9,6 +9,7 @@ const Notification = db.notification;
 const expert_service = db.expert_service
 const admin_setting = db.admin_setting;
 const TransactionHistory = db.transaction_history;
+const WalletSystem = db.wallet_system
 // exports.Add_Booking = async (req, res) => {
 //   try {
 //     const { serviceId, discounted_amount, GST, user_id } = req.body;
@@ -1287,25 +1288,33 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
       if (userWallet) {
         // For Admin deduction 
-        const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
-        const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
-          parseFloat(discounted_amount * admin_booking_percentage);
+        // const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
+        // const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
+        //   parseFloat(discounted_amount * admin_booking_percentage);
+
+        // await wallet_system.update(
+        //   { wallet_amount: newBalanceOfAdmin },
+        //   { where: { UserId: admin_id } }
+        // );
+        const admin_amount = parseFloat(discounted_amount);
+        const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) - admin_amount ;
 
         await wallet_system.update(
           { wallet_amount: newBalanceOfAdmin },
           { where: { UserId: admin_id } }
         );
 
-        // for expert deduction 
-        const expert_percentage = parseFloat(1 - admin_booking_percentage)
-        const expert_amount = parseFloat(discounted_amount * expert_percentage)
-        const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-          parseFloat(discounted_amount * expert_percentage);
+        // // for expert deduction 
+        // const expert_percentage = parseFloat(1 - admin_booking_percentage)
+        // const expert_amount = parseFloat(discounted_amount * expert_percentage)
+        // const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+        //   parseFloat(discounted_amount * expert_percentage);
 
-        await wallet_system.update(
-          { wallet_amount: newBalanceOfExpert },
-          { where: { UserId: expert_id } }
-        );
+        // await wallet_system.update(
+        //   { wallet_amount: newBalanceOfExpert },
+        //   { where: { UserId: expert_id } }
+        // );
+
         // Giving Refund to user 
 
         const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
@@ -1331,25 +1340,25 @@ exports.Cancle_booking_by_id = async (req, res) => {
             description: cancellation_reason
 
           },
-          {
-            UserId: expert_id,
-            payment_method: "wallet",
-            payment_status: "deduct for Refund ",
-            transaction_amount: expert_amount,
-            // transaction_id,
-            // device_id,
-            status: 1,
-            amount_receiver_id: UserId,
-            expert_id: expert_id,
-            user_type: get_user_type,
-            deduct_type: "Deducted, refunded to user ",
-            description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`
+          // {
+          //   UserId: expert_id,
+          //   payment_method: "wallet",
+          //   payment_status: "deduct for Refund ",
+          //   transaction_amount: expert_amount,
+          //   // transaction_id,
+          //   // device_id,
+          //   status: 1,
+          //   amount_receiver_id: UserId,
+          //   expert_id: expert_id,
+          //   user_type: get_user_type,
+          //   deduct_type: "Deducted, refunded to user ",
+          //   description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`
 
-          },
+          // },
           {
             UserId: admin_id,
             payment_method: "wallet",
-            payment_status: "deduct for Refund",
+            payment_status: "deduct for booking",
             transaction_amount: admin_amount,
             // transaction_id,
             // device_id,
@@ -1436,6 +1445,163 @@ exports.update_Booking_by_status = async (req, res) => {
     const find_expert = await User.findByPk(expert_id);
     const get_user_type = find_expert.user_type
   // Process refund if booking status is pending and payment is paid on Expert end
+  
+if(status === "approved" && payment_status === "paid"){
+
+  const check_approved_booking = await Booking_details.findByPk(booking_id);
+  if(check_approved_booking.status == "approved"){
+    
+   return res.status(200).json({status:false,message:"Booking is already approved"})
+  }
+
+  const find_admin_percentage = await admin_setting.findByPk(12)
+  const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
+  
+  const admin_id = 9
+
+  const walletSystem_of_admin = await WalletSystem.findOne({
+    where: { UserId: admin_id },
+  });
+
+  const walletSystem_of_expert = await WalletSystem.findOne({
+    where: { UserId: expert_id },
+  });
+
+  if (!walletSystem_of_admin) {
+    return res
+      .status(200)
+      .json({ status: false, message: "Admin_Wallet does not exist" });
+  }
+
+  let creating_wallet_of_expert 
+
+  if (!walletSystem_of_expert) {
+
+    // No wallet entry exists, create it
+    creating_wallet_of_expert = await WalletSystem.create({
+      UserId: expert_id,
+      wallet_amount:0,
+      // Assuming you might want to store additional fields like device_id, etc.
+    });
+  }
+  const new_walletSystem_of_expert = await WalletSystem.findOne({
+    where: { UserId: expert_id },
+  });
+
+  const wallet_balance_of_admin = parseFloat(walletSystem_of_admin.wallet_amount);
+
+  const wallet_balance_of_expert = parseFloat(new_walletSystem_of_expert.wallet_amount);
+
+  const requestedAmount = parseFloat(reject_discounted_amount);
+
+ // Updating wallet balance of expert
+    const expert_percentage = parseFloat( 1- admin_booking_percentage)
+    const expert_amount = parseFloat(expert_percentage * requestedAmount);
+    const newBalance_of_expert = wallet_balance_of_expert + expert_amount;
+    await new_walletSystem_of_expert.update(
+      { wallet_amount: newBalance_of_expert },
+      { where: { UserId: expert_id } }
+    );
+
+    // Update wallet balance of admin
+    // const admin_amount = parseFloat(admin_booking_percentage * requestedAmount);
+    const newBalance_of_admin = wallet_balance_of_admin - expert_amount;
+    await walletSystem_of_admin.update(
+      { wallet_amount: newBalance_of_admin},
+      { where: { UserId: admin_id } }
+    );
+
+    // Transaction's of expert and admin
+    const allTransaction = await TransactionHistory.bulkCreate([
+      // {
+      //   UserId: user_id,
+      //   payment_method,
+      //   payment_status,
+      //   transaction_amount: requestedAmount,
+      //   transaction_id,
+      //   device_id,
+      //   status: 1,
+      //   amount_receiver_id: admin_id,
+      //   expert_id: expert_id,
+      //   user_type: 1,
+      //   deduct_type:deduct_type,
+      //  description:description
+      // },
+      {
+        UserId: expert_id,
+        payment_method:"wallet",
+        // payment_status,
+        transaction_amount: expert_amount,
+        // transaction_id,
+        // device_id,
+        status: 1,
+        amount_receiver_id: expert_id,
+        expert_id: expert_id,
+        user_type: get_user_type,
+        deduct_type:"Booking",
+        description:`Credited for BookingID:-${reject_booking.booking_id}`
+      },
+      {
+        UserId: admin_id,
+        payment_method:"wallet",
+        payment_status:"deduct for booking",
+        transaction_amount: expert_amount,
+        // transaction_id,
+        // device_id,
+        status: 1,
+        amount_receiver_id: admin_id,
+        expert_id: expert_id,
+        user_type: 0,
+        deduct_type:"Deducted for Booking",
+        description:`Deducted for BookingID:-${reject_booking.booking_id}`
+      }
+    ]);
+    const status_change = await Booking_details.update(
+      { status: status,accepted_time: time},
+      { where: { id: booking_id } }
+    );
+
+      // Send notification to expert about booking cancellation
+  const user = await User.findByPk(UserId);
+  const expert = await User.findByPk(expert_id);
+  const serviceDetails = await service.findByPk(serviceId);
+
+  const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+  const user_name = user ? user.name : 'Unknown User';
+  const expert_name = expert ? expert.name : 'Unknown User';
+
+
+  const message = {
+    to: user.device_id, // Assuming the user model has a device_id field
+    notification: {
+      title: `Booking Approved`,
+      body: `Your booked service for the booking ID:${reject_booking.booking_id}, has been approved by ${expert_name}.`,
+    },
+  };
+
+  await Notification.create({
+    message: message.notification.body,
+    type: "Booking Approved",
+    UserId: user.id,
+    data: reject_booking,
+
+  });
+
+  // Send FCM notification
+  fcm.send(message, (err, response) => {
+    if (err) {
+      console.error("FCM notification error:", err);
+      return res.status(200).json({ status: false, message: "Failed to send notification" });
+    } else {
+      console.log("FCM notification sent successfully:", response);
+      return res.status(200).json({
+        status: true,
+        message: "Booking is approved and notification sent",
+      });
+    }
+  });
+}
+
   if (status === "reject" && payment_status === "paid") {
 
     const userWallet = await wallet_system.findOne({ where: { UserId : UserId} });
