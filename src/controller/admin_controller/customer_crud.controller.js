@@ -424,7 +424,36 @@ exports.getAllDocumentDetailById = async(req, res) =>{
 }
 
 
+ //  function for search data
+ const buildUserQuery = (queryParams) => {
+  const { id, email, name, phone_no, createdAt } = queryParams;
+  let query = {
+    where: {},
+  };
+
+  if (id) {
+    query.where.id = id; // Direct match
+  }
+  if (email) {
+    query.where.email = { [Sequelize.Op.like]: `%${email}%` };
+  }
+  if (name) {
+    query.where.name = { [Sequelize.Op.like]: `%${name}%` };
+  }
+  if (phone_no) {
+    query.where.phone_no = { [Sequelize.Op.like]: `%${phone_no}%` };
+  }
+  if (createdAt) {
+    query.where.createdAt = Sequelize.where(
+      Sequelize.fn("date", Sequelize.col("createdAt")),
+      "=",
+      createdAt
+    ); // Assumes createdAt is in 'YYYY-MM-DD' format
+  }
   
+  return query;
+};
+
   // API for count for chat, video and call
 exports.totalCountForCustomer = async(req, res)=>{
   const id = req.query.id;
@@ -447,6 +476,10 @@ exports.totalCountForCustomer = async(req, res)=>{
           message: "User not exist",
         });
       }
+
+      // Build query for chats, calls, and videos based on user details
+      const userQuery = buildUserQuery(req.query);
+
       const results = await chat.findAll({
         attributes: ["from_user_id", "to_user_id"],
         where: {

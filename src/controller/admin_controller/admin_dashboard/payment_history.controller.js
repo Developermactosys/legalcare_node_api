@@ -9,10 +9,11 @@ const getPaymentHistory = async(req ,res) =>{
         const limit = Number(req.query.limit) || 10;
         const offset = (page - 1) * limit;
         const findPayment = await transcation_histroy.findAll({
-            attributes:['id','transaction_id','payment_method','createdAt','transaction_amount','status'],
+            attributes:['id','transaction_id','payment_method','createdAt','transaction_amount',
+                        'status','deduct_type','description','payment_status'],
             include: [{
                 model: User,
-                attributes: ['name','user_type'], 
+                attributes: ['id','name','user_type','profile_image'], 
                 as: 'User' 
             }],
             order: [['id', 'DESC']],
