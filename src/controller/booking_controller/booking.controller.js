@@ -1032,8 +1032,12 @@ exports.Cancle_booking_by_id = async (req, res) => {
     // Send FCM notification
     fcm.send(message, (err, response) => {
       if (err) {
-        console.error("FCM notification error:", err);
-        return res.status(200).json({ status: false, message: "Failed to send notification" });
+        console.error("Error:", err.message);
+        return res.status(200).json({  
+          success: true,
+          message: "Booking is cancelled ",
+          data: cancel_booking,
+        });
       } else {
         console.log("FCM notification sent successfully:", response);
         return res.status(200).json({
@@ -1083,8 +1087,11 @@ exports.Cancle_booking_by_id = async (req, res) => {
       // Send FCM notification
       fcm.send(message, (err, response) => {
         if (err) {
-          console.error("FCM notification error:", err);
-          return res.status(200).json({ status: false, message: "Failed to send notification" });
+          console.error("Error:", err.message);
+          return res.status(200).json({  
+            success: true,
+            message: "Request for Booking cancellation is send successfully ",
+          });
         } else {
           console.log("FCM notification sent successfully:", response);
           return res.status(200).json({
@@ -1133,8 +1140,11 @@ exports.Cancle_booking_by_id = async (req, res) => {
       // Send FCM notification
       fcm.send(message, (err, response) => {
         if (err) {
-          console.error("FCM notification error:", err);
-          return res.status(200).json({ status: false, message: "Failed to send notification" });
+          console.error("Error:", err.message);
+          return res.status(200).json({  
+            success: true,
+            message: "Request for Booking Cancellation is rejected",
+          });
         } else {
           console.log("FCM notification sent successfully:", response);
           return res.status(200).json({
@@ -1263,8 +1273,11 @@ exports.Cancle_booking_by_id = async (req, res) => {
     // Send FCM notification
     fcm.send(message, (err, response) => {
       if (err) {
-        console.error("FCM notification error:", err);
-        return res.status(200).json({ status: false, message: "Failed to send notification" });
+        console.error("Error:", err.message);
+        return res.status(200).json({  
+          success: true,
+          message: "Booking is cancelled",
+        });
       } else {
         console.log("FCM notification sent successfully:", response);
         return res.status(200).json({
@@ -1407,8 +1420,11 @@ exports.Cancle_booking_by_id = async (req, res) => {
     // Send FCM notification
     fcm.send(message, (err, response) => {
       if (err) {
-        console.error("FCM notification error:", err);
-        return res.status(200).json({ status: false, message: "Failed to send notification" });
+        console.error("Error:", err.message);
+        return res.status(200).json({  
+          success: true,
+          message: "Booking is cancelled",
+        });
       } else {
         console.log("FCM notification sent successfully:", response);
         return res.status(200).json({

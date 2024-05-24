@@ -47,9 +47,13 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
-        currents_date: {
+        // currents_date: {
+        //   type: DataTypes.DATE,
+        //   defaultValue: DataTypes.NOW,
+        // },
+          currents_date: {
           type: DataTypes.DATE,
-          defaultValue: DataTypes.NOW,
+          defaultValue: () => new Date().toISOString(),
         },
         payment_method: {
           type: DataTypes.STRING,
