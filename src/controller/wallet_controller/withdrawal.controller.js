@@ -546,9 +546,9 @@ const update_withdrawal_request_status= async (req, res) => {
      // Log transaction history
      await TransactionHistory.create({
        UserId: expert_id,
-      // payment_method:payment_method,
+       payment_method:payment_method,
        transaction_amount: requestedAmount_1,
-      // transaction_id : transaction_id,
+       transaction_id : transaction_id,
        status: 1,
        user_type:user_Type
      });
