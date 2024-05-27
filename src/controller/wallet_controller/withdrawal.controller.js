@@ -339,10 +339,14 @@ const get_withdrawalRequest = async (req, res) => {
     }
 
     const data = await WithdrawalRequest.findAndCountAll({
-      where: whereCondition,
+        
+        where:{ ...whereCondition,
+                deleted_At:null
+              },
       include: [{
         model: User,
         as: "User",
+        deleted_At:null,
         attributes: ['id', 'user_type', 'name', 'profile_image']
       }],
       limit: limit,
