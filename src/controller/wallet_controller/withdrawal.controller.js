@@ -378,7 +378,8 @@ const get_withdrawalRequest = async (req, res) => {
       };
     });
 
-    const totalCount = await WithdrawalRequest.count({where:{ ...whereCondition, deleted_At:null }});
+    // const totalCount = await WithdrawalRequest.count({where:{ ...whereCondition, deleted_At:null }});
+    const totalCount =  data.count
     const totalPages = Math.ceil(totalCount / limit);
 
     return res.status(200).json({
