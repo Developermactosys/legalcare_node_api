@@ -378,6 +378,7 @@ const get_withdrawalRequest = async (req, res) => {
     return res.status(200).json({
       status: true,
       message: "Data retrieved successfully",
+      count:totalCount,
       data: mergedData,
       currentPage: page,
       totalPages: totalPages,
@@ -387,8 +388,6 @@ const get_withdrawalRequest = async (req, res) => {
     res.status(500).json({ error: 'Internal server error' });
   }
 };
-
-
 
 
 
