@@ -347,7 +347,9 @@ const get_withdrawalRequest = async (req, res) => {
         model: User,
         as: "User",
         deleted_At:null,
-        attributes: ['id', 'user_type', 'name', 'profile_image']
+        attributes: ['id', 'user_type', 'name', 'profile_image'],
+        required: true // Ensures only withdrawal requests with existing users are included
+
       }],
       limit: limit,
       offset: offset,
