@@ -47,10 +47,9 @@ module.exports = (sequelize, DataTypes) => {
           type: DataTypes.INTEGER,
           allowNull: true,
         },
-        // currents_date: {
-        //   type: DataTypes.DATE,
-        //   defaultValue: DataTypes.NOW,
-        // },
+        transaction_type: {
+          type: DataTypes.STRING,
+        },
           currents_date: {
           type: DataTypes.DATE,
           defaultValue: () => new Date().toISOString(),

@@ -15,7 +15,7 @@ const deductWalletAmount = async (req, res) => {
       device_id,
       payment_status,
       expert_id,
-      // user_type,
+      transaction_type,
       deduct_type,
       description
     } = req.body;
@@ -156,6 +156,7 @@ const deductWalletAmount = async (req, res) => {
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 1,
+        transaction_type:"Debited",
         deduct_type:deduct_type,
        description:description
       },
@@ -184,6 +185,7 @@ const deductWalletAmount = async (req, res) => {
         amount_receiver_id: admin_id,
         expert_id: expert_id,
         user_type: 0,
+        transaction_type:"Credited",
         deduct_type:deduct_type,
         description:description
       }

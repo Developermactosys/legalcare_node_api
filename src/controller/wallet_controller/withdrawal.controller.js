@@ -136,6 +136,7 @@ if(get_user_type == "1" || get_user_type == "0"){
       transaction_id : transactionId,
       status: 1,
       user_type:get_user_type,
+      transaction_type:"Debited",
       payment_status: payment_status,
       description: description
     });
@@ -167,6 +168,7 @@ if(get_user_type == "1" || get_user_type == "0"){
       transaction_id : transactionId,
       status: 1,
       user_type:get_user_type,
+      transaction_type:"Credited",
       payment_status: payment_status,
       description: description
     });
@@ -555,6 +557,7 @@ const update_withdrawal_request_status= async (req, res) => {
        payment_method:payment_method,
        transaction_amount: requestedAmount_1,
        transaction_id : transaction_id,
+       transaction_type:"Debited",
        status: 1,
        user_type:user_Type
      });
