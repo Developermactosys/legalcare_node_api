@@ -10,48 +10,17 @@ const expert_service = db.expert_service
 const admin_setting = db.admin_setting;
 const TransactionHistory = db.transaction_history;
 const WalletSystem = db.wallet_system
-// exports.Add_Booking = async (req, res) => {
-//   try {
-//     const { serviceId, discounted_amount, GST, user_id } = req.body;
-
-//     const isEmptykey = Object.keys(req.body).some((key) => {
-//       const value = req.body[key];
-//       return value === "" || value === null || value === undefined;
-//     });
-//     if (isEmptykey) {
-//       return res.status(400).json({ error: "please do not give empty fileds" });
-//     }
-
-//     const findService = await service.findByPk(serviceId)
-//     const add_booking = await Booking_details.create(req.body);
-
-//     add_booking.serviceId = serviceId;
-//     add_booking.discounted_amount = discounted_amount;
-//     add_booking.GST = GST;
-//     add_booking.UserId = user_id;
-//     add_booking.expert_id = findService.UserId;
-
-//     await add_booking.save();
-
-//     return res.status(200).json({
-//       status: true,
-//       message: "Booked successfully",
-//       data: add_booking,
-//     });
-//   } catch (error) {
-//     console.error(error);
-//     return res.status(500).json({ error: "Internal Server Error" });
-//   }
-// };
 
 const FCM = require('fcm-node');
 const serverKey = process.env.SERVER_KEY_HERE;
 const fcm = new FCM(serverKey);
+const emailService = require("../../services/email_for_booking")
 
 
+// Originoal
 // exports.Add_Booking = async (req, res) => {
 //   try {
-//     const { serviceId, discounted_amount, GST, user_id ,time} = req.body;
+//     const { serviceId, discounted_amount, GST, user_id, time, expert_id } = req.body;
 
 //     const isEmptykey = Object.keys(req.body).some((key) => {
 //       const value = req.body[key];
@@ -61,31 +30,57 @@ const fcm = new FCM(serverKey);
 //       return res.status(400).json({ error: "please do not give empty fields" });
 //     }
 //     const add_booking = await Booking_details.create(req.body);
+//     function generateBookingID() {
+//       // Get the current date
+//       const currentDate = new Date();
 
+//       // Extract year, month, and day components
+//       const year = currentDate.getFullYear();
+//       const month = (currentDate.getMonth() + 1).toString().padStart(2, '0'); // Adding leading zero if necessary
+//       const day = currentDate.getDate().toString().padStart(2, '0'); // Adding leading zero if necessary
+
+//       // Get the sequential number (you can replace this with your own logic to generate sequential numbers)
+//       const sequentialNumber = add_booking.id; // You need to implement this function
+
+//       // Format the booking ID
+//       const bookingID = `LL${day}${month}${year}${sequentialNumber}`;
+
+//       return bookingID;
+//     }
+
+//     const bookingID = generateBookingID()
 //     const find_service = await service.findByPk(serviceId)
 //     const service_name = find_service.serviceName
 
+//     const find_expert_service_id = await expert_service.findOne({
+//       where: { serviceId: serviceId, UserId: expert_id }
+//     })
+//     const find_service_cost = find_expert_service_id.expert_fees 
+
+//     add_booking.booking_id = bookingID
 //     add_booking.serviceId = serviceId;
-//     add_booking.discounted_amount = discounted_amount;
+//     add_booking.discounted_amount = find_service_cost;
 //     add_booking.GST = GST;
 //     add_booking.UserId = user_id;
-//     add_booking.expert_id = find_service.UserId;
+//     add_booking.expert_id = expert_id;
 //     add_booking.in_progress_time = time;
+
+//     add_booking.expertServiceId = find_expert_service_id.id;
 
 //     await add_booking.save();
 
-//     const expert_id = find_service.UserId
+//     // const expert_id = find_service.UserId// 
 
 //     const user = await User.findByPk(user_id)
-//     const user_name =  user.name
-//     const expert = await User.findByPk(expert_id) 
+//     const user_name = user.name
+//     const expert = await User.findByPk(expert_id)
 //     const expert_name = expert.name
 
 //     var message = {
 //       to: expert.device_id, // Assuming the user model has a device_id field
 //       notification: {
 //         title: `Booking Confirmation`,
-//         body: `Dear ${expert_name} you have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.id}.`,
+//         body: ` You have received a service request from ${user_name} for ${service_name} with Booking ID ${add_booking.booking_id}.`,
 //       },
 
 //     }
@@ -93,13 +88,18 @@ const fcm = new FCM(serverKey);
 //     await Notification.create({
 //       message: message.notification.body,
 //       type: " Booking ",
-//       UserId : expert.id
+//       UserId: expert.id,
+//       data: add_booking
 //     });
 
-//     fcm.send(message, function(err, response) {
+//     fcm.send(message, function (err, response) {
 //       if (err) {
 //         console.error("Error:", err.message);
-//         return res.status(400).json({ success: false, message: "Failed to send notification" });
+//         return res.status(200).json({  
+//           success: true,
+//           message: "Booked successfully ",
+//           data: add_booking,
+//         });
 //       } else {
 //         console.log("Successfully sent with response: ", response);
 //         return res.status(200).json({
@@ -109,18 +109,15 @@ const fcm = new FCM(serverKey);
 //         });
 //       }
 //     });
-// } catch (error) {
-//   console.error(error);
-//   return res.status(500).json({ error: "Internal Server Error" });
-// }
+//   } catch (error) {
+//     console.error(error);
+//     return res.status(500).json({ error: "Internal Server Error" });
+//   }
 // };
-
-// Function to generate booking ID
-
 
 exports.Add_Booking = async (req, res) => {
   try {
-    const { serviceId, discounted_amount, GST, user_id, time, expert_id } = req.body;
+    const { serviceId, discounted_amount, GST, user_id, time, expert_id ,email} = req.body;
 
     const isEmptykey = Object.keys(req.body).some((key) => {
       const value = req.body[key];
@@ -173,6 +170,7 @@ exports.Add_Booking = async (req, res) => {
 
     const user = await User.findByPk(user_id)
     const user_name = user.name
+    const user_email = user.email_id
     const expert = await User.findByPk(expert_id)
     const expert_name = expert.name
 
@@ -191,6 +189,15 @@ exports.Add_Booking = async (req, res) => {
       UserId: expert.id,
       data: add_booking
     });
+
+    const info = await emailService(bookingID, user_name, expert_name, service_name, find_service_cost,user_email);
+
+    // if (info) {
+    //        return res.json({
+    //         status: true,
+    //         message: "your Booking is successfully and link Sent on your E-mail",
+    //     })
+    //   }
 
     fcm.send(message, function (err, response) {
       if (err) {
@@ -965,7 +972,7 @@ exports.delete_booking_by_id = async (req, res) => {
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id, time, status, cancellation_reason, is_cancel_status } = req.query;
+    const { booking_id, time, status, cancellation_reason, is_cancel_status ,cancellation_approved_amount} = req.query;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -990,7 +997,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     //  }
 
     const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
-
+const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
     const find_expert = await User.findByPk(expert_id);
     const get_user_type = find_expert.user_type
 
@@ -1155,9 +1162,8 @@ exports.Cancle_booking_by_id = async (req, res) => {
       });
   }
 
-    // Expert End Cancel booking
-
-    if(is_cancel_status == "cancellation_approved"){ 
+    // Customer End Cancel booking
+    if(is_cancel_status == "cancellation_accepted_by_customer"){ 
 
     if (bookingStatus === "approved" && payment_status === "paid") {
       
@@ -1181,9 +1187,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
 
           // for expert deduction 
           const expert_percentage = parseFloat(1 - admin_booking_percentage)
-          const expert_amount = parseFloat(discounted_amount * expert_percentage)
+          const expert_amount = parseFloat(cancellation_Approved_Amount )
           const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-            parseFloat(discounted_amount * expert_percentage);
+            parseFloat(cancellation_Approved_Amount );
 
           await wallet_system.update(
             { wallet_amount: newBalanceOfExpert },
@@ -1238,15 +1244,72 @@ exports.Cancle_booking_by_id = async (req, res) => {
       // }
 
       const status_change = await Booking_details.update(
-        { status: "cancel" ,is_cancel_status : is_cancel_status,cancel_time: time},
+        { status: "cancel" ,is_cancel_status : is_cancel_status,cancellation_accepted_time: time},
         { where: { id: booking_id } }
       );
     }
 
     const expert_percentage = parseFloat(1 - admin_booking_percentage)
-    const expert_amount = parseFloat(discounted_amount * expert_percentage)
+    const expert_amount = parseFloat(cancellation_Approved_Amount)
 
     // Send notification to expert about booking cancellation
+    const user = await User.findByPk(UserId);
+    const expert = await User.findByPk(expert_id);
+    const serviceDetails = await service.findByPk(serviceId);
+
+    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    const user_name = user ? user.name : 'Unknown User';
+    const expert_name = expert ? expert.name : 'Unknown User';
+
+
+    const message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Cancellation`,
+        body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been accepted by ${user_name}. ${expert_amount} deducted from your wallet.`,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: "Booking_cancellation",
+      UserId: expert.id,
+      data: cancel_booking,
+
+    });
+
+
+
+    // Send FCM notification
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.error("Error:", err.message);
+        return res.status(200).json({  
+          success: true,
+          message: "Booking is cancelled",
+        });
+      } else {
+        console.log("FCM notification sent successfully:", response);
+        return res.status(200).json({
+          status: true,
+          message: "Booking is cancelled and notification sent",
+        });
+      }
+    });
+  }
+
+  // Expert Side Cancel booking
+  if(is_cancel_status == "cancellation_approved_by_expert"){
+
+    if (bookingStatus === "approved" && payment_status === "paid"){
+
+      const status_change = await Booking_details.update(
+        { is_cancel_status : is_cancel_status,cancellation_approved_time: time,cancellation_approved_amount:cancellation_approved_amount},
+        { where: { id: booking_id } }
+
+      );
+
+      // Send notification to expert about booking cancellation
     const user = await User.findByPk(UserId);
     const expert = await User.findByPk(expert_id);
     const serviceDetails = await service.findByPk(serviceId);
@@ -1260,7 +1323,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: ` Your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. ${expert_amount} added to your wallet.`,
+        body: ` Your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. and ${cancellation_approved_amount} has been approved .`,
       },
     };
 
@@ -1288,8 +1351,9 @@ exports.Cancle_booking_by_id = async (req, res) => {
         });
       }
     });
-  }
 
+    }
+  }
     // Process refund if booking status is pending and payment is paid on Expert end
     if (bookingStatus === "pending" && payment_status === "paid") {
 

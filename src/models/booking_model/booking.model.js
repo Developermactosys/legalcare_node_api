@@ -22,6 +22,9 @@ module.exports = (sequelize, DataTypes) => {
       total_amount :{
         type: DataTypes.FLOAT,
       },
+      cancellation_approved_amount :{
+        type: DataTypes.FLOAT,
+      },
       discounted_amount :{
         type: DataTypes.FLOAT,
       },
@@ -76,6 +79,16 @@ cancel_time: {
   allowNull: true,
   defaultValue: null
 },
+cancellation_approved_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+cancellation_accepted_time: {
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
 cancellation_reason: {
   type: DataTypes.STRING,
   allowNull: true,
@@ -83,7 +96,7 @@ cancellation_reason: {
 },
 is_cancel_status: {
   type: DataTypes.ENUM,
-  values: ["cancellation_pending", "cancellation_approved", "cancellation_reject" ],
+  values: ["cancellation_pending","cancellation_approved_by_expert","cancellation_reject","cancellation_accepted_by_customer" ],
   allowNull: true,
 },
   deleted_At: {

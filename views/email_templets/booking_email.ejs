@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Booking Confirmation</title>
+    <style>
+        /* Reset CSS */
+        body, h1, h2, p {
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            color: #333;
+            display: flex;
+            justify-content: center; /* Center horizontally */
+            align-items: center; /* Center vertically */
+            height: 100vh; /* Full viewport height */
+        }
+
+        .container {
+            max-width: 600px;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 24px;
+            margin-bottom: 20px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        p {
+            margin-bottom: 20px;
+        }
+
+        .booking-details {
+            border-top: 2px solid #007bff;
+            padding-top: 20px;
+            margin-top: 20px;
+        }
+
+        .booking-details h2 {
+            font-size: 18px;
+            margin-bottom: 10px;
+            color: #007bff;
+        }
+
+        .booking-details p {
+            margin-bottom: 10px;
+        }
+
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            background-color: #007bff;
+            color: #fff;
+            text-decoration: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+
+        .button:hover {
+            background-color: #0056b3;
+        }
+
+        @media screen and (max-width: 600px) {
+            .container {
+                width: 90%;
+            }
+        }
+    </style>
+</head>
+<body>
+   
+    <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://lynklegal.com/assets/lynkLogo-BTwXxail.png" alt="Lynk Legal Logo" style="max-width: 330px; width: 100%; height: auto;">
+        </div>
+        <h1>Booking Confirmation</h1>
+        <p>Dear <%= user_name %></p>
+        <p>Your booking has been confirmed successfully. Below are the details of your booking:</p>
+        <div class="booking-details">
+            <h2>Booking Details:</h2>
+            <p><strong>Booking ID:</strong> <%= bookingID %></p>
+            <p><strong>Expert:</strong> <%= expert_name %></p>
+            <p><strong>Service:</strong> <%= service_name %></p>
+            <p><strong>Expert Fees:</strong> <%= find_service_cost %></p>
+        </div>
+        <p>If you have any questions or need further assistance, please feel free to contact us.</p>
+    </div>
+</body>
+</html>
