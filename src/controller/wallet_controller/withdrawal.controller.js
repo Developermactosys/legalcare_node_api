@@ -467,7 +467,7 @@ const get_withdrawalRequest_by_expert_id = async (req, res) => {
       }],
       limit: pageSize,
       offset: offset,
-      order: [['id', 'DESC']]
+      order: [['updatedAt', 'DESC']]
     });
 
     const currentPage = page;
