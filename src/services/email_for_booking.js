@@ -8,8 +8,8 @@ const emailService = async (bookingID, user_name, expert_name, service_name, fin
 
   try {
     const transporter = nodemailer.createTransport({
-    //   host: "smtp.sendgrid.net",
-    host:"smtp.gmail.com",
+       host: "smtp.sendgrid.net",
+    //host:"smtp.gmail.com",
       port: 587,
       secure: false,
       requireTLS: true,
