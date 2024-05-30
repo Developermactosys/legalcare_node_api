@@ -52,6 +52,11 @@
             color: #007bff;
         }
 
+        .highlight {
+            color: #007bff;
+            font-weight: bold;
+        }
+
         .booking-details p {
             margin-bottom: 10px;
         }
@@ -83,7 +88,7 @@
         <div style="text-align: center; margin-bottom: 20px;">
             <img src="https://lynklegal.com/assets/lynkLogo-BTwXxail.png" alt="Lynk Legal Logo" style="max-width: 330px; width: 100%; height: auto;">
         </div>
-        <h1>Booking Confirmation</h1>
+        <h1>Booking Genration</h1>
         <p>Dear <%= user_name %></p>
         <p>Your booking has been confirmed successfully. Below are the details of your booking:</p>
         <div class="booking-details">
@@ -93,6 +98,7 @@
             <p><strong>Service:</strong> <%= service_name %></p>
             <p><strong>Expert Fees:</strong> <%= find_service_cost %></p>
         </div>
+        <p><strong>We will notify you once when the booking got accepted by <span class="highlight"><%= expert_name %></span></strong></p>
         <p>If you have any questions or need further assistance, please feel free to contact us.</p>
     </div>
 </body>
