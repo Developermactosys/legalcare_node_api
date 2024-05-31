@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Confirmation</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            width: 100%;
+            max-width: 600px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+        .header {
+            background-color: #4CAF50;
+            color: white;
+            text-align: center;
+            padding: 30px 20px;
+        }
+        .header h1 {
+            margin: 0;
+            font-size: 26px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        .content {
+            padding: 20px 30px;
+            line-height: 1.6;
+        }
+        .content p {
+            margin: 0 0 15px;
+            color: #333;
+        }
+        .details {
+            background-color: #f9f9f9;
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-left: 5px solid #4CAF50;
+            border-radius: 4px;
+        }
+        .details p {
+            margin: 5px 0;
+            color: #555;
+        }
+        .details p span {
+            font-weight: bold;
+            color: #333;
+        }
+        .button {
+            display: inline-block;
+            padding: 10px 20px;
+            margin: 20px 0;
+            background-color: #4CAF50;
+            color: white;
+            text-decoration: none;
+            border-radius: 4px;
+            text-align: center;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+        .footer {
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 15px 20px;
+            font-size: 14px;
+            color: #777;
+        }
+        @media (max-width: 600px) {
+            .container {
+                width: 100%;
+                padding: 0 10px;
+            }
+            .header, .content, .details, .footer {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Payment Confirmation</h1>
+        </div>
+        <div class="content">
+            <p>Dear <%= user_name %>,</p>
+            <p>Thank you for your payment. We have successfully received your payment for the order <strong><%= bookingID %></strong>.</p>
+            <div class="details">
+                <p><span>Payment Amount:</span> $<%= amount %></p>
+                <p><span>Payment Date:</span> <%= time %></p>
+                <p><span>Payment Method:</span> <%= payment_method %></p>
+                <p><span>Transaction ID:</span> <%= transaction_id %></p>
+                <p><span>Payment Status:</span> Paid </p>
+            </div>
+            <p>If you have any questions or concerns, please feel free to contact us at .</p>
+        </div>
+    </div>
+</body>
+</html>

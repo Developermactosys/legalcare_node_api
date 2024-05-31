@@ -4,6 +4,8 @@ const User = db.User;
 const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
 const admin_setting = db.admin_setting;
+const booking = db.booking_details
+const emailService = require("../../services/email_for_payment_confirmation_for_booking")
 
 const deductWalletAmount = async (req, res) => {
   try {
@@ -17,7 +19,9 @@ const deductWalletAmount = async (req, res) => {
       expert_id,
       transaction_type,
       deduct_type,
-      description
+      description,
+      booking_id,
+      time
     } = req.body;
 
     // Check for empty or undefined fields
@@ -190,6 +194,13 @@ const deductWalletAmount = async (req, res) => {
         description:description
       }
     ]);
+    
+    const find_booking = await booking.findByPk(booking_id)
+    const bookingID = find_booking.booking_id
+    const user_name = userExists.name
+    const user_email = userExists.email_id
+
+    const info = await emailService(bookingID, user_name, amount, payment_method, transaction_id, time, user_email);
 
     return res.status(200).json({
       status: true,
