@@ -972,7 +972,7 @@ exports.delete_booking_by_id = async (req, res) => {
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id, time, status, cancellation_reason, is_cancel_status ,cancellation_approved_amount} = req.query;
+    const { booking_id, time, status, cancellation_reason, is_cancel_status ,cancellation_approved_amount,cancellation_demanding_Amount_by_customer} = req.query;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -1162,74 +1162,143 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
       });
   }
 
-    // Cancellation approved amount is rejected by customer (Customer End)
-    if (is_cancel_status == "cancellation_rejected_by_customer") {
+    // // Cancellation approved amount is rejected by customer (Customer End)
+    // if (is_cancel_status == "cancellation_rejected_by_customer") {
 
-      if (bookingStatus === "approved" && payment_status === "paid") {
+    //   if (bookingStatus === "approved" && payment_status === "paid") {
 
-        // Calculate time difference in minutes between current time and in_progress_time
-        const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
-        const currentTime = new Date();
-        // const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
+    //     // Calculate time difference in minutes between current time and in_progress_time
+    //     const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
+    //     const currentTime = new Date();
+    //     // const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
 
-        // if (timeDifferenceMinutes > 1440) {
-        //   return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
-        // }
+    //     // if (timeDifferenceMinutes > 1440) {
+    //     //   return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
+    //     // }
 
-        // Process refund if booking status is approved and cancellation is within 24 hours
-        // if (timeDifferenceMinutes < 1440) {
+    //     // Process refund if booking status is approved and cancellation is within 24 hours
+    //     // if (timeDifferenceMinutes < 1440) {
        
 
-        const status_change = await Booking_details.update(
-          { is_cancel_status: is_cancel_status, cancellation_rejected_by_customer_time: time },
-          { where: { id: booking_id } }
-        );
-      }
+    //     const status_change = await Booking_details.update(
+    //       { is_cancel_status: is_cancel_status, cancellation_rejected_by_customer_time: time },
+    //       { where: { id: booking_id } }
+    //     );
+    //   }
 
 
-      // Send notification to expert about booking cancellation
-      const user = await User.findByPk(UserId);
-      const expert = await User.findByPk(expert_id);
-      const serviceDetails = await service.findByPk(serviceId);
+    //   // Send notification to expert about booking cancellation
+    //   const user = await User.findByPk(UserId);
+    //   const expert = await User.findByPk(expert_id);
+    //   const serviceDetails = await service.findByPk(serviceId);
 
-      const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
-      const user_name = user ? user.name : 'Unknown User';
-      const expert_name = expert ? expert.name : 'Unknown User';
+    //   const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    //   const user_name = user ? user.name : 'Unknown User';
+    //   const expert_name = expert ? expert.name : 'Unknown User';
 
 
-      const message = {
-        to: expert.device_id, // Assuming the user model has a device_id field
-        notification: {
-          title: `Booking Cancellation`,
-          body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been rejected by ${user_name}.`,
-        },
-      };
+    //   const message = {
+    //     to: expert.device_id, // Assuming the user model has a device_id field
+    //     notification: {
+    //       title: `Booking Cancellation`,
+    //       body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been rejected by ${user_name}.`,
+    //     },
+    //   };
 
-      await Notification.create({
-        message: message.notification.body,
-        type: "Booking_cancellation",
-        UserId: expert.id,
-        data: cancel_booking,
+    //   await Notification.create({
+    //     message: message.notification.body,
+    //     type: "Booking_cancellation",
+    //     UserId: expert.id,
+    //     data: cancel_booking,
 
-      });
+    //   });
 
-      // Send FCM notification
-      fcm.send(message, (err, response) => {
-        if (err) {
-          console.error("Error:", err.message);
-          return res.status(200).json({
-            success: true,
-            message: "Cancellation approved amount is rejected by customer",
-          });
-        } else {
-          console.log("FCM notification sent successfully:", response);
-          return res.status(200).json({
-            status: true,
-            message: "Cancellation approved amount is rejected by customer and notification sent",
-          });
-        }
-      });
+    //   // Send FCM notification
+    //   fcm.send(message, (err, response) => {
+    //     if (err) {
+    //       console.error("Error:", err.message);
+    //       return res.status(200).json({
+    //         success: true,
+    //         message: "Cancellation approved amount is rejected by customer",
+    //       });
+    //     } else {
+    //       console.log("FCM notification sent successfully:", response);
+    //       return res.status(200).json({
+    //         status: true,
+    //         message: "Cancellation approved amount is rejected by customer and notification sent",
+    //       });
+    //     }
+    //   });
+    // }
+
+   // Cancellation approved amount is rejected by customer (Customer End)
+   if (is_cancel_status == "cancellation_rejected_by_customer") {
+
+    if (bookingStatus === "approved" && payment_status === "paid") {
+
+      // Calculate time difference in minutes between current time and in_progress_time
+      const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
+      const currentTime = new Date();
+      // const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
+
+      // if (timeDifferenceMinutes > 1440) {
+      //   return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
+      // }
+
+      // Process refund if booking status is approved and cancellation is within 24 hours
+      // if (timeDifferenceMinutes < 1440) {
+     
+
+      const status_change = await Booking_details.update(
+        { is_cancel_status: is_cancel_status, cancellation_rejected_by_customer_time: time, cancellation_demanding_Amount_by_customer : cancellation_demanding_Amount_by_customer },
+        { where: { id: booking_id } }
+      );
     }
+
+
+    // Send notification to expert about booking cancellation
+    const user = await User.findByPk(UserId);
+    const expert = await User.findByPk(expert_id);
+    const serviceDetails = await service.findByPk(serviceId);
+
+    const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+    const user_name = user ? user.name : 'Unknown User';
+    const expert_name = expert ? expert.name : 'Unknown User';
+
+
+    const message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Cancellation`,
+        body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been rejected by ${user_name}, and Demanded amount of Rs.${cancellation_demanding_Amount_by_customer} `,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: "Booking_cancellation",
+      UserId: expert.id,
+      data: cancel_booking,
+
+    });
+
+    // Send FCM notification
+    fcm.send(message, (err, response) => {
+      if (err) {
+        console.error("Error:", err.message);
+        return res.status(200).json({
+          success: true,
+          message: "Cancellation approved amount is rejected by customer",
+        });
+      } else {
+        console.log("FCM notification sent successfully:", response);
+        return res.status(200).json({
+          status: true,
+          message: "Cancellation approved amount is rejected by customer and notification sent",
+        });
+      }
+    });
+  }
 
     // Customer End Cancel booking
     if(is_cancel_status == "cancellation_accepted_by_customer"){ 

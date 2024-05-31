@@ -25,6 +25,9 @@ module.exports = (sequelize, DataTypes) => {
       cancellation_approved_amount :{
         type: DataTypes.FLOAT,
       },
+      cancellation_demanding_Amount_by_customer:{
+        type: DataTypes.FLOAT,
+      },
       discounted_amount :{
         type: DataTypes.FLOAT,
       },
