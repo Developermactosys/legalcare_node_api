@@ -21,8 +21,7 @@
             overflow: hidden;
         }
         .header {
-            background-color: #4CAF50;
-            color: white;
+            color: #4CAF50;
             text-align: center;
             padding: 30px 20px;
         }
@@ -86,7 +85,6 @@
         }
     </style>
 </head>
-
 <body>
     <div class="container">
         <div style="text-align: center; margin-bottom: 20px;">
@@ -96,16 +94,16 @@
             <h1>Payment Confirmation</h1>
         </div>
         <div class="content">
-            <p>Dear <%= customerName %>,</p>
+            <p>Dear <%= user_name %>,</p>
             <p>Thank you for your payment. We have successfully received your payment for the order <strong><%= bookingNumber %></strong>.</p>
             <div class="details">
                 <p><span>Payment Amount:</span> $<%= amount %></p>
                 <p><span>Payment Date:</span> <%= time %></p>
                 <p><span>Payment Method:</span> <%= payment_method %></p>
                 <p><span>Transaction ID:</span> <%= transaction_id %></p>
-                <p><span>Payment Status:</span> Paid </p>
+                <p><span>Payment Status:</span> Paid</p>
             </div>
-            <p>If you have any questions or concerns, please feel free to contact us at .</p>
+            <p>If you have any questions or concerns, please feel free to contact us </p>
             <p>Thank you for choosing our services!</p>
             <p>Best regards,</p>
             <p>Lynklegal Team</p>
