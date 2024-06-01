@@ -195,7 +195,7 @@ const deductWalletAmount = async (req, res) => {
       }
     ]);
     
-    const find_booking = await booking.findByPk(booking_id)
+    const find_booking = await booking.findOne({where:{id:booking_id}})
     const bookingID = find_booking.booking_id
     const user_name = userExists.name
     const user_email = userExists.email_id
