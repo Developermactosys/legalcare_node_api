@@ -4,7 +4,7 @@ const User = db.User;
 const WalletSystem = db.wallet_system;
 const TransactionHistory = db.transaction_history;
 const admin_setting = db.admin_setting;
-const booking = db.booking_details
+const booking = db.booking_detail
 const emailService = require("../../services/email_for_payment_confirmation_for_booking")
 
 const deductWalletAmount = async (req, res) => {
