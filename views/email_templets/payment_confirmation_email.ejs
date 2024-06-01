@@ -89,12 +89,15 @@
 
 <body>
     <div class="container">
+        <div style="text-align: center; margin-bottom: 20px;">
+            <img src="https://lynklegal.com/assets/lynkLogo-BTwXxail.png" alt="Lynk Legal Logo" style="max-width: 330px; width: 100%; height: auto;">
+        </div>
         <div class="header">
             <h1>Payment Confirmation</h1>
         </div>
         <div class="content">
-            <p>Dear <%= user_name %>,</p>
-            <p>Thank you for your payment. We have successfully received your payment for the order <strong><%= bookingID %></strong>.</p>
+            <p>Dear <%= customerName %>,</p>
+            <p>Thank you for your payment. We have successfully received your payment for the order <strong><%= bookingNumber %></strong>.</p>
             <div class="details">
                 <p><span>Payment Amount:</span> $<%= amount %></p>
                 <p><span>Payment Date:</span> <%= time %></p>
@@ -103,6 +106,9 @@
                 <p><span>Payment Status:</span> Paid </p>
             </div>
             <p>If you have any questions or concerns, please feel free to contact us at .</p>
+            <p>Thank you for choosing our services!</p>
+            <p>Best regards,</p>
+            <p>Lynklegal Team</p>
         </div>
     </div>
 </body>

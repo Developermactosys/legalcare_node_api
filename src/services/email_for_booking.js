@@ -31,7 +31,7 @@ const emailService = async (bookingID, user_name, expert_name, service_name, fin
           const message = {
             from: process.env.sendMailer, // from
             to:user_email , // user email
-            subject: " Email format for booking creation ", // email subject
+            subject: `Booking Confirmation: Your Booking ID ${bookingID}`,
             html: res,
           };
         

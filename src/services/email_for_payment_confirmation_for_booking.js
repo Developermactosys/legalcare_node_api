@@ -31,7 +31,7 @@ const emailService = async (bookingID, user_name, amount, payment_method, transa
           const message = {
             from: process.env.sendMailer, // from
             to:user_email , // user email
-            subject: " Payment Confirmation ", // email subject
+            subject: `Booking Accepted: Your Booking ID ${bookingID}`,
             html: res,
           };
         
