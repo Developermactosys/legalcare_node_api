@@ -15,6 +15,7 @@ const FCM = require('fcm-node');
 const serverKey = process.env.SERVER_KEY_HERE;
 const fcm = new FCM(serverKey);
 const emailService = require("../../services/email_for_booking")
+const booking_accept_email_services = require("../../services/email_for_accept_booking")
 
 
 // Originoal
@@ -1662,7 +1663,7 @@ exports.update_Booking_by_status = async (req, res) => {
     // console.log(status, discounted_amount)
     const reject_booking = await Booking_details.findByPk(booking_id);
 
-    const { payment_status , UserId , expert_id,discounted_amount: reject_discounted_amount,serviceId} = reject_booking;
+    const { payment_status , UserId , expert_id,discounted_amount: reject_discounted_amount,serviceId,expertServiceId} = reject_booking;
 
     const find_expert = await User.findByPk(expert_id);
     const get_user_type = find_expert.user_type
@@ -1811,19 +1812,36 @@ if(status === "approved" && payment_status === "paid"){
 
   });
 
+  // Send Email when booking is accepted
+
+  const bookingID = reject_booking.booking_id
+  const expertService = await expert_service.findOne({where:{id:expertServiceId}})
+  const expertFees = expertService.expert_fees
+  const user_email = user.email_id
+
+   await booking_accept_email_services(bookingID, user_name, expert_name, service_name, expertFees,user_email);
+
   // Send FCM notification
-  fcm.send(message, (err, response) => {
+  fcm.send(message, function (err, response) {
     if (err) {
-      console.error("FCM notification error:", err);
-      return res.status(200).json({ status: false, message: "Failed to send notification" });
+      console.error("Error:", err.message);
+      //  return res.json({  
+      //   success: false,
+      //   message: "Failed to send notification ",
+      // });
     } else {
-      console.log("FCM notification sent successfully:", response);
-      return res.status(200).json({
-        status: true,
-        message: "Booking is approved and notification sent",
-      });
+      console.log("Successfully sent with response: ", response);
+      //  return res.status(200).json({
+      //   status: true,
+      //   message: "Booking is approved and notification sent",
+      // });
     }
   });
+  return res.status(200).json({
+    status: true,
+    message: "Booking is approved and notification sent",
+  });
+  
 }
 
   if (status === "reject" && payment_status === "paid") {

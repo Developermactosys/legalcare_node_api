@@ -290,7 +290,7 @@ db.document.belongsTo(db.booking_detail, {
 })
 
 //User and booking_detail one to many relationship
-db.User.hasMany(db.bank_details, {
+db.User.hasOne(db.bank_details, {
     forienKey: "UserId",
     as: "bank_details",
 })

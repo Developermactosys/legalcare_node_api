@@ -233,6 +233,7 @@
 
 // controllers/bankController.js
 
+const { where } = require("sequelize");
 const db = require("../../../config/db.config");
 const BankDetails = db.bank_details;
 const User =db.User
@@ -245,7 +246,7 @@ const saveBankDetails = async (req, res) => {
     acc_no,
     acc_holder_name,
     ifsc_code,
-    bank_name
+    bank_name,
   } = req.body;
 
   try {
@@ -261,7 +262,7 @@ const saveBankDetails = async (req, res) => {
      ? `documents/${req.files['passbook_img'][0].filename}`
      : null;
 
-     let certificate_of_membership = req.files['certificate_of_membership'] && req.files['certificate_of_membership'][0]
+    let certificate_of_membership = req.files['certificate_of_membership'] && req.files['certificate_of_membership'][0]
      ? `documents/${req.files['certificate_of_membership'][0].filename}`
      : null;
 
@@ -269,50 +270,58 @@ const saveBankDetails = async (req, res) => {
      ? `documents/${req.files['certificate_of_practice'][0].filename}`
      : null;
 
-
-    if (!pan_doc || !aadhar_doc || !passbook_img) {
-      return res.status(400).json({
+    const findUser = await User.findOne({ where: { id: expert_id } });
+    if (!findUser) {
+      return res.status(404).json({
         status: false,
-        message: "Please provide pancard, aadharcard, and passbook image."
+        message: "User not found"
       });
     }
-const findUser = await User.findOne({where : {
-  id :expert_id
-}})
-if(findUser){
-    const addBankDetails = await BankDetails.create({
-      UserId: expert_id,
-      pan_card_no,
-      aadhar_no,
-      acc_no,
-      acc_holder_name,
-      ifsc_code,
-      bank_name,
-      pan_doc,
-      aadhar_doc,
-      passbook_img,
-      certificate_of_membership,
-      certificate_of_practice
-    });
 
-    if (addBankDetails) {
+    const findBankDetails = await BankDetails.findOne({ where: { UserId: expert_id } });
+
+    if (!findBankDetails) {
+      const addBankDetails = await BankDetails.create({
+        UserId: expert_id,
+        pan_card_no,
+        aadhar_no,
+        acc_no,
+        acc_holder_name,
+        ifsc_code,
+        bank_name,
+        pan_doc,
+        aadhar_doc,
+        passbook_img,
+        certificate_of_membership,
+        certificate_of_practice
+      });
       return res.status(200).json({
         status: true,
         message: "Bank details added successfully.",
-        data: addBankDetails,
-      });
-    } else {
-      return res.status(400).json({
-        status: false,
-        message: "Bank details not found."
+        data: addBankDetails
       });
     }
-  }else{
-    return res.status(404).json({
-      status : false,
-      message : "user not found"
-    })
-  }
+
+    findBankDetails.pan_card_no = pan_card_no;
+    findBankDetails.aadhar_no = aadhar_no;
+    findBankDetails.acc_no = acc_no;
+    findBankDetails.acc_holder_name = acc_holder_name;
+    findBankDetails.ifsc_code = ifsc_code;
+    findBankDetails.bank_name = bank_name;
+    findBankDetails.pan_doc = pan_doc;
+    findBankDetails.aadhar_doc = aadhar_doc;
+    findBankDetails.passbook_img = passbook_img;
+    findBankDetails.certificate_of_membership = certificate_of_membership;
+    findBankDetails.certificate_of_practice = certificate_of_practice;
+
+    await findBankDetails.save();
+
+    return res.status(200).json({
+      status: true,
+      message: "Bank details updated successfully.",
+      data: findBankDetails
+    });
+
   } catch (error) {
     return res.status(500).json({
       status: false,
