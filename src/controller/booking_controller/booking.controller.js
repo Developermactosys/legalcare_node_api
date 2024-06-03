@@ -1271,7 +1271,7 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
       to: expert.device_id, // Assuming the user model has a device_id field
       notification: {
         title: `Booking Cancellation`,
-        body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been rejected by ${user_name}, and Demanded amount of Rs.${cancellation_demanding_Amount_by_customer} `,
+        body: ` Customer Rejected your offer for Booking ID: ${cancel_booking.booking_id}`,
       },
     };
 
