@@ -1437,18 +1437,146 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
     });
   }
 
-  // Expert Side Cancel booking
+  // Making an offer form Expert Side Cancel booking 
+  if(is_cancel_status == "cancellation_approved_by_expert" ){
+
+    if(cancellation_approved_amount){
+
+      if (bookingStatus === "approved" && payment_status === "paid"){
+  
+        const status_change = await Booking_details.update(
+          { is_cancel_status : is_cancel_status,cancellation_approved_time: time,cancellation_approved_amount:cancellation_approved_amount},
+          { where: { id: booking_id } }
+  
+        );
+  
+        // Send notification to expert about booking cancellation
+      const user = await User.findByPk(UserId);
+      const expert = await User.findByPk(expert_id);
+      const serviceDetails = await service.findByPk(serviceId);
+  
+      const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
+      const user_name = user ? user.name : 'Unknown User';
+      const expert_name = expert ? expert.name : 'Unknown User';
+  
+  
+      const message = {
+        to: user.device_id, // Assuming the user model has a device_id field
+        notification: {
+          title: `Booking Cancellation`,
+          body: ` Your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. and ${cancellation_approved_amount} has been approved .`,
+        },
+      };
+  
+      await Notification.create({
+        message: message.notification.body,
+        type: "Booking_cancellation",
+        UserId: user.id,
+        data: cancel_booking,
+  
+      });
+  
+      // Send FCM notification
+      fcm.send(message, (err, response) => {
+        if (err) {
+          console.error("Error:", err.message);
+          return res.status(200).json({  
+            success: true,
+            message: "Booking is cancelled",
+          });
+        } else {
+          console.log("FCM notification sent successfully:", response);
+          return res.status(200).json({
+            status: true,
+            message: "Booking is cancelled and notification sent",
+          });
+        }
+      });
+  
+      }
+    }
+
+  }
+
+  // Expert side accepted cancel booking directly given refud to user
   if(is_cancel_status == "cancellation_approved_by_expert"){
 
-    if (bookingStatus === "approved" && payment_status === "paid"){
+    if (bookingStatus === "approved" && payment_status === "paid") {
+      
+        const userWallet = await wallet_system.findOne({ where: { UserId } });
+
+        const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+
+        if (userWallet) {
+
+
+          // for expert deduction 
+          const expert_amount = parseFloat(cancellation_Approved_Amount )
+          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
+            parseFloat(cancellation_Approved_Amount );
+
+          await wallet_system.update(
+            { wallet_amount: newBalanceOfExpert },
+            { where: { UserId: expert_id } }
+          );
+
+          // Giving Refund to user 
+          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
+
+          await wallet_system.update(
+            { wallet_amount: newBalanceOfUser },
+            { where: { UserId } }
+          );
+
+          // console.log("Full refund processed successfully within 24 hours");
+
+          const allTransaction = await TransactionHistory.bulkCreate([
+            {
+              UserId: UserId,
+              payment_method: "wallet",
+              payment_status: "Refund for booking ",
+              transaction_amount: expert_amount,
+              // transaction_id,
+              // device_id,
+              transaction_type:"Credited",
+              status: 1,
+              amount_receiver_id: UserId,
+              expert_id: expert_id,
+              user_type: 1,
+              deduct_type: `Refunded for BookingID:-${cancel_booking.booking_id}`,
+              description: cancellation_reason
+            },
+            {
+              UserId: expert_id,
+              payment_method: "wallet",
+              payment_status: "deduct for Refund",
+              transaction_amount: expert_amount,
+              // transaction_id,
+              // device_id,
+              transaction_type:"Debited",
+              status: 1,
+              amount_receiver_id: UserId,
+              expert_id: expert_id,
+              user_type: get_user_type,
+              deduct_type: "Deducted",
+              description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
+
+            },
+
+          ]);
+        }
+      
 
       const status_change = await Booking_details.update(
-        { is_cancel_status : is_cancel_status,cancellation_approved_time: time,cancellation_approved_amount:cancellation_approved_amount},
+        { status: "cancel" ,is_cancel_status : is_cancel_status,
+        cancellation_approved_time: time,cancel_time:time},
         { where: { id: booking_id } }
-
       );
+    }
 
-      // Send notification to expert about booking cancellation
+    const expert_amount = parseFloat(cancellation_Approved_Amount)
+
+    // Send notification to expert about booking cancellation
     const user = await User.findByPk(UserId);
     const expert = await User.findByPk(expert_id);
     const serviceDetails = await service.findByPk(serviceId);
@@ -1461,14 +1589,14 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
     const message = {
       to: user.device_id, // Assuming the user model has a device_id field
       notification: {
-        title: `Booking Cancellation`,
-        body: ` Your cancellation request for Booking ID: ${cancel_booking.booking_id} has been accepted by ${expert_name}. and ${cancellation_approved_amount} has been approved .`,
+        title: `Booking Cancellation Approved`,
+        body: ` Cancellation approved amount for Booking ID: ${cancel_booking.booking_id} has been approved by ${expert_name}. ${expert_amount} Credited to your wallet.`,
       },
     };
 
     await Notification.create({
       message: message.notification.body,
-      type: "Booking_cancellation",
+      type: "Booking_cancellation Approved",
       UserId: user.id,
       data: cancel_booking,
 
@@ -1491,7 +1619,6 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
       }
     });
 
-    }
   }
     // Process refund if booking status is pending and payment is paid on Expert end
     if (bookingStatus === "pending" && payment_status === "paid") {
