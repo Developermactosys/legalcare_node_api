@@ -1501,80 +1501,85 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
   // Expert side accepted cancel booking directly given refud to user
   if(is_cancel_status == "cancellation_approved_by_expert"){
 
-    if (bookingStatus === "approved" && payment_status === "paid") {
+    if(!cancellation_approved_amount){
+
+      if (bookingStatus === "approved" && payment_status === "paid") {
+        
+          const userWallet = await wallet_system.findOne({ where: { UserId } });
+  
+          const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
+  
+          if (userWallet) {
+  
+           const find_expert_service = await expert_service.findByPk(expertServiceId)
+           const experts_fees = parseFloat(find_expert_service.expert_fees)
+            // for expert deduction 
+            const expert_percentage = parseFloat(1 - admin_booking_percentage)
+  
+            const expert_amount = parseFloat(experts_fees * expert_percentage)  
+            const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) - parseFloat(expert_amount );
+  
+            await wallet_system.update(
+              { wallet_amount: newBalanceOfExpert },
+              { where: { UserId: expert_id } }
+            );
+  
+            // Giving Refund to user 
+            const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
+  
+            await wallet_system.update(
+              { wallet_amount: newBalanceOfUser },
+              { where: { UserId } }
+            );
+  
+            // console.log("Full refund processed successfully within 24 hours");
+  
+            const allTransaction = await TransactionHistory.bulkCreate([
+              {
+                UserId: UserId,
+                payment_method: "wallet",
+                payment_status: "Refund for booking ",
+                transaction_amount: expert_amount,
+                // transaction_id,
+                // device_id,
+                transaction_type:"Credited",
+                status: 1,
+                amount_receiver_id: UserId,
+                expert_id: expert_id,
+                user_type: 1,
+                deduct_type: `Refunded for BookingID:-${cancel_booking.booking_id}`,
+                description: cancellation_reason
+              },
+              {
+                UserId: expert_id,
+                payment_method: "wallet",
+                payment_status: "deduct for Refund",
+                transaction_amount: expert_amount,
+                // transaction_id,
+                // device_id,
+                transaction_type:"Debited",
+                status: 1,
+                amount_receiver_id: UserId,
+                expert_id: expert_id,
+                user_type: get_user_type,
+                deduct_type: "Deducted",
+                description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
+  
+              },
+  
+            ]);
+          }
+        
+  
+        const status_change = await Booking_details.update(
+          { status: "cancel" ,is_cancel_status : is_cancel_status,
+          cancellation_approved_time: time,cancel_time:time},
+          { where: { id: booking_id } }
+        );
+      }
       
-        const userWallet = await wallet_system.findOne({ where: { UserId } });
-
-        const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
-
-        if (userWallet) {
-
-         const find_expert_service = await expert_service.findByPk(expertServiceId)
-         const experts_fees = parseFloat(find_expert_service.expert_fees)
-          // for expert deduction 
-          const expert_percentage = parseFloat(1 - admin_booking_percentage)
-
-          const expert_amount = parseFloat(experts_fees * expert_percentage)  
-          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) - parseFloat(expert_amount );
-
-          await wallet_system.update(
-            { wallet_amount: newBalanceOfExpert },
-            { where: { UserId: expert_id } }
-          );
-
-          // Giving Refund to user 
-          const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
-
-          await wallet_system.update(
-            { wallet_amount: newBalanceOfUser },
-            { where: { UserId } }
-          );
-
-          // console.log("Full refund processed successfully within 24 hours");
-
-          const allTransaction = await TransactionHistory.bulkCreate([
-            {
-              UserId: UserId,
-              payment_method: "wallet",
-              payment_status: "Refund for booking ",
-              transaction_amount: expert_amount,
-              // transaction_id,
-              // device_id,
-              transaction_type:"Credited",
-              status: 1,
-              amount_receiver_id: UserId,
-              expert_id: expert_id,
-              user_type: 1,
-              deduct_type: `Refunded for BookingID:-${cancel_booking.booking_id}`,
-              description: cancellation_reason
-            },
-            {
-              UserId: expert_id,
-              payment_method: "wallet",
-              payment_status: "deduct for Refund",
-              transaction_amount: expert_amount,
-              // transaction_id,
-              // device_id,
-              transaction_type:"Debited",
-              status: 1,
-              amount_receiver_id: UserId,
-              expert_id: expert_id,
-              user_type: get_user_type,
-              deduct_type: "Deducted",
-              description: `Deducted, Refunded for BookingID:-${cancel_booking.booking_id}`,
-
-            },
-
-          ]);
-        }
-      
-
-      const status_change = await Booking_details.update(
-        { status: "cancel" ,is_cancel_status : is_cancel_status,
-        cancellation_approved_time: time,cancel_time:time},
-        { where: { id: booking_id } }
-      );
     }
+
 
     const expert_amount = parseFloat(cancellation_Approved_Amount)
 
