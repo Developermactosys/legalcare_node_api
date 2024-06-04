@@ -997,7 +997,7 @@ exports.Cancle_booking_by_id = async (req, res) => {
     //      });
     //  }
 
-    const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
+    const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount,expertServiceId } = cancel_booking;
 const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
     const find_expert = await User.findByPk(expert_id);
     const get_user_type = find_expert.user_type
@@ -1509,11 +1509,13 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
 
         if (userWallet) {
 
-
+         const find_expert_service = await expert_service.findByPk(expertServiceId)
+         const experts_fees = parseFloat(find_expert_service.expert_fees)
           // for expert deduction 
-          const expert_amount = parseFloat(cancellation_Approved_Amount )
-          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-            parseFloat(cancellation_Approved_Amount );
+          const expert_percentage = parseFloat(1 - admin_booking_percentage)
+
+          const expert_amount = parseFloat(experts_fees * expert_percentage)  
+          const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) - parseFloat(expert_amount );
 
           await wallet_system.update(
             { wallet_amount: newBalanceOfExpert },
