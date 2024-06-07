@@ -973,7 +973,7 @@ exports.delete_booking_by_id = async (req, res) => {
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
-    const { booking_id, time, status, cancellation_reason, is_cancel_status ,cancellation_approved_amount,cancellation_demanding_Amount_by_customer} = req.query;
+    const { booking_id, time, status, cancellation_reason, is_cancel_status ,cancellation_approved_amount,cancellation_demanding_Amount_by_customer,reason_of_reject_cacellation_by_expert_side} = req.query;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -1114,9 +1114,11 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
     // Expert End Cancel booking
 
     if(is_cancel_status == "cancellation_reject"){
+      if(reason_of_reject_cacellation_by_expert_side){
+
       // Update booking status to cancelled if status is reject
       const status_change = await Booking_details.update(
-        { is_cancel_status: "cancellation_reject" },
+        { is_cancel_status: "cancellation_reject",reason_of_reject_cacellation_by_expert_side:reason_of_reject_cacellation_by_expert_side,reason_of_reject_cacellation_by_expert_side_time:time },
         { where: { id: booking_id } }
       );
 
@@ -1161,6 +1163,7 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
           });
         }
       });
+    }
   }
 
     // // Cancellation approved amount is rejected by customer (Customer End)

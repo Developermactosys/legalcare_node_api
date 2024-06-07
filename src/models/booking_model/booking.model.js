@@ -102,6 +102,16 @@ cancellation_rejected_by_customer_time:{
   allowNull: true,
   defaultValue: null
 },
+reason_of_reject_cacellation_by_expert_side:{
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
+reason_of_reject_cacellation_by_expert_side_time:{
+  type: DataTypes.STRING,
+  allowNull: true,
+  defaultValue: null
+},
 is_cancel_status: {
   type: DataTypes.ENUM,
   values: ["cancellation_pending","cancellation_approved_by_expert","cancellation_reject","cancellation_accepted_by_customer" ],
