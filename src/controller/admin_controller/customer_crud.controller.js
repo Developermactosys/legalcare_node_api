@@ -1,8 +1,9 @@
 
 // >>>>>>>>>>>>>>>>>>>>>>>>>>>>For Admin Section >>>>>>>>>>>>>>>>>>>>>>>>>>>>>> //
+const { messaging } = require("firebase-admin");
 const db = require("../../../config/db.config")
 const User = db.User;
-const {Sequelize,Op,or }= require("sequelize");
+const {Sequelize,Op,or, where }= require("sequelize");
 const wallet_system = db.wallet_system;
 const chat = db.chat;
 const call=db.call_details;
@@ -10,7 +11,7 @@ const video = db.video;
 const document = db.document;
 const bank_details = db.bank_details;
 const TransactionHistory = db.transaction_history;
-
+const booking_detail = db.booking_detail
 
 // API for count total user
 exports.totalUser = async (req, res) => {
@@ -100,32 +101,249 @@ exports.totalUser = async (req, res) => {
     }
   };
   
-  
   // API for user delete from admin
-  exports.delUserDetails = async (req, res) => {
-    const { UserId } = req.params;
-    try {
-      const userDetails = await User.findByPk(UserId);
-      await userDetails.destroy(userDetails);
-      if (userDetails) {
-        return res.status(200).json({
-          success: true,
-          message: "User delete successfully",
-        });
-      } else {
-        return res.status(400).json({
-          success: false,
-          message: "user Id not found ",
-        });
-      }
-    } catch (error) {
-      return res.status(500).json({
+exports.delUserDetails = async (req, res) => {
+  const { UserId } = req.params;
+  try {
+    // Find the user by their primary key (UserId)
+    const user = await User.findByPk(UserId);
+
+    // Check if the user exists
+    if (!user) {
+      return res.status(404).json({
         success: false,
-        message: error.message,
+        message: "User not found",
       });
     }
-  };
-  
+
+    if (user.user_type === "1") {
+      const bookingData = await booking_detail.findAll({
+        where: { UserId: UserId }
+      });
+
+      // Check if any booking has 'pending' status
+      const hasPendingBooking = bookingData && bookingData.some(booking => booking.status === 'pending');
+
+      if (hasPendingBooking) {
+        return res.status(200).json({
+          status: false,
+          message: "Cannot delete User due to pending bookings"
+        });
+      }
+
+      await db.booking_detail.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await TransactionHistory.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      const wallet_balance_amount = await wallet_system.findOne({
+        where: { UserId: UserId }
+      });
+
+      const wallet_balance = wallet_balance_amount ? wallet_balance_amount.wallet_amount : 0;
+
+      if (wallet_balance < 0) {
+        return res.status(200).json({
+          status: false,
+          message: "Your wallet balance is negative so we cannot delete your account"
+        });
+      }
+
+      if (wallet_balance >= 0) {
+        await wallet_system.destroy({
+          where: {
+            UserId: UserId,
+          },
+          force: true
+        });
+      }
+
+      await bank_details.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.call_details.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await chat.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await video.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.withdrawal_request.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.notification.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await document.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      // Delete the user
+      await user.destroy({
+        force: true
+      });
+
+      return res.status(200).json({
+        success: true,
+        message: "Your account deleted successfully",
+      });
+    }
+
+    if (user.user_type == "2" || user.user_type == "3" || user.user_type == "4") {
+      const bookingData = await db.booking_detail.findAll({
+        where: { expert_id: UserId }
+      });
+
+      // Check if any booking has 'pending' status
+      const hasPendingBooking = bookingData && bookingData.some(booking => booking.status === 'pending');
+
+      if (hasPendingBooking) {
+        return res.status(200).json({
+          status: false,
+          message: "Cannot delete Expert due to pending bookings of User"
+        });
+      }
+
+      await db.booking_detail.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await TransactionHistory.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      const wallet_balance_amount = await wallet_system.findOne({
+        where: { UserId: UserId }
+      });
+
+      const wallet_balance = wallet_balance_amount ? wallet_balance_amount.wallet_amount : 0;
+
+      if (wallet_balance < 0) {
+        return res.status(200).json({
+          status: false,
+          message: "Your wallet balance is negative so we cannot delete your account"
+        });
+      }
+
+      if (wallet_balance >= 0) {
+        await wallet_system.destroy({
+          where: {
+            UserId: UserId,
+          },
+          force: true
+        });
+      }
+
+      await bank_details.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.call_details.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await chat.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await video.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.withdrawal_request.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await db.notification.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      await document.destroy({
+        where: {
+          UserId: UserId,
+        },
+        force: true
+      });
+
+      // Delete the user
+      await user.destroy();
+
+      return res.status(200).json({
+        success: true,
+        message: "Your account deleted successfully",
+      });
+    }
+
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+};
+
   // API for search user form admin side.
   exports.searchUser = async (req, res) => {
     const { id, email, name,phone_no, createdAt } = req.query;
@@ -235,7 +453,6 @@ exports.totalUser = async (req, res) => {
       });
     }
   };
-
 
   // For final api for customer CRUD 
 exports.getAllCallDetailById = async(req, res) =>{
@@ -371,7 +588,6 @@ exports.getAllVideoCallDetailById = async(req, res) =>{
   }
 }
 
-
 // API for get all document details by id
 exports.getAllDocumentDetailById = async(req, res) =>{
   try {
@@ -422,7 +638,6 @@ exports.getAllDocumentDetailById = async(req, res) =>{
     })
   }
 }
-
 
  //  function for search data
  const buildUserQuery = (queryParams) => {
