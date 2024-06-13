@@ -28,8 +28,12 @@ const emailService = async (bookingID, user_name, amount, payment_method, transa
             console.log(err);
           }
           
+          // let from = `Lynklegal <info@lynklegal.com>`
+          let from = `Lynklegal ${process.env.sendMailer}`
+
           const message = {
-            from: process.env.sendMailer, // from
+            // from: process.env.sendMailer, // from
+            from: from, // from
             to:user_email , // user email
             subject: `Payment Confirmation `,
             html: res,

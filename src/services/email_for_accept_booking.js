@@ -27,9 +27,11 @@ const booking_accept_email_services = async (bookingID, user_name, expert_name, 
           if (err) {
             console.log(err);
           }
+          let from = `Lynklegal ${process.env.sendMailer}`
           
           const message = {
-            from: process.env.sendMailer, // from
+            // from: process.env.sendMailer, // from
+            from:from,
             to:user_email , // user email
             subject: `Booking Accepted: Your Booking ID ${bookingID}`,
             html: res,

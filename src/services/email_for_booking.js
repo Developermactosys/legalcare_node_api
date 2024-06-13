@@ -27,9 +27,11 @@ const emailService = async (bookingID, user_name, expert_name, service_name, fin
           if (err) {
             console.log(err);
           }
+          let from = `Lynklegal ${process.env.sendMailer}`
           
           const message = {
-            from: process.env.sendMailer, // from
+            // from: process.env.sendMailer, // from
+            from:from,
             to:user_email , // user email
             subject: `Booking Confirmation: Your Booking ID ${bookingID}`,
             html: res,

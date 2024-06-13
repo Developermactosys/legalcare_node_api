@@ -76,9 +76,12 @@ const emailService = async (otp, name, email, yourName,yourPosition,yourCompany)
           if (err) {
             console.log(err);
           }
-          
+
+          let from = `Lynklegal ${process.env.sendMailer}`
+
           const message = {
-            from: process.env.sendMailer, // from
+            // from: process.env.sendMailer, // from
+            from: from, // from
             to:email , // user email
             subject: "OTP Verification Mail for LynKlegal", // email subject
             html: res,
