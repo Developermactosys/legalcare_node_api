@@ -58,7 +58,7 @@ exports.addExpertService = async(req, res) =>{
 exports.getAllExpertService = async(req, res) => {
     try {
         const page = Number(req.query.page) || 1;
-        const limit = Number(req.query.limit) || 10;
+        const limit = Number(req.query.limit) || 5;
         const offset = (page - 1) * limit
         const getAllData = await expert_service.findAll({
             where:{expert_service_active: true },

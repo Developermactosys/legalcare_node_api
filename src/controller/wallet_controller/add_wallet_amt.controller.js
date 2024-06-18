@@ -64,7 +64,7 @@ const addWalletAmount = async (req, res) => {
         UserId: user_id,
         payment_method,
         payment_status,
-        wallet_amount,
+        wallet_amount:wallet_amount,
         transaction_id,
         status: 1,
         user_type:user_type,
