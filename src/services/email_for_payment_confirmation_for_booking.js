@@ -28,8 +28,8 @@ const emailService = async (bookingID, user_name, amount, payment_method, transa
             console.log(err);
           }
           
-          // let from = `Lynklegal <info@lynklegal.com>`
-          let from = `Lynklegal ${process.env.sendMailer}`
+          let from = `Lynklegal <account@lynklegal.com>`
+          // let from = `Lynklegal ${process.env.sendMailer}`
 
           const message = {
             // from: process.env.sendMailer, // from
