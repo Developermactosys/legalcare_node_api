@@ -203,7 +203,7 @@ exports.uploadDocument = async (req, res) => {
   
                     notification: {
                       title: `Document`,
-                      body: `Dear ${receiver.name}, you have received a document sent by ${sender.name}`,
+                      body: ` You have received a document sent by ${sender.name}`,
                       priority: "high"
                     },
                   };
