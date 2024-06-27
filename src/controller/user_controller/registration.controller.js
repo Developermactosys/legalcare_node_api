@@ -126,6 +126,7 @@ const otpVerify = async (req, res) => {
               phone_no: phone_no,
               otp: otp,
           },
+          
       });
 
       if (!checkotps) {
@@ -148,6 +149,7 @@ const otpVerify = async (req, res) => {
           name: checkotps.name,
           email_id: checkotps.email_id,
           is_free: checkotps.free_redeem,
+          is_verify:checkotps.is_verify,
           message: "Otp successfully verified",
       });
   } catch (error) {
