@@ -719,257 +719,6 @@ exports.delete_booking_by_id = async (req, res) => {
   }
 }
 
-// Origional
-// exports.Cancle_booking_by_id = async (req, res) => {
-//   try {
-//     const { booking_id, time, status , cancellation_reason } = req.query;
-
-//     const find_admin_percentage = await admin_setting.findByPk(12)
-//     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
-
-//     // Find booking by ID
-//     const cancel_booking = await Booking_details.findByPk(booking_id);
-
-//     if (!cancel_booking) {
-//       return res.status(200).json({ status: false, message: "Booking not found" });
-//     }
-//     if(cancel_booking.status == "cancel"){
-//       return res.status(200).json({status:false ,message: "your booking is already cancelled"})
-//     }
-
-//     const { payment_status, status: bookingStatus, UserId, expert_id, serviceId, discounted_amount } = cancel_booking;
-
-//     const find_expert = await User.findByPk(expert_id);
-//     const get_user_type = find_expert.user_type
-
-//     if (payment_status === "unpaid") {
-//       // Update booking status to cancelled if payment is unpaid
-//       const status_change = await Booking_details.update(
-//         { status: status ,cancellation_reason:cancellation_reason},
-//         { where: { id: booking_id } }
-//       );
-
-//       // return res.status(200).json({ status: true, message: "Booking is cancelled", data: status_change });
-//     }
-
-//     if (bookingStatus === "approved" && payment_status === "paid") {
-//       // Calculate time difference in minutes between current time and in_progress_time
-//       const bookingInProgressTime = new Date(cancel_booking.in_progress_time);
-//       const currentTime = new Date();
-//       const timeDifferenceMinutes = Math.floor((currentTime - bookingInProgressTime) / (1000 * 60));
-
-//       if (timeDifferenceMinutes > 1440) {
-//         return res.status(200).json({ status: true, message: "Booking can not be cancelled, please read cancellation policy" });
-//       }
-
-//       // Process refund if booking status is approved and cancellation is within 24 hours
-//       if (timeDifferenceMinutes < 1440) {
-//         const userWallet = await wallet_system.findOne({ where: { UserId } });
-
-//         const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
-
-//         if (userWallet) {
-
-
-//           // for expert deduction 
-//           const expert_percentage = parseFloat(1 - admin_booking_percentage)
-//           const expert_amount = parseFloat(discounted_amount * expert_percentage)
-//           const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-//             parseFloat(discounted_amount * expert_percentage);
-
-//           await wallet_system.update(
-//             { wallet_amount: newBalanceOfExpert },
-//             { where: { UserId: expert_id } }
-//           );
-
-//           // Giving Refund to user 
-//           const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(expert_amount);
-
-//           await wallet_system.update(
-//             { wallet_amount: newBalanceOfUser },
-//             { where: { UserId } }
-//           );
-
-//           // console.log("Full refund processed successfully within 24 hours");
-
-//           const allTransaction = await TransactionHistory.bulkCreate([
-//             {
-//               UserId: UserId,
-//               payment_method:"wallet",
-//               payment_status:"wallet_transaction",
-//               transaction_amount: expert_amount,
-//               // transaction_id,
-//               // device_id,
-//               status: 1,
-//               amount_receiver_id: UserId,
-//               expert_id: expert_id,
-//               user_type: 1,
-//               deduct_type: "refund",
-//               description:cancellation_reason
-//             },
-//             {
-//               UserId: expert_id,
-//               payment_method:"wallet",
-//               payment_status:"wallet_transaction",
-//               transaction_amount: expert_amount,
-//               // transaction_id,
-//               // device_id,
-//               status: 1,
-//               amount_receiver_id: UserId,
-//               expert_id: expert_id,
-//               user_type: get_user_type,
-//               deduct_type: "refund",
-//               description:cancellation_reason
-
-//             },
-
-//           ]);
-//         }
-//       }
-
-//       const status_change = await Booking_details.update(
-//         { status: status ,cancellation_reason : cancellation_reason},
-//         { where: { id: booking_id } }
-//       );
-//     }
-
-//     // Process refund if booking status is pending and payment is paid
-//     if (bookingStatus === "pending" && payment_status === "paid") {
-//       const userWallet = await wallet_system.findOne({ where: { UserId } });
-
-//       const admin_id = 9
-//       const admin_wallet = await wallet_system.findOne({ where: { UserId: admin_id } })
-
-//       const expert_wallet = await wallet_system.findOne({ where: { UserId: expert_id } })
-
-
-//       if (userWallet) {
-//         // For Admin deduction 
-//         const admin_amount = parseFloat(discounted_amount * admin_booking_percentage);
-//         const newBalanceOfAdmin = parseFloat(admin_wallet.wallet_amount) -
-//           parseFloat(discounted_amount * admin_booking_percentage);
-
-//         await wallet_system.update(
-//           { wallet_amount: newBalanceOfAdmin },
-//           { where: { UserId: admin_id } }
-//         );
-
-//         // for expert deduction 
-//         const expert_percentage = parseFloat(1 - admin_booking_percentage)
-//         const expert_amount = parseFloat(discounted_amount * expert_percentage)
-//         const newBalanceOfExpert = parseFloat(expert_wallet.wallet_amount) -
-//           parseFloat(discounted_amount * expert_percentage);
-
-//         await wallet_system.update(
-//           { wallet_amount: newBalanceOfExpert },
-//           { where: { UserId: expert_id } }
-//         );
-//         // Giving Refund to user 
-
-//         const newBalanceOfUser = parseFloat(userWallet.wallet_amount) + parseFloat(discounted_amount);
-
-//         await wallet_system.update(
-//           { wallet_amount: newBalanceOfUser },
-//           { where: { UserId : UserId} }
-//         );
-
-//         const allTransaction = await TransactionHistory.bulkCreate([
-//           {
-//             UserId: UserId,
-//             payment_method:"wallet",
-//             payment_status:"wallet_transaction",
-//             transaction_amount: discounted_amount,
-//             // transaction_id,
-//             // device_id,
-//             status: 1,
-//             amount_receiver_id: UserId,
-//             expert_id: expert_id,
-//             user_type: 1,
-//             deduct_type: "refund",
-//             description:cancellation_reason
-
-//           },
-//           {
-//             UserId: expert_id,
-//             payment_method:"wallet",
-//             payment_status:"wallet_transaction",
-//             transaction_amount: expert_amount,
-//             // transaction_id,
-//             // device_id,
-//             status: 1,
-//             amount_receiver_id: UserId,
-//             expert_id: expert_id,
-//             user_type: get_user_type,
-//             deduct_type: "refund",
-//             description:cancellation_reason
-
-//           },
-//           {
-//             UserId: admin_id,
-//             payment_method:"wallet",
-//             payment_status:"wallet_transaction",
-//             transaction_amount: admin_amount,
-//             // transaction_id,
-//             // device_id,
-//             status: 1,
-//             amount_receiver_id: UserId,
-//             expert_id: expert_id,
-//             user_type: 0,
-//             deduct_type: "refund",
-//             description:cancellation_reason
-
-//           }
-//         ]);
-
-//       }
-//       const status_change = await Booking_details.update(
-//         { status: status , cancellation_reason :cancellation_reason},
-//         { where: { id: booking_id } }
-//       );
-//     }
-
-//     // Send notification to expert about booking cancellation
-//     const user = await User.findByPk(UserId);
-//     const expert = await User.findByPk(expert_id);
-//     const serviceDetails = await service.findByPk(serviceId);
-
-//     const service_name = serviceDetails ? serviceDetails.serviceName : 'Unknown Service';
-//     const user_name = user ? user.name : 'Unknown User';
-
-//     const message = {
-//       to: expert.device_id, // Assuming the user model has a device_id field
-//       notification: {
-//         title: `Booking Cancellation`,
-//         body: `Booking service for ${service_name} is cancelled by ${user_name}.`,
-//       },
-//     };
-
-//     await Notification.create({
-//       message: message.notification.body,
-//       type: "Booking_cancellation",
-//       UserId: expert.id
-//     });
-
-//     // Send FCM notification
-//     fcm.send(message, (err, response) => {
-//       if (err) {
-//         console.error("FCM notification error:", err);
-//         return res.status(200).json({ status: false, message: "Failed to send notification" });
-//       } else {
-//         console.log("FCM notification sent successfully:", response);
-//         return res.status(200).json({
-//           status: true,
-//           message: "Booking is cancelled and notification sent",
-//         });
-//       }
-//     });
-
-//   } catch (error) {
-//     console.error("Error in cancelling booking:", error);
-//     return res.status(500).json({ status: false, message: error.message });
-//   }
-// };
-
 
 exports.Cancle_booking_by_id = async (req, res) => {
   try {
@@ -1788,7 +1537,7 @@ const cancellation_Approved_Amount = cancel_booking.cancellation_approved_amount
 
 exports.update_Booking_by_status = async (req, res) => {
   try {
-    const { status, booking_id, discounted_amount, time } = req.body;
+    const { status, booking_id, discounted_amount, time ,userId_of_customer} = req.body;
 
     const find_admin_percentage = await admin_setting.findByPk(12)
     const admin_booking_percentage = parseFloat(find_admin_percentage.admin_per_booking / 100)
@@ -2145,9 +1894,61 @@ if(status === "approved" && payment_status === "paid"){
       find_booking.paid_time = time
       await find_booking.save()
     }
-    if (status == "completed") {
+    if (status == "completed" && userId_of_customer) {
       find_booking.completed_time = time
       await find_booking.save()
+
+    // notification when booking is completed
+    const user = await User.findByPk(find_booking.UserId)
+    const expert = await User.findByPk(find_booking.expert_id)
+
+    if(user.id !== userId_of_customer){
+      return res.status(200).json({
+        status:false,
+        message:"Please send valid userId of customer"
+      })
+    }
+
+    const find_service = await service.findByPk(find_booking.serviceId)
+    const service_name = find_service.serviceName
+
+    // const expert_name = expert.name
+    const expert_name = expert ? expert.name : 'Unknown User';
+    const user_name = user ? user.name : 'Unknown Customer'
+
+    var message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Booking Completed`,
+        body: ` Your service request for ${service_name} with Booking ID : ${find_booking.booking_id}`,
+      },
+    };
+
+    if (status) {
+      message.notification.body += ` has been ${status} by ${user_name}.`;
+    } 
+
+    await Notification.create({
+      message: message.notification.body,
+      type: " Booking_status ",
+      UserId: expert.id,
+      data: find_booking,
+    });
+
+    fcm.send(message, function (err, response) {
+      if (err) {
+        console.error("Something went wrong!", err);
+        return res.status(400).json({ success: false, message: err.message });
+      } else {
+        console.log("Successfully sent with response: ", response);
+        // Proceed with your response
+        return res.status(200).json({
+          status: true,
+          message: "Booking status updated and notification sent",
+        });
+      }
+    });
+
     }
 
     if (discounted_price) {
