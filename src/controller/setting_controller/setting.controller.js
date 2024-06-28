@@ -208,7 +208,7 @@ const update_setting = await setting.update(
 
 )
 
-        if(data){
+        if(update_setting){
             return res.status(200).json({
                 status : true,
                 message : "Setting Details updated successfully",
