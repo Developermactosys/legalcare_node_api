@@ -401,7 +401,7 @@ exports.updateStatusForDoc = async (req, res) => {
     && findDoc.is_passbook_verify == 'approved' && findDoc.is_certificate_of_practice_verify == 'approved' &&
     findDoc.is_pan_card_image_verify == 'approved'){
       await User.update({
-        is_verify: true
+        is_verify: 1
       }, {where : {id : expert_id}})
     }
     }
