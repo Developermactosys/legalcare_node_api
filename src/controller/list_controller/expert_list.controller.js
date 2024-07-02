@@ -77,7 +77,7 @@ exports.expert_list = async (req, res) => {
       //   // chat_active: 1,
       //   // call_active: 1,
       // },
-      where:query,
+      where:query.where,
       order: query.order,
       limit: limit,
       offset: offset,
