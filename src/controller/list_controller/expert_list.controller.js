@@ -69,7 +69,7 @@ exports.expert_list = async (req, res) => {
     // For PostgreSQL, use: query.order = Sequelize.literal('RANDOM()');
 
     // Fetch users directly without counting
-    const users = await User.findAll(query,{
+    const users = await User.findAll({
       // where: {
       //   user_type: user_type,
       //   // is_verify:true,
@@ -77,7 +77,7 @@ exports.expert_list = async (req, res) => {
       //   // chat_active: 1,
       //   // call_active: 1,
       // },
-      
+      where:query,
       order: query.order,
       limit: limit,
       offset: offset,
