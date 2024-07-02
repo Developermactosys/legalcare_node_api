@@ -390,7 +390,7 @@ exports.updateStatusForDoc = async (req, res) => {
         message: "Document not found."
       });
     }
-    const findDoc = await doc.findOne({
+    const findDoc = await BankDetails.findOne({
       where : {
         UserId: expert_id     
        }
@@ -400,9 +400,49 @@ exports.updateStatusForDoc = async (req, res) => {
     if(findDoc.is_aadhar_card_verify == 'approved' && findDoc.is_certificate_of_membership_verify == 'approved'
     && findDoc.is_passbook_verify == 'approved' && findDoc.is_certificate_of_practice_verify == 'approved' &&
     findDoc.is_pan_card_image_verify == 'approved'){
-      await User.update({
+      const all_document_verified = await User.update({
         is_verify: 1
       }, {where : {id : expert_id}})
+
+
+    // notification when booking is completed
+    const expert = await User.findByPk(expert_id)
+
+
+    // const expert_name = expert.name
+    const expert_name = expert ? expert.name : 'Unknown User';
+
+    var message = {
+      to: expert.device_id, // Assuming the user model has a device_id field
+      notification: {
+        title: `Documents Verified`,
+        body: ` Your all documents verified successfuly `,
+      },
+    };
+
+    await Notification.create({
+      message: message.notification.body,
+      type: " Documents Verified ",
+      UserId: expert.id,
+    });
+
+    fcm.send(message, function (err, response) {
+      if (err) {
+        console.error("Something went wrong!", err);
+        return res.status(400).json({ success: false, message: err.message });
+      } else {
+        console.log("Successfully sent with response: ", response);
+        // Proceed with your response
+        return res.status(200).json({
+          status: true,
+          message: "Documents verified and notification sent",
+        });
+      }
+    });
+
+
+
+
     }
     }
     return res.status(200).json({
