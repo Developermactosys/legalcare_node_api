@@ -17,7 +17,9 @@ exports.expert_list = async (req, res) => {
     const offset = (page - 1) * limit;
 
     let query = {
-      where: {},
+    
+        is_verify:1
+
     };
     // if (id) {
     //   query.where.id = id; // Direct match
@@ -71,7 +73,7 @@ exports.expert_list = async (req, res) => {
     const users = await User.findAll(query,{
       where: {
         user_type: user_type,
-        is_verify:1,
+        //is_verify:1,
         // user_status: "1",
         // chat_active: 1,
         // call_active: 1,
