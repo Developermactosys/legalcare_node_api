@@ -70,13 +70,14 @@ exports.expert_list = async (req, res) => {
 
     // Fetch users directly without counting
     const users = await User.findAll(query,{
-      where: {
-        user_type: user_type,
-        // is_verify:true,
-        // user_status: "1",
-        // chat_active: 1,
-        // call_active: 1,
-      },
+      // where: {
+      //   user_type: user_type,
+      //   // is_verify:true,
+      //   // user_status: "1",
+      //   // chat_active: 1,
+      //   // call_active: 1,
+      // },
+      
       order: query.order,
       limit: limit,
       offset: offset,
