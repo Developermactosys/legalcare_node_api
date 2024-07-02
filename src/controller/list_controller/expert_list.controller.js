@@ -21,7 +21,7 @@ exports.expert_list = async (req, res) => {
       },
     };
     if (is_verify) {
-      query.where.is_verify = true; // Direct match
+      query.where.is_verify = { [Sequelize.Op.like]: `%${is_verify}%` }; // Direct match
     }
     // Add the order clause for random order
 
