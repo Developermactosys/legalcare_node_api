@@ -20,9 +20,9 @@ exports.expert_list = async (req, res) => {
       where: { 
       },
     };
-    // if (id) {
-    //   query.where.id = id; // Direct match
-    // }
+    if (is_verify) {
+      query.where.is_verify = true; // Direct match
+    }
     // Add the order clause for random order
 
     if (user_type) {
