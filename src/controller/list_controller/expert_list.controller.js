@@ -10,7 +10,7 @@ exports.expert_list = async (req, res) => {
   try {
   
   const {user_type, type_account, work_type, location,language, experience,category_of_lawyer,
-    type_of_lawyer,case_type,max_per_minute, min_per_minute, address } = req.query;
+    type_of_lawyer,case_type,max_per_minute, min_per_minute, address,is_verify } = req.query;
   
     const page = Number(req.query.page) || 1;
     const limit = Number(req.query.limit) || 5;
